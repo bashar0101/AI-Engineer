@@ -1,157 +1,105 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tutorial 03: Python & NumPy for AI Engineers — AI Engineer Bootcamp</title>
+  <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial 03: Calculus & Optimization — AI Engineer Bootcamp</title>
   <style>
-    :root {
-      --bg: #0a0e1a; --surface: #111827; --surface2: #1f2937; --surface3: #263042;
-      --border: #374151; --accent: #10b981; --accent2: #059669; --accent3: #06b6d4;
-      --green: #10b981; --yellow: #f59e0b; --red: #ef4444;
-      --text: #f9fafb; --text2: #9ca3af; --text3: #6b7280; --code-bg: #0d1117;
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.7; }
-    .top-nav { background: rgba(17,24,39,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); padding: 14px 40px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 100; }
-    .nav-back { color: var(--text2); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
-    .nav-back:hover { color: var(--text); }
-    .nav-sep { color: var(--border); }
-    .nav-current { font-size: 0.85rem; color: var(--text); font-weight: 600; }
-    .nav-progress { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--text3); }
-    .progress-bar { width: 120px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); width: 5%; transition: width 0.5s; }
-    .tutorial-hero { background: linear-gradient(135deg, #051a10, #0a1a12, #0a0e1a); border-bottom: 1px solid var(--border); padding: 50px 40px; }
-    .tutorial-hero .container { max-width: 860px; margin: 0 auto; }
-    .tut-meta { display: flex; gap: 16px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
-    .tut-badge { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; padding: 4px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; }
-    .tut-phase { color: var(--text3); font-size: 0.82rem; }
-    .tutorial-hero h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 14px; line-height: 1.2; }
-    .tutorial-hero .subtitle { font-size: 1.05rem; color: var(--text2); margin-bottom: 24px; }
-    .tut-info-row { display: flex; gap: 24px; flex-wrap: wrap; }
-    .tut-info-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text2); }
-    .content-layout { max-width: 1060px; margin: 0 auto; padding: 40px 24px; display: grid; grid-template-columns: 220px 1fr; gap: 40px; align-items: start; }
-    .sidebar { position: sticky; top: 70px; }
-    .toc { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
-    .toc h3 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 14px; }
-    .toc-list { list-style: none; }
-    .toc-item { margin-bottom: 2px; }
-    .toc-link { display: block; padding: 6px 8px; border-radius: 6px; color: var(--text2); text-decoration: none; font-size: 0.82rem; transition: all 0.15s; line-height: 1.3; }
-    .toc-link:hover { background: var(--surface2); color: var(--text); }
-    .toc-link.active { background: rgba(16,185,129,0.12); color: #6ee7b7; }
-    .lesson-content { min-width: 0; }
-    .lesson-section { margin-bottom: 52px; }
-    .section-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); font-weight: 700; margin-bottom: 8px; }
-    h2.section-title { font-size: 1.7rem; font-weight: 800; margin-bottom: 20px; line-height: 1.2; }
-    h3.subsection { font-size: 1.15rem; font-weight: 700; margin: 32px 0 12px; color: #e2e8f0; padding-left: 12px; border-left: 3px solid var(--accent); }
-    p { margin-bottom: 14px; color: var(--text2); font-size: 0.95rem; }
-    strong { color: var(--text); }
-    .math-block { background: var(--code-bg); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 10px; padding: 20px 24px; margin: 20px 0; overflow-x: auto; }
-    .math-block .math-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #6ee7b7; margin-bottom: 10px; font-weight: 600; }
-    .math-formula { font-family: 'Courier New', monospace; font-size: 0.95rem; color: #e2e8f0; line-height: 1.8; }
-    .math-formula .highlight { color: #6ee7b7; }
-    .math-formula .comment { color: var(--text3); font-style: italic; }
-    .code-block { background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 20px 0; }
-    .code-header { background: #161b22; padding: 10px 16px; display: flex; align-items: center; border-bottom: 1px solid var(--border); }
-    .code-lang { font-size: 0.75rem; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
-    .code-body { padding: 20px; overflow-x: auto; }
-    pre { font-family: 'Courier New', Consolas, monospace; font-size: 0.87rem; line-height: 1.6; color: #e2e8f0; }
-    .py-kw { color: #ff7b72; } .py-fn { color: #d2a8ff; } .py-str { color: #a5d6ff; } .py-num { color: #79c0ff; } .py-cm { color: #8b949e; font-style: italic; }
-    .callout { border-radius: 10px; padding: 18px 20px; margin: 20px 0; display: flex; gap: 14px; }
-    .callout-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
-    .callout-body h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 6px; }
-    .callout-body p { font-size: 0.87rem; margin-bottom: 0; }
-    .callout.info { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); }
-    .callout.info .callout-body h4 { color: #6ee7b7; }
-    .callout.tip { background: rgba(6,182,212,0.08); border: 1px solid rgba(6,182,212,0.2); }
-    .callout.tip .callout-body h4 { color: #67e8f9; }
-    .callout.warning { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); }
-    .callout.warning .callout-body h4 { color: #fcd34d; }
-    .callout.important { background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.2); }
-    .callout.important .callout-body h4 { color: #6ee7b7; }
-    .ai-connection { background: linear-gradient(135deg, rgba(16,185,129,0.06), rgba(6,182,212,0.06)); border: 1px solid rgba(16,185,129,0.2); border-radius: 12px; padding: 20px 24px; margin: 20px 0; }
-    .ai-title { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: #6ee7b7; font-weight: 700; margin-bottom: 10px; }
-    .ai-connection p { color: var(--text2); font-size: 0.9rem; }
-    .key-terms { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin: 20px 0; }
-    .term-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
-    .term-name { font-size: 0.9rem; font-weight: 700; color: #6ee7b7; margin-bottom: 6px; font-family: monospace; }
-    .term-def { font-size: 0.82rem; color: var(--text2); }
-    .section-divider { border: none; border-top: 1px solid var(--border); margin: 52px 0; }
-    .compare-table { width: 100%; border-collapse: collapse; margin: 20px 0; font-size: 0.88rem; }
-    .compare-table th { background: var(--surface2); color: var(--text2); font-weight: 600; padding: 10px 14px; text-align: left; border: 1px solid var(--border); }
-    .compare-table td { padding: 10px 14px; border: 1px solid var(--border); color: var(--text2); }
-    .compare-table tr:hover td { background: rgba(16,185,129,0.04); }
-    .compare-table .highlight-col { color: #6ee7b7; font-family: monospace; }
-    #exam { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 40px; margin-top: 60px; }
-    .exam-header { text-align: center; margin-bottom: 40px; }
-    .exam-badge { display: inline-block; background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(6,182,212,0.2)); border: 1px solid rgba(16,185,129,0.3); color: #6ee7b7; padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 14px; }
-    .exam-header h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 10px; }
-    .exam-header p { font-size: 0.92rem; color: var(--text2); }
-    .exam-progress-bar { background: var(--surface2); border-radius: 4px; height: 6px; margin: 20px 0 30px; overflow: hidden; }
-    .exam-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); transition: width 0.4s; width: 0%; }
-    .exam-progress-label { font-size: 0.78rem; color: var(--text3); text-align: right; margin-bottom: 6px; }
-    .question-block { margin-bottom: 32px; padding: 24px; background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; transition: border-color 0.2s; }
-    .question-block.answered-correct { border-color: rgba(16,185,129,0.5); }
-    .question-block.answered-wrong { border-color: rgba(239,68,68,0.3); }
-    .q-num { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); font-weight: 600; margin-bottom: 8px; }
-    .q-text { font-size: 0.98rem; font-weight: 600; color: var(--text); margin-bottom: 18px; line-height: 1.5; }
-    .q-code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; font-family: monospace; font-size: 0.85rem; color: #6ee7b7; margin-bottom: 16px; line-height: 1.6; white-space: pre; }
-    .options { display: flex; flex-direction: column; gap: 10px; }
-    .option-btn { background: var(--surface3); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; color: var(--text2); font-size: 0.9rem; cursor: pointer; transition: all 0.15s; text-align: left; display: flex; align-items: center; gap: 12px; }
-    .option-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--text); background: rgba(16,185,129,0.08); }
-    .option-btn.correct { border-color: var(--green); background: rgba(16,185,129,0.1); color: #6ee7b7; }
-    .option-btn.wrong { border-color: var(--red); background: rgba(239,68,68,0.08); color: #fca5a5; }
-    .option-key { width: 26px; height: 26px; border-radius: 6px; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; flex-shrink: 0; }
-    .option-btn.correct .option-key { background: rgba(16,185,129,0.2); border-color: var(--green); }
-    .option-btn.wrong .option-key { background: rgba(239,68,68,0.15); border-color: var(--red); }
-    .feedback { margin-top: 14px; padding: 14px 16px; border-radius: 8px; font-size: 0.87rem; display: none; }
-    .feedback.show { display: block; }
-    .feedback.correct { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); color: #6ee7b7; }
-    .feedback.wrong { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); color: #fca5a5; }
-    .exam-submit { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--accent), var(--accent3)); border: none; border-radius: 12px; color: white; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s, transform 0.1s; margin-top: 10px; }
-    .exam-submit:hover { opacity: 0.9; transform: translateY(-1px); }
-    .exam-submit:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
-    .exam-results { display: none; text-align: center; padding: 40px; background: var(--surface2); border: 1px solid var(--border); border-radius: 16px; margin-top: 24px; }
-    .exam-results.show { display: block; }
-    .result-score { font-size: 3.5rem; font-weight: 800; margin-bottom: 8px; }
-    .result-label { font-size: 1.1rem; color: var(--text2); margin-bottom: 20px; }
-    .result-message { font-size: 0.95rem; color: var(--text2); max-width: 500px; margin: 0 auto 24px; }
-    .result-next { display: inline-block; background: linear-gradient(135deg, var(--accent), var(--accent3)); color: white; text-decoration: none; padding: 12px 28px; border-radius: 10px; font-weight: 700; font-size: 0.95rem; }
-    .retry-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text2); padding: 12px 28px; border-radius: 10px; font-size: 0.9rem; cursor: pointer; margin-top: 12px; transition: all 0.2s; display: block; margin: 12px auto 0; }
-    .retry-btn:hover { border-color: var(--accent); color: var(--text); }
-    .next-tutorial { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; margin-top: 40px; display: flex; align-items: center; gap: 20px; }
-    .next-info { flex: 1; }
-    .next-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 6px; }
-    .next-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 4px; }
-    .next-desc { font-size: 0.83rem; color: var(--text2); }
-    .next-btn { background: linear-gradient(135deg, var(--accent), var(--accent3)); color: white; text-decoration: none; padding: 12px 24px; border-radius: 10px; font-weight: 700; font-size: 0.88rem; white-space: nowrap; }
-    @media (max-width: 768px) { .content-layout { grid-template-columns: 1fr; } .sidebar { display: none; } #exam { padding: 24px 20px; } }
+    :root { --bg:#0a0e1a;--surface:#111827;--surface2:#1f2937;--surface3:#263042;--border:#374151;--accent:#f59e0b;--accent2:#d97706;--accent3:#06b6d4;--green:#10b981;--red:#ef4444;--text:#f9fafb;--text2:#9ca3af;--text3:#6b7280;--code-bg:#0d1117; }
+    *{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7}
+    .top-nav{background:rgba(17,24,39,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:14px 40px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100}
+    .nav-back{color:var(--text2);text-decoration:none;font-size:.85rem;transition:color .2s}.nav-back:hover{color:var(--text)}.nav-sep{color:var(--border)}.nav-current{font-size:.85rem;color:var(--text);font-weight:600}
+    .nav-progress{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--text3)}.progress-bar{width:120px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));width:5%;transition:width .5s}
+    .tutorial-hero{background:linear-gradient(135deg,#1a1000,#1a1200,#0a0e1a);border-bottom:1px solid var(--border);padding:50px 40px}
+    .tutorial-hero .container{max-width:860px;margin:0 auto}
+    .tut-meta{display:flex;gap:16px;align-items:center;margin-bottom:20px;flex-wrap:wrap}
+    .tut-badge{background:rgba(245,158,11,.15);border:1px solid rgba(245,158,11,.3);color:#fcd34d;padding:4px 12px;border-radius:6px;font-size:.78rem;font-weight:600}
+    .tut-phase{color:var(--text3);font-size:.82rem}
+    .tutorial-hero h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;margin-bottom:14px;line-height:1.2}
+    .tutorial-hero .subtitle{font-size:1.05rem;color:var(--text2);margin-bottom:24px}
+    .tut-info-row{display:flex;gap:24px;flex-wrap:wrap}.tut-info-item{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--text2)}
+    .content-layout{max-width:1060px;margin:0 auto;padding:40px 24px;display:grid;grid-template-columns:220px 1fr;gap:40px;align-items:start}
+    .sidebar{position:sticky;top:70px}.toc{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px}
+    .toc h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:14px}
+    .toc-list{list-style:none}.toc-item{margin-bottom:2px}.toc-link{display:block;padding:6px 8px;border-radius:6px;color:var(--text2);text-decoration:none;font-size:.82rem;transition:all .15s;line-height:1.3}.toc-link:hover{background:var(--surface2);color:var(--text)}.toc-link.active{background:rgba(245,158,11,.12);color:#fcd34d}
+    .lesson-content{min-width:0}.lesson-section{margin-bottom:52px}
+    .section-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);font-weight:700;margin-bottom:8px}
+    h2.section-title{font-size:1.7rem;font-weight:800;margin-bottom:20px;line-height:1.2}
+    h3.subsection{font-size:1.15rem;font-weight:700;margin:32px 0 12px;color:#e2e8f0;padding-left:12px;border-left:3px solid var(--accent)}
+    p{margin-bottom:14px;color:var(--text2);font-size:.95rem}strong{color:var(--text)}
+    .math-block{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;padding:20px 24px;margin:20px 0;overflow-x:auto}
+    .math-block .math-title{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:#fcd34d;margin-bottom:10px;font-weight:600}
+    .math-formula{font-family:'Courier New',monospace;font-size:.95rem;color:#e2e8f0;line-height:1.8}.math-formula .highlight{color:#fcd34d}.math-formula .comment{color:var(--text3);font-style:italic}
+    .code-block{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:20px 0}
+    .code-header{background:#161b22;padding:10px 16px;display:flex;align-items:center;border-bottom:1px solid var(--border)}
+    .code-lang{font-size:.75rem;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.05em}
+    .code-body{padding:20px;overflow-x:auto}
+    pre{font-family:'Courier New',Consolas,monospace;font-size:.87rem;line-height:1.6;color:#e2e8f0}
+    .py-kw{color:#ff7b72}.py-fn{color:#d2a8ff}.py-str{color:#a5d6ff}.py-num{color:#79c0ff}.py-cm{color:#8b949e;font-style:italic}
+    .callout{border-radius:10px;padding:18px 20px;margin:20px 0;display:flex;gap:14px}.callout-icon{font-size:1.2rem;flex-shrink:0;margin-top:2px}
+    .callout-body h4{font-size:.9rem;font-weight:700;margin-bottom:6px}.callout-body p{font-size:.87rem;margin-bottom:0}
+    .callout.info{background:rgba(245,158,11,.08);border:1px solid rgba(245,158,11,.2)}.callout.info .callout-body h4{color:#fcd34d}
+    .callout.tip{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2)}.callout.tip .callout-body h4{color:#6ee7b7}
+    .callout.important{background:rgba(245,158,11,.06);border:1px solid rgba(245,158,11,.2)}.callout.important .callout-body h4{color:#fcd34d}
+    .ai-connection{background:linear-gradient(135deg,rgba(245,158,11,.06),rgba(6,182,212,.06));border:1px solid rgba(245,158,11,.2);border-radius:12px;padding:20px 24px;margin:20px 0}
+    .ai-title{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:#fcd34d;font-weight:700;margin-bottom:10px}.ai-connection p{color:var(--text2);font-size:.9rem}
+    .section-divider{border:none;border-top:1px solid var(--border);margin:52px 0}
+    .viz-box{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;margin:20px 0;text-align:center}
+    .viz-box canvas{max-width:100%}
+    /* EXAM */
+    #exam{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px;margin-top:60px}
+    .exam-header{text-align:center;margin-bottom:40px}
+    .exam-badge{display:inline-block;background:linear-gradient(135deg,rgba(245,158,11,.2),rgba(6,182,212,.2));border:1px solid rgba(245,158,11,.3);color:#fcd34d;padding:6px 16px;border-radius:20px;font-size:.8rem;font-weight:600;letter-spacing:.05em;margin-bottom:14px}
+    .exam-header h2{font-size:1.8rem;font-weight:800;margin-bottom:10px}.exam-header p{font-size:.92rem;color:var(--text2)}
+    .exam-progress-bar{background:var(--surface2);border-radius:4px;height:6px;margin:20px 0 30px;overflow:hidden}
+    .exam-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));transition:width .4s;width:0%}
+    .exam-progress-label{font-size:.78rem;color:var(--text3);text-align:right;margin-bottom:6px}
+    .question-block{margin-bottom:32px;padding:24px;background:var(--surface2);border:1px solid var(--border);border-radius:14px;transition:border-color .2s}
+    .question-block.answered-correct{border-color:rgba(16,185,129,.5)}.question-block.answered-wrong{border-color:rgba(239,68,68,.3)}
+    .q-num{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);font-weight:600;margin-bottom:8px}
+    .q-text{font-size:.98rem;font-weight:600;color:var(--text);margin-bottom:18px;line-height:1.5}
+    .q-code{background:var(--code-bg);border:1px solid var(--border);border-radius:8px;padding:12px 16px;font-family:monospace;font-size:.85rem;color:#fcd34d;margin-bottom:16px;line-height:1.6;white-space:pre}
+    .options{display:flex;flex-direction:column;gap:10px}
+    .option-btn{background:var(--surface3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;color:var(--text2);font-size:.9rem;cursor:pointer;transition:all .15s;text-align:left;display:flex;align-items:center;gap:12px}
+    .option-btn:hover:not(:disabled){border-color:var(--accent);color:var(--text);background:rgba(245,158,11,.08)}
+    .option-btn.correct{border-color:var(--green);background:rgba(16,185,129,.1);color:#6ee7b7}.option-btn.wrong{border-color:var(--red);background:rgba(239,68,68,.08);color:#fca5a5}
+    .option-key{width:26px;height:26px;border-radius:6px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0}
+    .option-btn.correct .option-key{background:rgba(16,185,129,.2);border-color:var(--green)}.option-btn.wrong .option-key{background:rgba(239,68,68,.15);border-color:var(--red)}
+    .feedback{margin-top:14px;padding:14px 16px;border-radius:8px;font-size:.87rem;display:none}.feedback.show{display:block}
+    .feedback.correct{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#6ee7b7}.feedback.wrong{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#fca5a5}
+    .exam-submit{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),var(--accent3));border:none;border-radius:12px;color:white;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s;margin-top:10px}
+    .exam-submit:hover{opacity:.9;transform:translateY(-1px)}.exam-submit:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    .exam-results{display:none;text-align:center;padding:40px;background:var(--surface2);border:1px solid var(--border);border-radius:16px;margin-top:24px}.exam-results.show{display:block}
+    .result-score{font-size:3.5rem;font-weight:800;margin-bottom:8px}.result-label{font-size:1.1rem;color:var(--text2);margin-bottom:20px}
+    .result-message{font-size:.95rem;color:var(--text2);max-width:500px;margin:0 auto 24px}
+    .result-next{display:inline-block;background:linear-gradient(135deg,var(--accent),var(--accent3));color:white;text-decoration:none;padding:12px 28px;border-radius:10px;font-weight:700;font-size:.95rem}
+    .retry-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:12px 28px;border-radius:10px;font-size:.9rem;cursor:pointer;margin-top:12px;transition:all .2s;display:block;margin:12px auto 0}.retry-btn:hover{border-color:var(--accent);color:var(--text)}
+    .next-tutorial{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;margin-top:40px;display:flex;align-items:center;gap:20px}
+    .next-info{flex:1}.next-label{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:6px}
+    .next-title{font-size:1.05rem;font-weight:700;margin-bottom:4px}.next-desc{font-size:.83rem;color:var(--text2)}
+    .next-btn{background:linear-gradient(135deg,var(--accent),var(--accent3));color:white;text-decoration:none;padding:12px 24px;border-radius:10px;font-weight:700;font-size:.88rem;white-space:nowrap}
+    @media(max-width:768px){.content-layout{grid-template-columns:1fr}.sidebar{display:none}#exam{padding:24px 20px}}
   </style>
 </head>
 <body>
 <nav class="top-nav">
-  <a href="index.html" class="nav-back">← Course Home</a>
-  <span class="nav-sep">/</span>
-  <span class="nav-current">Tutorial 03: Python & NumPy for AI Engineers</span>
-  <div class="nav-progress">
-    <span id="progress-text">0% read</span>
-    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-  </div>
+  <a href="index.html" class="nav-back">← Course Home</a><span class="nav-sep">/</span>
+  <span class="nav-current">Tutorial 03: Calculus & Optimization</span>
+  <div class="nav-progress"><span id="progress-text">0% read</span><div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div></div>
 </nav>
 
 <div class="tutorial-hero">
   <div class="container">
     <div class="tut-meta">
-      <span class="tut-badge">🐍 Tutorial 03</span>
-      <span class="tut-phase">Phase 2 · Python & Data Science Stack · Week 3</span>
+      <span class="tut-badge">📈 Tutorial 03</span>
+      <span class="tut-phase">Phase 1 · Mathematical Foundations · Week 2</span>
     </div>
-    <h1>Python & NumPy for AI Engineers</h1>
-    <p class="subtitle">From a C++ engineer's perspective: Python's flexibility and NumPy's vectorized operations are the foundation of every AI framework — understand them deeply and PyTorch/TensorFlow become intuitive.</p>
+    <h1>Calculus & Optimization for AI</h1>
+    <p class="subtitle">Derivatives, partial derivatives, the chain rule, and gradient descent — understanding these means understanding exactly how every neural network learns from data.</p>
     <div class="tut-info-row">
-      <div class="tut-info-item">📖 ~2 hour read</div>
+      <div class="tut-info-item">📖 ~1.5 hour read</div>
       <div class="tut-info-item">🎯 6 core concepts</div>
       <div class="tut-info-item">✏️ 10-question exam</div>
-      <div class="tut-info-item">💻 Hands-on code</div>
+      <div class="tut-info-item">💻 Python code included</div>
     </div>
   </div>
 </div>
@@ -161,55 +109,61 @@
     <nav class="toc">
       <h3>Contents</h3>
       <ul class="toc-list">
-        <li class="toc-item"><a href="#sec1" class="toc-link">1. Python vs C++ for AI</a></li>
-        <li class="toc-item"><a href="#sec2" class="toc-link">2. Python Essentials</a></li>
-        <li class="toc-item"><a href="#sec3" class="toc-link">3. NumPy Arrays</a></li>
-        <li class="toc-item"><a href="#sec4" class="toc-link">4. Broadcasting</a></li>
-        <li class="toc-item"><a href="#sec5" class="toc-link">5. Pandas DataFrames</a></li>
-        <li class="toc-item"><a href="#sec6" class="toc-link">6. The AI Stack</a></li>
-        <li class="toc-item"><a href="#exam" class="toc-link" style="color:#6ee7b7;font-weight:600;">✏️ Exam</a></li>
+        <li class="toc-item"><a href="#sec1" class="toc-link">1. Derivatives & Gradients</a></li>
+        <li class="toc-item"><a href="#sec2" class="toc-link">2. Partial Derivatives</a></li>
+        <li class="toc-item"><a href="#sec3" class="toc-link">3. The Chain Rule</a></li>
+        <li class="toc-item"><a href="#sec4" class="toc-link">4. Gradient Descent</a></li>
+        <li class="toc-item"><a href="#sec5" class="toc-link">5. Optimizers (Adam, SGD)</a></li>
+        <li class="toc-item"><a href="#sec6" class="toc-link">6. Learning Rate Schedules</a></li>
+        <li class="toc-item"><a href="#exam" class="toc-link" style="color:#fcd34d;font-weight:600;">✏️ Exam</a></li>
       </ul>
     </nav>
   </aside>
 
   <main class="lesson-content">
-
     <div class="callout info">
       <span class="callout-icon">🎓</span>
       <div class="callout-body">
-        <h4>Professor's Opening — For the C++ Engineer</h4>
-        <p>You're going to love and hate Python in equal measure. Dynamically typed, no compilation, slow loops — everything your C++ instincts will rebel against. But here's the secret: <strong>Python is just the orchestration layer.</strong> NumPy, PyTorch, and TensorFlow all execute in heavily optimized C/CUDA under the hood. Write clean Python; let the libraries run at C speed.</p>
+        <h4>Professor's Opening</h4>
+        <p>You already know calculus from your CE program. What we're doing here is building <strong>machine learning intuition</strong> on top of that foundation. The derivative you computed to find the minimum of a curve in Calculus I? That's gradient descent. The chain rule you used in circuits? That's backpropagation. The math is identical — the application is what's new.</p>
       </div>
     </div>
 
     <!-- SEC 1 -->
     <div class="lesson-section" id="sec1">
       <div class="section-label">Section 1</div>
-      <h2 class="section-title">Python vs C++ — The AI Engineer's Perspective</h2>
+      <h2 class="section-title">Derivatives & Gradients</h2>
+      <p>The <strong>derivative</strong> of a function measures how much the output changes when the input changes slightly. In AI, derivatives tell us: <em>if I change this weight by a tiny amount, how does the loss change?</em></p>
 
-      <p>As a Computer Engineer, your Python learning curve is primarily about <em>mindset shift</em>, not fundamentals. You know algorithms — now learn the idioms.</p>
-
-      <table class="compare-table">
-        <thead>
-          <tr><th>Concept</th><th>C++ (what you know)</th><th class="highlight-col">Python (what you're learning)</th></tr>
-        </thead>
-        <tbody>
-          <tr><td>Typing</td><td>Static, explicit</td><td class="highlight-col">Dynamic, inferred (but type hints exist)</td></tr>
-          <tr><td>Memory</td><td>Manual (new/delete)</td><td class="highlight-col">Garbage collected (reference counting)</td></tr>
-          <tr><td>Speed</td><td>Near-metal fast</td><td class="highlight-col">Slow loops, but NumPy/PyTorch are C/CUDA</td></tr>
-          <tr><td>Arrays</td><td>int arr[N]</td><td class="highlight-col">np.array([...]) — vectorized, dynamic</td></tr>
-          <tr><td>Compilation</td><td>Required</td><td class="highlight-col">Interpreted (REPL-friendly for experiments)</td></tr>
-          <tr><td>Null pointer</td><td>nullptr</td><td class="highlight-col">None</td></tr>
-          <tr><td>Boolean</td><td>true/false</td><td class="highlight-col">True/False (capitalized!)</td></tr>
-        </tbody>
-      </table>
-
-      <div class="callout warning">
-        <span class="callout-icon">⚠️</span>
-        <div class="callout-body">
-          <h4>The #1 Pitfall for C++ Engineers in AI</h4>
-          <p>Writing Python loops where you should be writing NumPy operations. A Python for-loop over 1 million elements: ~0.5s. The equivalent NumPy vectorized operation: ~5ms. That's 100× slower. <strong>In AI, loops kill performance. Vectorize everything.</strong></p>
+      <div class="math-block">
+        <div class="math-title">Derivative — Rate of Change</div>
+        <div class="math-formula">
+f'(x) = df/dx = lim[h→0] (f(x+h) - f(x)) / h<br/><br/>
+<span class="comment">// Key rules you'll use constantly:</span><br/>
+d/dx [xⁿ]     = n·xⁿ⁻¹         <span class="comment">← power rule</span><br/>
+d/dx [eˣ]     = eˣ              <span class="comment">← exponential</span><br/>
+d/dx [ln(x)]  = 1/x             <span class="comment">← log (appears in cross-entropy)</span><br/>
+d/dx [σ(x)]   = σ(x)·(1-σ(x))  <span class="comment">← sigmoid derivative</span><br/>
+d/dx [tanh(x)] = 1 - tanh²(x)  <span class="comment">← tanh derivative</span>
         </div>
+      </div>
+
+      <p>The <strong>gradient</strong> generalizes the derivative to multiple dimensions — it's a vector of all partial derivatives pointing in the direction of steepest ascent of the loss function.</p>
+
+      <div class="math-block">
+        <div class="math-title">Gradient — Multi-dimensional Derivative</div>
+        <div class="math-formula">
+∇f(x₁, x₂, ..., xₙ) = [∂f/∂x₁, ∂f/∂x₂, ..., ∂f/∂xₙ]<br/><br/>
+<span class="highlight">The gradient points toward the steepest increase.</span><br/>
+<span class="highlight">The negative gradient points toward the steepest decrease.</span><br/><br/>
+<span class="comment">// In neural networks: ∇_W L(W) points toward increasing loss</span><br/>
+<span class="comment">// We update W in the NEGATIVE gradient direction to decrease loss</span>
+        </div>
+      </div>
+
+      <div class="ai-connection">
+        <div class="ai-title">🤖 AI Connection — Loss Landscape</div>
+        <p>The loss function of a neural network is a surface in a space with billions of dimensions (one per weight). Training is the process of <strong>navigating this landscape</strong> to find a valley (low loss region). The gradient tells us which direction is "uphill" — and we go downhill instead. This is exactly why it's called gradient <em>descent</em>.</p>
       </div>
     </div>
 
@@ -218,64 +172,47 @@
     <!-- SEC 2 -->
     <div class="lesson-section" id="sec2">
       <div class="section-label">Section 2</div>
-      <h2 class="section-title">Python Essentials for AI Engineers</h2>
+      <h2 class="section-title">Partial Derivatives</h2>
+      <p>A neural network has millions of parameters. A <strong>partial derivative</strong> ∂L/∂wᵢ measures how the loss changes when we nudge <em>only</em> weight wᵢ while holding everything else fixed.</p>
 
-      <h3 class="subsection">List Comprehensions & Generator Expressions</h3>
-      <p>The Python idiom for transforming collections. Far more readable and often faster than explicit loops.</p>
-
-      <div class="code-block">
-        <div class="code-header"><span class="code-lang">Python — Core Patterns</span></div>
-        <div class="code-body">
-<pre><span class="py-cm"># List comprehension — your new for loop</span>
-squares = [x**<span class="py-num">2</span> <span class="py-kw">for</span> x <span class="py-kw">in</span> range(<span class="py-num">10</span>)]         <span class="py-cm"># [0,1,4,9,16,25,36,49,64,81]</span>
-filtered = [x <span class="py-kw">for</span> x <span class="py-kw">in</span> squares <span class="py-kw">if</span> x > <span class="py-num">20</span>]  <span class="py-cm"># [25,36,49,64,81]</span>
-
-<span class="py-cm"># Dict comprehension — common for building label maps</span>
-label_map = {i: name <span class="py-kw">for</span> i, name <span class="py-kw">in</span> <span class="py-fn">enumerate</span>([<span class="py-str">'cat'</span>, <span class="py-str">'dog'</span>, <span class="py-str">'bird'</span>])}
-<span class="py-cm"># {0: 'cat', 1: 'dog', 2: 'bird'}</span>
-
-<span class="py-cm"># Unpacking — very common in ML code</span>
-x_train, y_train = data_loader.next_batch()  <span class="py-cm"># tuple unpacking</span>
-first, *rest = [<span class="py-num">1</span>, <span class="py-num">2</span>, <span class="py-num">3</span>, <span class="py-num">4</span>, <span class="py-num">5</span>]              <span class="py-cm"># first=1, rest=[2,3,4,5]</span>
-
-<span class="py-cm"># F-strings — essential for logging training metrics</span>
-epoch, loss, acc = <span class="py-num">10</span>, <span class="py-num">0.0234</span>, <span class="py-num">0.976</span>
-<span class="py-fn">print</span>(<span class="py-str">f"Epoch {epoch:03d} | Loss: {loss:.4f} | Acc: {acc:.1%}"</span>)
-<span class="py-cm"># "Epoch 010 | Loss: 0.0234 | Acc: 97.6%"</span>
-
-<span class="py-cm"># *args and **kwargs — how PyTorch layers are defined</span>
-<span class="py-kw">def</span> <span class="py-fn">create_model</span>(*layer_sizes, activation=<span class="py-str">'relu'</span>, dropout=<span class="py-num">0.1</span>):
-    <span class="py-fn">print</span>(<span class="py-str">f"Layers: {layer_sizes}, activation: {activation}"</span>)
-
-<span class="py-fn">create_model</span>(<span class="py-num">512</span>, <span class="py-num">256</span>, <span class="py-num">128</span>, <span class="py-num">10</span>, activation=<span class="py-str">'gelu'</span>)</pre>
+      <div class="math-block">
+        <div class="math-title">Partial Derivatives</div>
+        <div class="math-formula">
+f(x, y) = x²y + 3xy²<br/><br/>
+∂f/∂x = 2xy + 3y²   <span class="comment">← treat y as constant</span><br/>
+∂f/∂y = x² + 6xy    <span class="comment">← treat x as constant</span><br/><br/>
+<span class="comment">// In a neural network with loss L and weights W:</span><br/>
+∂L/∂W[i,j] = "how does loss change if I nudge weight W[i,j]?"<br/>
+<span class="comment">// Positive → increasing W[i,j] increases loss (bad)</span><br/>
+<span class="comment">// Negative → increasing W[i,j] decreases loss (good)</span>
         </div>
       </div>
 
-      <h3 class="subsection">Classes & Inheritance — How PyTorch Models Work</h3>
       <div class="code-block">
-        <div class="code-header"><span class="code-lang">Python — OOP (Critical for PyTorch)</span></div>
+        <div class="code-header"><span class="code-lang">Python — Numerical vs Analytical Gradients</span></div>
         <div class="code-body">
-<pre><span class="py-cm"># Every PyTorch model is a class inheriting from nn.Module</span>
-<span class="py-cm"># You MUST understand Python classes to write custom models</span>
+<pre><span class="py-kw">import</span> numpy <span class="py-kw">as</span> np
 
-<span class="py-kw">class</span> <span class="py-fn">LinearLayer</span>:
-    <span class="py-kw">def</span> <span class="py-fn">__init__</span>(self, in_features, out_features):
-        <span class="py-cm"># __init__ = constructor (like C++ constructor)</span>
-        <span class="py-kw">import</span> numpy <span class="py-kw">as</span> np
-        self.W = np.random.randn(in_features, out_features) * <span class="py-num">0.01</span>
-        self.b = np.zeros(out_features)
+<span class="py-cm"># Numerical gradient (finite differences) — useful for debugging</span>
+<span class="py-kw">def</span> <span class="py-fn">numerical_gradient</span>(f, x, h=<span class="py-num">1e-5</span>):
+    grad = np.zeros_like(x)
+    <span class="py-kw">for</span> i <span class="py-kw">in</span> range(x.size):
+        x_plus  = x.copy(); x_plus.flat[i]  += h
+        x_minus = x.copy(); x_minus.flat[i] -= h
+        grad.flat[i] = (f(x_plus) - f(x_minus)) / (<span class="py-num">2</span> * h)
+    <span class="py-kw">return</span> grad
 
-    <span class="py-kw">def</span> <span class="py-fn">forward</span>(self, x):
-        <span class="py-cm"># __call__ or forward = the computation</span>
-        <span class="py-kw">return</span> x @ self.W + self.b
+<span class="py-cm"># Example: L = sum(W^2) — simple quadratic loss</span>
+<span class="py-kw">def</span> <span class="py-fn">loss</span>(W): <span class="py-kw">return</span> np.sum(W**<span class="py-num">2</span>)
+<span class="py-kw">def</span> <span class="py-fn">analytical_grad</span>(W): <span class="py-kw">return</span> <span class="py-num">2</span> * W  <span class="py-cm"># d/dW [W^2] = 2W</span>
 
-    <span class="py-kw">def</span> <span class="py-fn">__repr__</span>(self):
-        <span class="py-cm"># __repr__ = how the object prints (like operator<< in C++)</span>
-        <span class="py-kw">return</span> <span class="py-str">f"LinearLayer({self.W.shape[0]} → {self.W.shape[1]})"</span>
+W = np.array([[<span class="py-num">1.0</span>, <span class="py-num">-2.0</span>], [<span class="py-num">3.0</span>, <span class="py-num">0.5</span>]])
+num_grad  = <span class="py-fn">numerical_gradient</span>(loss, W)
+anal_grad = <span class="py-fn">analytical_grad</span>(W)
 
-layer = <span class="py-fn">LinearLayer</span>(<span class="py-num">512</span>, <span class="py-num">256</span>)
-<span class="py-fn">print</span>(layer)              <span class="py-cm"># LinearLayer(512 → 256)</span>
-output = layer.forward(x)  <span class="py-cm"># forward pass</span></pre>
+<span class="py-fn">print</span>(<span class="py-str">"Numerical gradient:\n"</span>, num_grad)
+<span class="py-fn">print</span>(<span class="py-str">"Analytical gradient:\n"</span>, anal_grad)
+<span class="py-fn">print</span>(<span class="py-str">"Match:"</span>, np.allclose(num_grad, anal_grad))  <span class="py-cm"># True</span></pre>
         </div>
       </div>
     </div>
@@ -285,48 +222,54 @@ output = layer.forward(x)  <span class="py-cm"># forward pass</span></pre>
     <!-- SEC 3 -->
     <div class="lesson-section" id="sec3">
       <div class="section-label">Section 3</div>
-      <h2 class="section-title">NumPy Arrays — The Foundation of AI</h2>
+      <h2 class="section-title">The Chain Rule — Heart of Backpropagation</h2>
+      <p>The chain rule computes derivatives of <strong>composed functions</strong>. Since a neural network is just a composition of functions (layer₁ → layer₂ → ... → loss), the chain rule <em>is</em> backpropagation.</p>
 
-      <p>NumPy's <code style="background:var(--code-bg);padding:2px 5px;border-radius:3px;font-size:0.85rem;">ndarray</code> is the workhorse of all scientific Python. PyTorch tensors are essentially NumPy arrays on steroids (with GPU support and automatic differentiation).</p>
-
-      <h3 class="subsection">Creating & Inspecting Arrays</h3>
-      <div class="code-block">
-        <div class="code-header"><span class="code-lang">Python — NumPy Fundamentals</span></div>
-        <div class="code-body">
-<pre><span class="py-kw">import</span> numpy <span class="py-kw">as</span> np
-
-<span class="py-cm"># Creating arrays — your most common patterns</span>
-a = np.array([<span class="py-num">1</span>, <span class="py-num">2</span>, <span class="py-num">3</span>, <span class="py-num">4</span>])              <span class="py-cm"># from list</span>
-b = np.zeros((<span class="py-num">3</span>, <span class="py-num">4</span>))                   <span class="py-cm"># 3×4 zeros (bias initialization)</span>
-c = np.ones((<span class="py-num">2</span>, <span class="py-num">3</span>))                    <span class="py-cm"># 2×3 ones</span>
-d = np.random.randn(<span class="py-num">64</span>, <span class="py-num">512</span>)            <span class="py-cm"># random normal — weight init</span>
-e = np.eye(<span class="py-num">4</span>)                           <span class="py-cm"># 4×4 identity matrix</span>
-f = np.arange(<span class="py-num">0</span>, <span class="py-num">1</span>, <span class="py-num">0.1</span>)               <span class="py-cm"># [0.0, 0.1, 0.2, ..., 0.9]</span>
-g = np.linspace(<span class="py-num">0</span>, <span class="py-num">1</span>, <span class="py-num">100</span>)             <span class="py-cm"># 100 evenly spaced points 0→1</span>
-
-<span class="py-cm"># Inspecting — always check shapes in ML!</span>
-X = np.random.randn(<span class="py-num">32</span>, <span class="py-num">224</span>, <span class="py-num">224</span>, <span class="py-num">3</span>)  <span class="py-cm"># batch of 32 RGB images</span>
-<span class="py-fn">print</span>(X.shape)       <span class="py-cm"># (32, 224, 224, 3)</span>
-<span class="py-fn">print</span>(X.ndim)        <span class="py-cm"># 4 (batch, height, width, channels)</span>
-<span class="py-fn">print</span>(X.dtype)       <span class="py-cm"># float64</span>
-<span class="py-fn">print</span>(X.size)        <span class="py-cm"># 32 * 224 * 224 * 3 = 4,816,896 elements</span>
-<span class="py-fn">print</span>(X.nbytes)      <span class="py-cm"># bytes in memory</span>
-
-<span class="py-cm"># Reshaping — EXTREMELY common in ML (flattening, batching)</span>
-flat = X.reshape(<span class="py-num">32</span>, -<span class="py-num">1</span>)   <span class="py-cm"># (32, 150528) — -1 infers the dimension</span>
-<span class="py-fn">print</span>(flat.shape)             <span class="py-cm"># (32, 150528)</span>
-
-<span class="py-cm"># Indexing (like C++ but with slices)</span>
-arr = np.arange(<span class="py-num">12</span>).reshape(<span class="py-num">3</span>, <span class="py-num">4</span>)
-<span class="py-fn">print</span>(arr[<span class="py-num">0</span>])       <span class="py-cm"># first row: [0, 1, 2, 3]</span>
-<span class="py-fn">print</span>(arr[:, <span class="py-num">1</span>])    <span class="py-cm"># second column: [1, 5, 9]</span>
-<span class="py-fn">print</span>(arr[<span class="py-num">1</span>:, <span class="py-num">2</span>:])  <span class="py-cm"># rows 1-2, cols 2-3</span></pre>
+      <div class="math-block">
+        <div class="math-title">Chain Rule</div>
+        <div class="math-formula">
+If z = f(g(x)), then: dz/dx = (dz/dg) · (dg/dx)<br/><br/>
+<span class="comment">// Multi-layer example — 3-layer network:</span><br/>
+x → [W₁] → h₁ → [σ] → a₁ → [W₂] → h₂ → [loss] → L<br/><br/>
+∂L/∂W₁ = (∂L/∂h₂) · (∂h₂/∂a₁) · (∂a₁/∂h₁) · (∂h₁/∂W₁)<br/><br/>
+<span class="highlight">Backpropagation = efficiently applying chain rule to all weights</span><br/>
+<span class="comment">// Gradients flow backward through the network, layer by layer</span>
         </div>
       </div>
 
-      <div class="ai-connection">
-        <div class="ai-title">🤖 AI Connection — PyTorch Tensors</div>
-        <p>PyTorch's <strong>torch.Tensor</strong> is almost identical to NumPy's ndarray, but with two superpowers: (1) it can run on GPU, and (2) it tracks operations for automatic differentiation (autograd). When you write <code style="color:#fff">torch.tensor([1.0, 2.0])</code>, you get the same data structure as <code style="color:#fff">np.array([1.0, 2.0])</code> — but with gradient tracking. The NumPy skills you build here transfer directly to PyTorch.</p>
+      <div class="callout tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <h4>The Computational Graph</h4>
+          <p>PyTorch's <strong>autograd</strong> system builds a computational graph as you do the forward pass, then traverses it backward to apply the chain rule automatically. When you call <code>loss.backward()</code>, PyTorch uses the chain rule across the entire graph. You never compute gradients by hand — the framework does it for you.</p>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — PyTorch Autograd (Chain Rule in Action)</span></div>
+        <div class="code-body">
+<pre><span class="py-kw">import</span> torch
+
+<span class="py-cm"># Create tensors with gradient tracking</span>
+x  = torch.tensor([<span class="py-num">2.0</span>], requires_grad=<span class="py-num">True</span>)
+W1 = torch.tensor([<span class="py-num">3.0</span>], requires_grad=<span class="py-num">True</span>)
+W2 = torch.tensor([<span class="py-num">4.0</span>], requires_grad=<span class="py-num">True</span>)
+
+<span class="py-cm"># Forward pass — PyTorch builds the computation graph</span>
+h1 = W1 * x          <span class="py-cm"># h1 = 3*2 = 6</span>
+h2 = W2 * h1         <span class="py-cm"># h2 = 4*6 = 24</span>
+L  = h2 ** <span class="py-num">2</span>         <span class="py-cm"># L  = 24^2 = 576</span>
+
+<span class="py-cm"># Backward pass — chain rule applied automatically!</span>
+L.backward()
+
+<span class="py-cm"># Analytical: dL/dW1 = dL/dh2 * dh2/dh1 * dh1/dW1</span>
+<span class="py-cm">#           = 2*h2   * W2      * x</span>
+<span class="py-cm">#           = 2*24   * 4       * 2 = 384</span>
+<span class="py-fn">print</span>(<span class="py-str">f"dL/dW1 = {W1.grad.item()}"</span>)  <span class="py-cm"># 384.0 ✓</span>
+<span class="py-fn">print</span>(<span class="py-str">f"dL/dW2 = {W2.grad.item()}"</span>)  <span class="py-cm"># 288.0</span>
+<span class="py-fn">print</span>(<span class="py-str">f"dL/dx  = {x.grad.item()}"</span>)   <span class="py-cm"># 576.0</span></pre>
+        </div>
       </div>
     </div>
 
@@ -335,54 +278,60 @@ arr = np.arange(<span class="py-num">12</span>).reshape(<span class="py-num">3</
     <!-- SEC 4 -->
     <div class="lesson-section" id="sec4">
       <div class="section-label">Section 4</div>
-      <h2 class="section-title">Broadcasting — NumPy's Most Powerful Feature</h2>
-
-      <p>Broadcasting allows NumPy to operate on arrays of different shapes <strong>without copying data</strong>. It's what makes the concise vectorized code of deep learning possible.</p>
+      <h2 class="section-title">Gradient Descent — How Neural Networks Learn</h2>
+      <p>Gradient descent is the optimization algorithm that uses gradients to iteratively update weights toward a lower loss.</p>
 
       <div class="math-block">
-        <div class="math-title">Broadcasting Rules</div>
+        <div class="math-title">Gradient Descent Update Rule</div>
         <div class="math-formula">
-          Two dimensions are compatible if:<br/>
-          1. They are equal, OR<br/>
-          2. One of them is 1<br/><br/>
-          <span class="highlight">Shape (32, 256) + Shape (256,)</span><br/>
-          → (256,) is expanded to (1, 256) → then to (32, 256)<br/>
-          → Result shape: (32, 256)  ✓<br/><br/>
-          <span class="highlight">Shape (32, 1) * Shape (1, 64)</span><br/>
-          → Both expanded → (32, 64)  ✓<br/><br/>
-          <span class="comment">// No data is copied — NumPy uses strides tricks for memory efficiency</span>
+<span class="highlight">W ← W - α · ∇_W L(W)</span><br/><br/>
+where:<br/>
+· W   = current weights<br/>
+· α   = learning rate (step size)<br/>
+· ∇_W L = gradient of loss w.r.t. weights<br/><br/>
+Variants:<br/>
+<span class="highlight">Batch GD:</span>    use ALL training samples to compute gradient<br/>
+<span class="highlight">Stochastic GD:</span> use ONE sample per update (noisy but fast)<br/>
+<span class="highlight">Mini-batch GD:</span>  use N samples (default in DL, e.g. batch_size=32)
         </div>
       </div>
 
       <div class="code-block">
-        <div class="code-header"><span class="code-lang">Python — Broadcasting in Practice</span></div>
+        <div class="code-header"><span class="code-lang">Python — Gradient Descent from Scratch</span></div>
         <div class="code-body">
 <pre><span class="py-kw">import</span> numpy <span class="py-kw">as</span> np
+<span class="py-kw">import</span> matplotlib.pyplot <span class="py-kw">as</span> plt
 
-<span class="py-cm"># Adding bias to a batch — broadcasting in action</span>
-batch_output = np.random.randn(<span class="py-num">32</span>, <span class="py-num">256</span>)  <span class="py-cm"># (32, 256) — 32 samples</span>
-bias = np.zeros(<span class="py-num">256</span>)                      <span class="py-cm"># (256,) — one bias per neuron</span>
-result = batch_output + bias               <span class="py-cm"># (32, 256) + (256,) = (32, 256) ✓</span>
-<span class="py-cm"># bias is BROADCAST across all 32 samples automatically!</span>
+<span class="py-cm"># Simple example: minimize f(w) = w^2 (minimum at w=0)</span>
+<span class="py-kw">def</span> <span class="py-fn">f</span>(w):     <span class="py-kw">return</span> w**<span class="py-num">2</span>
+<span class="py-kw">def</span> <span class="py-fn">grad_f</span>(w): <span class="py-kw">return</span> <span class="py-num">2</span> * w
 
-<span class="py-cm"># Normalizing a batch</span>
-X = np.random.randn(<span class="py-num">64</span>, <span class="py-num">512</span>)             <span class="py-cm"># 64 samples, 512 features</span>
-mu = X.mean(axis=<span class="py-num">0</span>, keepdims=<span class="py-num">True</span>)       <span class="py-cm"># (1, 512) — mean per feature</span>
-sigma = X.std(axis=<span class="py-num">0</span>, keepdims=<span class="py-num">True</span>)     <span class="py-cm"># (1, 512) — std per feature</span>
-X_norm = (X - mu) / (sigma + <span class="py-num">1e-8</span>)       <span class="py-cm"># (64,512) - (1,512) / (1,512) ✓</span>
-<span class="py-cm"># This IS batch normalization (simplified)!</span>
+w = <span class="py-num">5.0</span>   <span class="py-cm"># starting point</span>
+lr = <span class="py-num">0.1</span>  <span class="py-cm"># learning rate</span>
 
-<span class="py-cm"># Common vectorized operations — NEVER use Python loops for these</span>
-a = np.array([[<span class="py-num">1</span>,<span class="py-num">2</span>,<span class="py-num">3</span>],[<span class="py-num">4</span>,<span class="py-num">5</span>,<span class="py-num">6</span>]])    <span class="py-cm"># (2,3)</span>
+<span class="py-fn">print</span>(<span class="py-str">f"Starting: w={w:.3f}, loss={f(w):.3f}"</span>)
+<span class="py-kw">for</span> step <span class="py-kw">in</span> range(<span class="py-num">20</span>):
+    grad = <span class="py-fn">grad_f</span>(w)
+    w = w - lr * grad           <span class="py-cm"># gradient descent update</span>
+    <span class="py-kw">if</span> step % <span class="py-num">5</span> == <span class="py-num">0</span>:
+        <span class="py-fn">print</span>(<span class="py-str">f"Step {step:2d}: w={w:.4f}, loss={f(w):.6f}"</span>)
 
-<span class="py-fn">print</span>(a.sum())              <span class="py-cm"># 21 — sum all elements</span>
-<span class="py-fn">print</span>(a.sum(axis=<span class="py-num">0</span>))        <span class="py-cm"># [5,7,9] — sum each column</span>
-<span class="py-fn">print</span>(a.sum(axis=<span class="py-num">1</span>))        <span class="py-cm"># [6,15] — sum each row</span>
-<span class="py-fn">print</span>(a.mean(axis=<span class="py-num">0</span>))       <span class="py-cm"># column means</span>
-<span class="py-fn">print</span>(a.max(axis=<span class="py-num">1</span>))        <span class="py-cm"># row maxima [3, 6]</span>
-<span class="py-fn">print</span>(a.argmax(axis=<span class="py-num">1</span>))     <span class="py-cm"># index of row maxima [2, 2]</span>
-<span class="py-cm"># argmax is how we get predicted class labels from model outputs!</span></pre>
+<span class="py-cm"># Step  0: w=4.0000, loss=16.0</span>
+<span class="py-cm"># Step  5: w=1.3107, loss=1.7180</span>
+<span class="py-cm"># Step 10: w=0.4295, loss=0.1845</span>
+<span class="py-cm"># Step 15: w=0.1408, loss=0.0198 → approaching 0!</span>
+
+<span class="py-cm"># Effect of learning rate</span>
+<span class="py-kw">for</span> lr, name <span class="py-kw">in</span> [(<span class="py-num">0.01</span>, <span class="py-str">"too small"</span>), (<span class="py-num">0.1</span>, <span class="py-str">"just right"</span>), (<span class="py-num">1.1</span>, <span class="py-str">"too large"</span>)]:
+    w_test = <span class="py-num">5.0</span>
+    <span class="py-kw">for</span> _ <span class="py-kw">in</span> range(<span class="py-num">10</span>): w_test -= lr * <span class="py-num">2</span> * w_test
+    <span class="py-fn">print</span>(<span class="py-str">f"lr={lr} ({name}): final w={w_test:.3f}"</span>)</pre>
         </div>
+      </div>
+
+      <div class="ai-connection">
+        <div class="ai-title">🤖 AI Connection — The Learning Rate is Critical</div>
+        <p>Too small a learning rate: training is painfully slow (thousands of epochs to converge). Too large: the loss oscillates or diverges (explodes). This is why <strong>learning rate scheduling</strong> (Section 6) is a core engineering technique. The learning rate is often the single most important hyperparameter in any training run.</p>
       </div>
     </div>
 
@@ -391,47 +340,64 @@ a = np.array([[<span class="py-num">1</span>,<span class="py-num">2</span>,<span
     <!-- SEC 5 -->
     <div class="lesson-section" id="sec5">
       <div class="section-label">Section 5</div>
-      <h2 class="section-title">Pandas DataFrames — Managing AI Datasets</h2>
+      <h2 class="section-title">Modern Optimizers: SGD, Momentum, Adam</h2>
+      <p>Vanilla gradient descent is rarely used in practice. Modern optimizers add <strong>adaptive learning rates</strong> and <strong>momentum</strong> to converge faster and more reliably.</p>
 
-      <p>Pandas is how you load, inspect, clean, and transform data before feeding it to a model. Every AI project starts with raw data — Pandas is where you tame it.</p>
+      <div class="math-block">
+        <div class="math-title">SGD with Momentum</div>
+        <div class="math-formula">
+v ← β·v - α·∇L          <span class="comment">← accumulate velocity</span><br/>
+W ← W + v                <span class="comment">← update weights</span><br/><br/>
+· β = momentum coefficient (typically 0.9)<br/>
+· v = velocity vector (running average of gradients)<br/><br/>
+<span class="comment">// Momentum: like a ball rolling downhill — builds up speed</span><br/>
+<span class="comment">// in consistent directions, dampens oscillations</span>
+        </div>
+      </div>
+
+      <div class="math-block">
+        <div class="math-title">Adam Optimizer (Adaptive Moment Estimation)</div>
+        <div class="math-formula">
+m ← β₁·m + (1-β₁)·g          <span class="comment">← 1st moment (mean of gradients)</span><br/>
+v ← β₂·v + (1-β₂)·g²         <span class="comment">← 2nd moment (variance of gradients)</span><br/>
+m̂ = m / (1-β₁ᵗ)               <span class="comment">← bias correction</span><br/>
+v̂ = v / (1-β₂ᵗ)               <span class="comment">← bias correction</span><br/>
+W ← W - α · m̂ / (√v̂ + ε)      <span class="comment">← parameter update</span><br/><br/>
+Defaults: α=0.001, β₁=0.9, β₂=0.999, ε=1e-8<br/><br/>
+<span class="highlight">Adam = SGD + momentum + per-parameter adaptive learning rates</span>
+        </div>
+      </div>
+
+      <div class="callout important">
+        <span class="callout-icon">⭐</span>
+        <div class="callout-body">
+          <h4>Which Optimizer to Use?</h4>
+          <p><strong>Adam</strong> is the default for most deep learning tasks — it's robust and requires minimal tuning. <strong>SGD with momentum</strong> can outperform Adam when carefully tuned and is common in computer vision (ResNets are often trained with SGD). <strong>AdamW</strong> (Adam + weight decay) is the standard for LLM training. Start with Adam unless you have a reason to do otherwise.</p>
+        </div>
+      </div>
 
       <div class="code-block">
-        <div class="code-header"><span class="code-lang">Python — Pandas Essentials</span></div>
+        <div class="code-header"><span class="code-lang">Python — PyTorch Optimizers</span></div>
         <div class="code-body">
-<pre><span class="py-kw">import</span> pandas <span class="py-kw">as</span> pd
-<span class="py-kw">import</span> numpy <span class="py-kw">as</span> np
+<pre><span class="py-kw">import</span> torch
+<span class="py-kw">import</span> torch.nn <span class="py-kw">as</span> nn
+<span class="py-kw">import</span> torch.optim <span class="py-kw">as</span> optim
 
-<span class="py-cm"># Loading data — how every ML project begins</span>
-df = pd.read_csv(<span class="py-str">'dataset.csv'</span>)
-<span class="py-cm"># Also: pd.read_json(), pd.read_excel(), pd.read_parquet()</span>
+model = nn.Linear(<span class="py-num">512</span>, <span class="py-num">256</span>)  <span class="py-cm"># simple linear layer</span>
 
-<span class="py-cm"># Essential inspection (do this FIRST on any new dataset)</span>
-<span class="py-fn">print</span>(df.shape)           <span class="py-cm"># (rows, columns)</span>
-<span class="py-fn">print</span>(df.dtypes)          <span class="py-cm"># data types of each column</span>
-<span class="py-fn">print</span>(df.head())          <span class="py-cm"># first 5 rows</span>
-<span class="py-fn">print</span>(df.describe())      <span class="py-cm"># statistics: mean, std, min, max, quartiles</span>
-<span class="py-fn">print</span>(df.isnull().sum())  <span class="py-cm"># count missing values per column</span>
+<span class="py-cm"># Different optimizers — swap out easily</span>
+optimizer_sgd  = optim.SGD(model.parameters(), lr=<span class="py-num">0.01</span>, momentum=<span class="py-num">0.9</span>)
+optimizer_adam = optim.Adam(model.parameters(), lr=<span class="py-num">1e-3</span>, betas=(<span class="py-num">0.9</span>, <span class="py-num">0.999</span>))
+optimizer_adamw= optim.AdamW(model.parameters(), lr=<span class="py-num">1e-4</span>, weight_decay=<span class="py-num">0.01</span>)
 
-<span class="py-cm"># Simulated dataset for demonstration</span>
-df = pd.DataFrame({
-    <span class="py-str">'age'</span>:    [<span class="py-num">25</span>, <span class="py-num">30</span>, np.nan, <span class="py-num">45</span>, <span class="py-num">22</span>],
-    <span class="py-str">'income'</span>: [<span class="py-num">50000</span>, <span class="py-num">75000</span>, <span class="py-num">60000</span>, <span class="py-num">90000</span>, <span class="py-num">40000</span>],
-    <span class="py-str">'label'</span>:  [<span class="py-num">0</span>, <span class="py-num">1</span>, <span class="py-num">1</span>, <span class="py-num">1</span>, <span class="py-num">0</span>]
-})
-
-<span class="py-cm"># Handling missing values</span>
-df[<span class="py-str">'age'</span>].fillna(df[<span class="py-str">'age'</span>].mean(), inplace=<span class="py-num">True</span>)  <span class="py-cm"># fill NaN with mean</span>
-
-<span class="py-cm"># Feature selection and conversion to NumPy (for the model)</span>
-X = df[[<span class="py-str">'age'</span>, <span class="py-str">'income'</span>]].values  <span class="py-cm"># → NumPy array (5, 2)</span>
-y = df[<span class="py-str">'label'</span>].values              <span class="py-cm"># → NumPy array (5,)</span>
-
-<span class="py-cm"># Train/test split</span>
-<span class="py-kw">from</span> sklearn.model_selection <span class="py-kw">import</span> train_test_split
-X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=<span class="py-num">0.2</span>, random_state=<span class="py-num">42</span>
-)
-<span class="py-fn">print</span>(<span class="py-str">f"Train: {X_train.shape}, Test: {X_test.shape}"</span>)</pre>
+<span class="py-cm"># Standard training step pattern</span>
+<span class="py-kw">def</span> <span class="py-fn">training_step</span>(model, optimizer, x, y_true, loss_fn):
+    optimizer.zero_grad()      <span class="py-cm"># 1. clear old gradients (ALWAYS do this!)</span>
+    y_pred = model(x)          <span class="py-cm"># 2. forward pass</span>
+    loss   = loss_fn(y_pred, y_true)  <span class="py-cm"># 3. compute loss</span>
+    loss.backward()            <span class="py-cm"># 4. backward pass (chain rule)</span>
+    optimizer.step()           <span class="py-cm"># 5. update weights</span>
+    <span class="py-kw">return</span> loss.item()</pre>
         </div>
       </div>
     </div>
@@ -441,42 +407,56 @@ X_train, X_test, y_train, y_test = train_test_split(
     <!-- SEC 6 -->
     <div class="lesson-section" id="sec6">
       <div class="section-label">Section 6</div>
-      <h2 class="section-title">The AI Engineer's Python Stack</h2>
+      <h2 class="section-title">Learning Rate Schedules</h2>
+      <p>The learning rate should not stay constant throughout training. <strong>Schedules</strong> dynamically adjust the learning rate to achieve faster early convergence and finer tuning late in training.</p>
 
-      <p>Understanding the full stack helps you know which tool to reach for at each stage of an AI project:</p>
-
-      <div class="key-terms">
-        <div class="term-card">
-          <div class="term-name">NumPy</div>
-          <div class="term-def">Numerical arrays and math. The foundation. Every ML library builds on it. Use for: data manipulation, manual implementations, understanding internals.</div>
-        </div>
-        <div class="term-card">
-          <div class="term-name">Pandas</div>
-          <div class="term-def">Data manipulation and analysis. Use for: loading CSV/JSON, cleaning data, feature engineering, EDA. Not for training loops.</div>
-        </div>
-        <div class="term-card">
-          <div class="term-name">scikit-learn</div>
-          <div class="term-def">Classical ML algorithms. Use for: preprocessing, train/test split, evaluation metrics, baseline models (SVM, random forest, logistic regression).</div>
-        </div>
-        <div class="term-card">
-          <div class="term-name">PyTorch</div>
-          <div class="term-def">The dominant deep learning framework. Dynamic computation graph, strong research community. Use for: neural networks, custom architectures, research.</div>
-        </div>
-        <div class="term-card">
-          <div class="term-name">HuggingFace</div>
-          <div class="term-def">Pre-trained models and datasets. Use for: fine-tuning LLMs, loading BERT/GPT/T5, datasets API. The npm of AI.</div>
-        </div>
-        <div class="term-card">
-          <div class="term-name">Matplotlib/Seaborn</div>
-          <div class="term-def">Visualization. Use for: training curves, confusion matrices, data distribution plots. Essential for understanding what's happening in your model.</div>
+      <div class="math-block">
+        <div class="math-title">Common Learning Rate Schedules</div>
+        <div class="math-formula">
+<span class="highlight">Step Decay:</span>      α(t) = α₀ · γ^(t/step_size)<br/>
+<span class="highlight">Cosine Annealing:</span> α(t) = α_min + ½(α_max-α_min)(1+cos(πt/T))<br/>
+<span class="highlight">Warmup + Decay:</span>  α(t) = α_max·(t/t_warmup)  for t &lt; t_warmup<br/>
+                  α(t) = cosine_decay(t)      for t ≥ t_warmup<br/><br/>
+<span class="comment">// Warmup is standard for Transformers/LLMs — start low,</span><br/>
+<span class="comment">// ramp up, then slowly decay. Used in GPT, BERT, LLaMA.</span>
         </div>
       </div>
 
-      <div class="callout important">
-        <span class="callout-icon">⭐</span>
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — Learning Rate Scheduling in PyTorch</span></div>
+        <div class="code-body">
+<pre><span class="py-kw">import</span> torch.optim <span class="py-kw">as</span> optim
+
+optimizer = optim.AdamW(model.parameters(), lr=<span class="py-num">1e-3</span>)
+
+<span class="py-cm"># Cosine annealing — decays lr smoothly</span>
+scheduler = optim.lr_scheduler.CosineAnnealingLR(
+    optimizer, T_max=<span class="py-num">100</span>, eta_min=<span class="py-num">1e-6</span>
+)
+
+<span class="py-cm"># Warmup + cosine decay (standard for LLM training)</span>
+<span class="py-kw">def</span> <span class="py-fn">get_lr_with_warmup</span>(step, warmup_steps, total_steps, max_lr, min_lr):
+    <span class="py-kw">if</span> step &lt; warmup_steps:
+        <span class="py-kw">return</span> max_lr * step / warmup_steps  <span class="py-cm"># linear warmup</span>
+    <span class="py-kw">import</span> math
+    progress = (step - warmup_steps) / (total_steps - warmup_steps)
+    <span class="py-kw">return</span> min_lr + (max_lr - min_lr) * <span class="py-num">0.5</span> * (<span class="py-num">1</span> + math.cos(math.pi * progress))
+
+<span class="py-cm"># Training loop with scheduler</span>
+<span class="py-kw">for</span> epoch <span class="py-kw">in</span> range(<span class="py-num">100</span>):
+    loss = <span class="py-fn">training_step</span>(model, optimizer, X, y, loss_fn)
+    scheduler.step()   <span class="py-cm"># update learning rate after each epoch</span>
+    <span class="py-kw">if</span> epoch % <span class="py-num">10</span> == <span class="py-num">0</span>:
+        current_lr = optimizer.param_groups[<span class="py-num">0</span>][<span class="py-str">'lr'</span>]
+        <span class="py-fn">print</span>(<span class="py-str">f"Epoch {epoch}: loss={loss:.4f}, lr={current_lr:.6f}"</span>)</pre>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <span class="callout-icon">💡</span>
         <div class="callout-body">
-          <h4>Summary: Python Is Not the Bottleneck</h4>
-          <p>Python's slow loops don't matter in AI because the actual computation (matrix multiplications, convolutions, attention) runs in C++/CUDA inside NumPy/PyTorch. Your job as an AI engineer: write clean, vectorized Python that correctly orchestrates these operations. Master NumPy broadcasting and shape manipulation — you'll use them every single day.</p>
+          <h4>Gradient Clipping — Preventing Explosions</h4>
+          <p>In RNNs and Transformers, gradients can become enormous (explode), causing unstable training. <strong>Gradient clipping</strong> caps the gradient norm: <code>torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)</code>. This is called before <code>optimizer.step()</code> and is standard practice in LLM training.</p>
         </div>
       </div>
     </div>
@@ -486,160 +466,140 @@ X_train, X_test, y_train, y_test = train_test_split(
     <div id="exam">
       <div class="exam-header">
         <div class="exam-badge">📝 End-of-Tutorial Exam</div>
-        <h2>Tutorial 03 Exam — Python & NumPy</h2>
+        <h2>Tutorial 03 Exam — Calculus & Optimization</h2>
         <p>10 questions. Passing grade: 7/10.</p>
       </div>
-
       <div class="exam-progress-label" id="answered-count">0 of 10 answered</div>
       <div class="exam-progress-bar"><div class="exam-progress-fill" id="exam-progress"></div></div>
 
-      <!-- Q1 -->
       <div class="question-block" id="q1">
         <div class="q-num">Question 1 of 10</div>
-        <div class="q-text">What is the output shape of this operation?
-          <div class="q-code">A = np.random.randn(32, 512)  # (32, 512)
-W = np.random.randn(512, 256) # (512, 256)
-b = np.zeros(256)             # (256,)
-result = A @ W + b</div>
-        </div>
+        <div class="q-text">In gradient descent, why do we subtract the gradient instead of adding it?</div>
         <div class="options">
-          <button class="option-btn" onclick="selectOption(this,'q1','A','wrong')"><span class="option-key">A</span> (512, 256)</button>
-          <button class="option-btn" onclick="selectOption(this,'q1','B','correct')"><span class="option-key">B</span> (32, 256)</button>
-          <button class="option-btn" onclick="selectOption(this,'q1','C','wrong')"><span class="option-key">C</span> (32, 512)</button>
-          <button class="option-btn" onclick="selectOption(this,'q1','D','wrong')"><span class="option-key">D</span> Error — shapes incompatible</button>
+          <button class="option-btn" onclick="sel(this,'q1','wrong')"><span class="option-key">A</span> Because gradients are always negative</button>
+          <button class="option-btn" onclick="sel(this,'q1','correct')"><span class="option-key">B</span> The gradient points toward increasing loss; we subtract to move toward decreasing loss</button>
+          <button class="option-btn" onclick="sel(this,'q1','wrong')"><span class="option-key">C</span> Subtraction is numerically more stable than addition</button>
+          <button class="option-btn" onclick="sel(this,'q1','wrong')"><span class="option-key">D</span> It's a convention — adding would work equally well</button>
         </div>
-        <div class="feedback" id="fb-q1-correct correct">✅ <strong>Correct!</strong> A @ W: (32,512) · (512,256) = (32,256). Then + b: (32,256) + (256,) — broadcasting expands b to (1,256) → (32,256). Final result: (32, 256). This is exactly one neural network layer forward pass!</div>
-        <div class="feedback" id="fb-q1-wrong wrong">❌ <strong>Incorrect.</strong> Step by step: A @ W = (32,512) · (512,256) = (32,256) ← inner dims match. Then + b: broadcasting makes (256,) into (1,256) → (32,256). Result = (32, 256). The 32 is the batch size (preserved), 256 is the output dimension.</div>
+        <div class="feedback correct" id="fb-q1-correct">✅ <strong>Correct!</strong> The gradient ∇L points in the direction of steepest <em>increase</em> of the loss. Since we want to <em>decrease</em> the loss, we move in the opposite direction: W ← W - α·∇L. This is the fundamental intuition of gradient descent.</div>
+        <div class="feedback wrong" id="fb-q1-wrong">❌ The gradient points toward <em>increasing</em> loss (steepest ascent). We want to <em>decrease</em> the loss, so we move in the <em>negative</em> gradient direction. Hence W ← W - α·∇L (subtract). Adding the gradient would be gradient ascent — used in adversarial attacks, not training.</div>
       </div>
 
-      <!-- Q2 -->
       <div class="question-block" id="q2">
         <div class="q-num">Question 2 of 10</div>
-        <div class="q-text">What does <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;">X.reshape(64, -1)</code> do when X has shape (64, 28, 28)?</div>
+        <div class="q-text">What does <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;">optimizer.zero_grad()</code> do, and why must it be called every training step?</div>
         <div class="options">
-          <button class="option-btn" onclick="selectOption(this,'q2','A','wrong')"><span class="option-key">A</span> Raises an error because -1 is invalid</button>
-          <button class="option-btn" onclick="selectOption(this,'q2','B','wrong')"><span class="option-key">B</span> Returns shape (64, 28)</button>
-          <button class="option-btn" onclick="selectOption(this,'q2','C','correct')"><span class="option-key">C</span> Returns shape (64, 784) — flattening each 28×28 image</button>
-          <button class="option-btn" onclick="selectOption(this,'q2','D','wrong')"><span class="option-key">D</span> Returns shape (1, 784)</button>
+          <button class="option-btn" onclick="sel(this,'q2','wrong')"><span class="option-key">A</span> Resets all model weights to zero</button>
+          <button class="option-btn" onclick="sel(this,'q2','wrong')"><span class="option-key">B</span> Resets the learning rate to its initial value</button>
+          <button class="option-btn" onclick="sel(this,'q2','correct')"><span class="option-key">C</span> Clears accumulated gradients from the previous step — PyTorch accumulates by default</button>
+          <button class="option-btn" onclick="sel(this,'q2','wrong')"><span class="option-key">D</span> Zeros out the batch normalization statistics</button>
         </div>
-        <div class="feedback" id="fb-q2-correct correct">✅ <strong>Correct!</strong> -1 tells NumPy to infer that dimension. Total elements = 64 × 28 × 28 = 50,176. With first dim fixed at 64: 50,176 / 64 = 784. Result: (64, 784). This is how you flatten image batches before passing to a fully-connected layer (e.g., MNIST digit images).</div>
-        <div class="feedback" id="fb-q2-wrong wrong">❌ <strong>Incorrect.</strong> reshape(64, -1) means: keep 64 as the first dimension, and infer the second. Total elements = 64 × 28 × 28 = 50,176. Second dim = 50,176 / 64 = 784. So shape becomes (64, 784). This is flattening — turning 2D image arrays into 1D feature vectors.</div>
+        <div class="feedback correct" id="fb-q2-correct">✅ <strong>Correct!</strong> PyTorch accumulates gradients by default (useful for gradient accumulation tricks). Without zero_grad(), the gradient from step t is added to the gradient from step t+1, corrupting the update. Forgetting zero_grad() is one of the most common bugs when writing custom training loops.</div>
+        <div class="feedback wrong" id="fb-q2-wrong">❌ zero_grad() clears the .grad attribute of all parameters. PyTorch accumulates gradients across backward() calls (this is intentional for gradient accumulation). If you forget to call it, gradients from previous batches add up to the current gradient, giving incorrect updates. Classic beginner bug!</div>
       </div>
 
-      <!-- Q3 -->
       <div class="question-block" id="q3">
         <div class="q-num">Question 3 of 10</div>
-        <div class="q-text">Why should you NEVER use a Python for-loop to compute element-wise operations on large NumPy arrays?</div>
+        <div class="q-text">The chain rule applied to a neural network is known as:</div>
         <div class="options">
-          <button class="option-btn" onclick="selectOption(this,'q3','A','wrong')"><span class="option-key">A</span> Python loops produce incorrect results with NumPy</button>
-          <button class="option-btn" onclick="selectOption(this,'q3','B','correct')"><span class="option-key">B</span> NumPy vectorized operations run in C and are ~100× faster than Python loops</button>
-          <button class="option-btn" onclick="selectOption(this,'q3','C','wrong')"><span class="option-key">C</span> Python for-loops can't handle floating-point numbers</button>
-          <button class="option-btn" onclick="selectOption(this,'q3','D','wrong')"><span class="option-key">D</span> NumPy arrays are immutable and can't be iterated</button>
+          <button class="option-btn" onclick="sel(this,'q3','wrong')"><span class="option-key">A</span> Forward propagation</button>
+          <button class="option-btn" onclick="sel(this,'q3','correct')"><span class="option-key">B</span> Backpropagation</button>
+          <button class="option-btn" onclick="sel(this,'q3','wrong')"><span class="option-key">C</span> Gradient ascent</button>
+          <button class="option-btn" onclick="sel(this,'q3','wrong')"><span class="option-key">D</span> Stochastic approximation</button>
         </div>
-        <div class="feedback" id="fb-q3-correct correct">✅ <strong>Correct!</strong> NumPy vectorized operations are implemented in C (and often BLAS/LAPACK). Iterating 1M elements with a Python loop: ~500ms. NumPy vectorized: ~5ms. That's 100× speedup. In AI training loops that run millions of iterations, this difference is critical.</div>
-        <div class="feedback" id="fb-q3-wrong wrong">❌ <strong>Incorrect.</strong> Python loops work correctly on NumPy arrays but are dramatically slower (~100× or more). NumPy vectorized operations call optimized C code under the hood. As an AI engineer, "vectorize everything" is a core discipline — loops are a performance anti-pattern in numerical Python.</div>
+        <div class="feedback correct" id="fb-q3-correct">✅ <strong>Correct!</strong> Backpropagation is the algorithm that applies the chain rule efficiently to compute ∂L/∂W for every weight W in the network. It traverses the computational graph in reverse (backward), accumulating gradients layer by layer using the chain rule.</div>
+        <div class="feedback wrong" id="fb-q3-wrong">❌ Backpropagation is the chain rule applied to neural networks. It computes gradients by traversing the computational graph backward from the loss to the inputs, applying the chain rule at each operation. This is what makes neural network training computationally feasible.</div>
       </div>
 
-      <!-- Q4 -->
       <div class="question-block" id="q4">
         <div class="q-num">Question 4 of 10</div>
-        <div class="q-text">What does <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;">predictions.argmax(axis=1)</code> return when predictions has shape (32, 10)?</div>
+        <div class="q-text">Adam optimizer maintains which two quantities for each parameter?</div>
         <div class="options">
-          <button class="option-btn" onclick="selectOption(this,'q4','A','wrong')"><span class="option-key">A</span> Shape (32, 10) — the same shape with max values</button>
-          <button class="option-btn" onclick="selectOption(this,'q4','B','wrong')"><span class="option-key">B</span> Shape (10,) — the max index of each column</button>
-          <button class="option-btn" onclick="selectOption(this,'q4','C','correct')"><span class="option-key">C</span> Shape (32,) — the predicted class index for each sample</button>
-          <button class="option-btn" onclick="selectOption(this,'q4','D','wrong')"><span class="option-key">D</span> A single integer — the index of the globally largest value</button>
+          <button class="option-btn" onclick="sel(this,'q4','wrong')"><span class="option-key">A</span> The current weight value and the previous weight value</button>
+          <button class="option-btn" onclick="sel(this,'q4','correct')"><span class="option-key">B</span> The first moment (mean of gradients) and second moment (variance of gradients)</button>
+          <button class="option-btn" onclick="sel(this,'q4','wrong')"><span class="option-key">C</span> The learning rate and momentum coefficient per layer</button>
+          <button class="option-btn" onclick="sel(this,'q4','wrong')"><span class="option-key">D</span> The loss value and gradient magnitude per step</button>
         </div>
-        <div class="feedback" id="fb-q4-correct correct">✅ <strong>Correct!</strong> argmax(axis=1) finds the index of the maximum along axis 1 (across the 10 class probabilities). For 32 samples, this gives 32 predicted class indices — shape (32,). This is exactly how you convert softmax outputs to predicted labels!</div>
-        <div class="feedback" id="fb-q4-wrong wrong">❌ <strong>Incorrect.</strong> argmax(axis=1) collapses axis 1 (the 10 classes) into a single index — the class with the highest probability. Result shape: (32,) — one predicted class per sample. This is the standard way to convert model probability outputs to discrete class predictions.</div>
+        <div class="feedback correct" id="fb-q4-correct">✅ <strong>Correct!</strong> Adam tracks m (exponential moving average of gradients = first moment) and v (exponential moving average of squared gradients = second moment). The second moment gives per-parameter adaptive scaling: parameters with consistently large gradients get smaller effective learning rates, preventing instability.</div>
+        <div class="feedback wrong" id="fb-q4-wrong">❌ Adam maintains: m = running mean of gradients (first moment, β₁=0.9) and v = running mean of squared gradients (second moment, β₂=0.999). The update is α·m̂/√v̂ — dividing by √v̂ adapts the effective learning rate per parameter based on its gradient history.</div>
       </div>
 
-      <!-- Q5 -->
       <div class="question-block" id="q5">
         <div class="q-num">Question 5 of 10</div>
-        <div class="q-text">Which operations are valid through NumPy broadcasting?
-          <div class="q-code">A: shape (64, 1, 512)
-B: shape (1, 32, 512)
-C = A + B → ?</div>
-        </div>
+        <div class="q-text">What is the derivative of the sigmoid function σ(x) = 1/(1+e^(-x))?</div>
         <div class="options">
-          <button class="option-btn" onclick="selectOption(this,'q5','A','wrong')"><span class="option-key">A</span> Error — shapes are incompatible</button>
-          <button class="option-btn" onclick="selectOption(this,'q5','B','wrong')"><span class="option-key">B</span> (64, 32, 1)</button>
-          <button class="option-btn" onclick="selectOption(this,'q5','C','correct')"><span class="option-key">C</span> (64, 32, 512)</button>
-          <button class="option-btn" onclick="selectOption(this,'q5','D','wrong')"><span class="option-key">D</span> (64, 1, 512)</button>
+          <button class="option-btn" onclick="sel(this,'q5','wrong')"><span class="option-key">A</span> 1 / (1 + e^(-x))</button>
+          <button class="option-btn" onclick="sel(this,'q5','wrong')"><span class="option-key">B</span> -e^(-x) / (1+e^(-x))²</button>
+          <button class="option-btn" onclick="sel(this,'q5','correct')"><span class="option-key">C</span> σ(x) · (1 - σ(x))</button>
+          <button class="option-btn" onclick="sel(this,'q5','wrong')"><span class="option-key">D</span> 1 - σ(x)²</button>
         </div>
-        <div class="feedback" id="fb-q5-correct correct">✅ <strong>Correct!</strong> Broadcasting rules: compare dims right-to-left. 512==512 ✓. 1 and 32 → expand 1 to 32 ✓. 64 and 1 → expand 1 to 64 ✓. Result: (64, 32, 512). This type of 3D broadcasting is common in attention mechanisms where you have (batch, heads, sequence) tensors.</div>
-        <div class="feedback" id="fb-q5-wrong wrong">❌ <strong>Incorrect.</strong> Broadcasting checks dims right-to-left. 512 == 512 ✓. Dim 2: 1 and 32 → compatible (1 expands to 32). Dim 1: 64 and 1 → compatible (1 expands to 64). Result shape: (64, 32, 512). All dimensions are either equal or one is 1 — the broadcast condition is satisfied.</div>
+        <div class="feedback correct" id="fb-q5-correct">✅ <strong>Correct!</strong> σ'(x) = σ(x)·(1-σ(x)). This elegant form means we can compute the gradient using only the forward pass output — σ(x) is already computed! This is why sigmoid is computationally efficient in backpropagation. Max value of σ'(x) is 0.25 (at x=0), which contributes to the vanishing gradient problem in deep networks.</div>
+        <div class="feedback wrong" id="fb-q5-wrong">❌ The sigmoid derivative is σ'(x) = σ(x)·(1-σ(x)). Notice: the maximum value is 0.25 (at x=0). This means gradients are multiplied by at most 0.25 at each sigmoid layer. In a 10-layer network, the gradient becomes 0.25^10 ≈ 0.000001 — this is the vanishing gradient problem! ReLU was invented to solve this.</div>
       </div>
 
-      <!-- Q6 -->
       <div class="question-block" id="q6">
         <div class="q-num">Question 6 of 10</div>
-        <div class="q-text">In Python, every PyTorch neural network is defined by inheriting from what class?</div>
+        <div class="q-text">What happens during training if the learning rate is set too high (e.g., α = 10.0)?</div>
         <div class="options">
-          <button class="option-btn" onclick="selectOption(this,'q6','A','wrong')"><span class="option-key">A</span> torch.Layer</button>
-          <button class="option-btn" onclick="selectOption(this,'q6','B','wrong')"><span class="option-key">B</span> torch.NeuralNet</button>
-          <button class="option-btn" onclick="selectOption(this,'q6','C','correct')"><span class="option-key">C</span> torch.nn.Module</button>
-          <button class="option-btn" onclick="selectOption(this,'q6','D','wrong')"><span class="option-key">D</span> torch.Model</button>
+          <button class="option-btn" onclick="sel(this,'q6','correct')"><span class="option-key">A</span> The loss oscillates or diverges — the optimizer overshoots the minimum</button>
+          <button class="option-btn" onclick="sel(this,'q6','wrong')"><span class="option-key">B</span> Training converges faster to a better minimum</button>
+          <button class="option-btn" onclick="sel(this,'q6','wrong')"><span class="option-key">C</span> The model memorizes the training data (overfitting)</button>
+          <button class="option-btn" onclick="sel(this,'q6','wrong')"><span class="option-key">D</span> Gradients vanish and the model stops learning</button>
         </div>
-        <div class="feedback" id="fb-q6-correct correct">✅ <strong>Correct!</strong> Every custom PyTorch model inherits from torch.nn.Module and implements forward(). The Module class handles parameter registration, device movement (.to(device)), training/eval mode, and serialization. This is why Python OOP (Section 2) is critical knowledge for AI engineering.</div>
-        <div class="feedback" id="fb-q6-wrong wrong">❌ <strong>Incorrect.</strong> The base class is torch.nn.Module. You define __init__ (setup layers) and forward (define the computation). All other functionality (parameter iteration, .cuda(), state_dict()) comes for free from nn.Module. Understanding Python class inheritance is essential here.</div>
+        <div class="feedback correct" id="fb-q6-correct">✅ <strong>Correct!</strong> A too-large learning rate causes the optimizer to take huge steps that jump over the minimum, landing somewhere with even higher loss — then jumping again. The loss bounces around (oscillates) or grows without bound (diverges). In practice, you often see NaN values in the loss — a sure sign of exploding gradients or too large a learning rate.</div>
+        <div class="feedback wrong" id="fb-q6-wrong">❌ A too-large learning rate causes divergence or oscillation. Imagine a ball rolling in a bowl — with a huge step, it flies past the bottom and up the other side, then back, never settling. In practice: the loss goes up instead of down, or you see NaN. This is why learning rate warmup (starting small, growing gradually) is important for large models.</div>
       </div>
 
-      <!-- Q7 -->
       <div class="question-block" id="q7">
         <div class="q-num">Question 7 of 10</div>
-        <div class="q-text">What is the key difference between <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;">A * B</code> and <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;">A @ B</code> in NumPy?</div>
+        <div class="q-text">What is the correct order of operations in a PyTorch training step?</div>
         <div class="options">
-          <button class="option-btn" onclick="selectOption(this,'q7','A','wrong')"><span class="option-key">A</span> * is faster than @</button>
-          <button class="option-btn" onclick="selectOption(this,'q7','B','correct')"><span class="option-key">B</span> * is element-wise (Hadamard), @ is matrix multiplication</button>
-          <button class="option-btn" onclick="selectOption(this,'q7','C','wrong')"><span class="option-key">C</span> * requires the same shape, @ allows any shape</button>
-          <button class="option-btn" onclick="selectOption(this,'q7','D','wrong')"><span class="option-key">D</span> They are equivalent for 2D arrays</button>
+          <button class="option-btn" onclick="sel(this,'q7','wrong')"><span class="option-key">A</span> backward() → zero_grad() → forward() → step()</button>
+          <button class="option-btn" onclick="sel(this,'q7','correct')"><span class="option-key">B</span> zero_grad() → forward() → loss.backward() → step()</button>
+          <button class="option-btn" onclick="sel(this,'q7','wrong')"><span class="option-key">C</span> forward() → step() → backward() → zero_grad()</button>
+          <button class="option-btn" onclick="sel(this,'q7','wrong')"><span class="option-key">D</span> zero_grad() → backward() → forward() → step()</button>
         </div>
-        <div class="feedback" id="fb-q7-correct correct">✅ <strong>Correct!</strong> Critical distinction: A * B = element-wise product (shapes must broadcast; [1,2]·[3,4]=[3,8]). A @ B = matrix multiplication (inner dims must match). Confusing these causes subtle bugs. In LSTM gates and attention masking, you use *. In linear transformations, you use @.</div>
-        <div class="feedback" id="fb-q7-wrong wrong">❌ <strong>Incorrect.</strong> * is the Hadamard (element-wise) product: [[1,2],[3,4]] * [[2,0],[0,2]] = [[2,0],[0,8]]. @ is matrix multiplication: [[1,2],[3,4]] @ [[1,0],[0,1]] = [[1,2],[3,4]]. They require different shape conditions and compute entirely different things. This distinction is one of the most common sources of bugs in neural network code.</div>
+        <div class="feedback correct" id="fb-q7-correct">✅ <strong>Correct!</strong> The canonical PyTorch training loop order: (1) zero_grad() — clear old gradients; (2) forward pass — compute predictions; (3) compute loss; (4) loss.backward() — compute gradients via chain rule; (5) optimizer.step() — update weights using gradients. Memorize this sequence!</div>
+        <div class="feedback wrong" id="fb-q7-wrong">❌ The correct order is: zero_grad() → forward pass → compute loss → loss.backward() → optimizer.step(). You must zero gradients first (prevent accumulation), compute predictions forward, get the loss, run backprop to get gradients, then update weights. This 5-step pattern appears in virtually every PyTorch training loop ever written.</div>
       </div>
 
-      <!-- Q8 -->
       <div class="question-block" id="q8">
         <div class="q-num">Question 8 of 10</div>
-        <div class="q-text">You have a Pandas DataFrame with a column 'score' that has some NaN values. What's the correct way to fill them with the column mean?</div>
+        <div class="q-text">Warmup learning rate schedules (used in GPT, BERT, LLaMA training) start with a small learning rate and increase it. Why?</div>
         <div class="options">
-          <button class="option-btn" onclick="selectOption(this,'q8','A','wrong')"><span class="option-key">A</span> df['score'] = df['score'].replace(NaN, df.mean())</button>
-          <button class="option-btn" onclick="selectOption(this,'q8','B','correct')"><span class="option-key">B</span> df['score'].fillna(df['score'].mean(), inplace=True)</button>
-          <button class="option-btn" onclick="selectOption(this,'q8','C','wrong')"><span class="option-key">C</span> df['score'].dropna(inplace=True)</button>
-          <button class="option-btn" onclick="selectOption(this,'q8','D','wrong')"><span class="option-key">D</span> df['score'] = df['score'].interpolate(method='zero')</button>
+          <button class="option-btn" onclick="sel(this,'q8','wrong')"><span class="option-key">A</span> To allow the batch normalization statistics to stabilize first</button>
+          <button class="option-btn" onclick="sel(this,'q8','correct')"><span class="option-key">B</span> Early in training, gradients are noisy/unreliable; small steps prevent making large incorrect updates before the model stabilizes</button>
+          <button class="option-btn" onclick="sel(this,'q8','wrong')"><span class="option-key">C</span> It reduces GPU memory usage during the first few batches</button>
+          <button class="option-btn" onclick="sel(this,'q8','wrong')"><span class="option-key">D</span> Warmup prevents the Adam optimizer's second moment from initializing too large</button>
         </div>
-        <div class="feedback" id="fb-q8-correct correct">✅ <strong>Correct!</strong> fillna() replaces NaN values. Using .mean() fills with the column's mean — a standard imputation strategy. dropna() would remove rows with missing values (loses data). Mean imputation is common in ML preprocessing but can introduce bias; alternatives include median imputation or model-based imputation.</div>
-        <div class="feedback" id="fb-q8-wrong wrong">❌ <strong>Incorrect.</strong> The correct Pandas method is fillna(): df['score'].fillna(df['score'].mean(), inplace=True). This replaces NaN values with the column mean. Dropping rows (dropna) loses data. Always handle NaN before converting to NumPy and feeding to your model — NaN propagates through arithmetic and will corrupt your entire training loss.</div>
+        <div class="feedback correct" id="fb-q8-correct">✅ <strong>Correct!</strong> At the very start of training, random weights produce large, chaotic gradients that don't yet reflect the true loss landscape. Taking large steps with these unreliable gradients can send the model to a very poor region. Small initial steps (warmup) let the model "find its footing" before taking larger, more informed steps.</div>
+        <div class="feedback wrong" id="fb-q8-wrong">❌ Warmup is about gradient reliability. Early training gradients are based on random weights — they point in unreliable directions. Large updates with unreliable gradients can permanently damage the model's initialization. Warming up prevents this by using small steps until gradients become more reliable as the model begins to learn the data distribution.</div>
       </div>
 
-      <!-- Q9 -->
       <div class="question-block" id="q9">
         <div class="q-num">Question 9 of 10</div>
-        <div class="q-text">What is the primary advantage of HuggingFace Transformers over training a language model from scratch?</div>
+        <div class="q-text">Mini-batch gradient descent uses batches of 32–256 samples per update. What is the key advantage over full-batch gradient descent?</div>
         <div class="options">
-          <button class="option-btn" onclick="selectOption(this,'q9','A','wrong')"><span class="option-key">A</span> HuggingFace models are always faster to run at inference time</button>
-          <button class="option-btn" onclick="selectOption(this,'q9','B','wrong')"><span class="option-key">B</span> HuggingFace eliminates the need for GPUs</button>
-          <button class="option-btn" onclick="selectOption(this,'q9','C','correct')"><span class="option-key">C</span> Access to pre-trained models with billions of parameters that would cost millions of dollars and months to train from scratch</button>
-          <button class="option-btn" onclick="selectOption(this,'q9','D','wrong')"><span class="option-key">D</span> HuggingFace models require no fine-tuning for domain-specific tasks</button>
+          <button class="option-btn" onclick="sel(this,'q9','wrong')"><span class="option-key">A</span> Mini-batch gradients are more accurate than full-batch gradients</button>
+          <button class="option-btn" onclick="sel(this,'q9','correct')"><span class="option-key">B</span> More weight updates per epoch; GPU parallelism; slight noise can help escape local minima</button>
+          <button class="option-btn" onclick="sel(this,'q9','wrong')"><span class="option-key">C</span> Mini-batches eliminate the need for a learning rate schedule</button>
+          <button class="option-btn" onclick="sel(this,'q9','wrong')"><span class="option-key">D</span> Mini-batches guarantee convergence to the global minimum</button>
         </div>
-        <div class="feedback" id="fb-q9-correct correct">✅ <strong>Correct!</strong> Training GPT-3 from scratch cost ~$4.6M and took weeks on thousands of GPUs. With HuggingFace, you load these pre-trained weights in one line and fine-tune on your specific task with a fraction of the compute. This is transfer learning at scale — one of the most powerful concepts in modern AI engineering.</div>
-        <div class="feedback" id="fb-q9-wrong wrong">❌ <strong>Incorrect.</strong> HuggingFace's key value is access to pre-trained models. Training large LLMs from scratch requires massive compute budgets (GPT-3: ~$4.6M), months of time, and petabytes of data. HuggingFace lets you download these trained weights and fine-tune for your specific task — this is the foundation of modern AI engineering practice.</div>
+        <div class="feedback correct" id="fb-q9-correct">✅ <strong>Correct!</strong> Mini-batches give: (1) many more updates per epoch (1M samples / batch_size=32 = 31,250 updates); (2) efficient GPU utilization via parallel matrix ops; (3) the noise from sampling can help escape sharp local minima. Full-batch is precise but slow and memory-intensive. Single sample (SGD) is noisy and slow on GPU.</div>
+        <div class="feedback wrong" id="fb-q9-wrong">❌ Mini-batches are a tradeoff: less accurate than full-batch (noisier estimate of true gradient), but: (1) far more parameter updates per epoch; (2) excellent GPU parallelism; (3) the stochastic noise can act as implicit regularization. Full-batch gradients are more accurate but computationally expensive for large datasets that don't fit in memory.</div>
       </div>
 
-      <!-- Q10 -->
       <div class="question-block" id="q10">
         <div class="q-num">Question 10 of 10</div>
-        <div class="q-text">What does <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;">np.random.randn(512, 256) * 0.01</code> achieve in neural network weight initialization?</div>
+        <div class="q-text">Gradient clipping (e.g., <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;">clip_grad_norm_(params, max_norm=1.0)</code>) is applied before optimizer.step(). What problem does it solve?</div>
         <div class="options">
-          <button class="option-btn" onclick="selectOption(this,'q10','A','wrong')"><span class="option-key">A</span> Creates weights drawn from a uniform distribution between 0 and 0.01</button>
-          <button class="option-btn" onclick="selectOption(this,'q10','B','wrong')"><span class="option-key">B</span> Creates a weight matrix of all zeros with tiny noise</button>
-          <button class="option-btn" onclick="selectOption(this,'q10','C','correct')"><span class="option-key">C</span> Creates small random weights from N(0, 0.0001) — preventing vanishing/exploding gradients at initialization</button>
-          <button class="option-btn" onclick="selectOption(this,'q10','D','wrong')"><span class="option-key">D</span> Creates weights in the range [-0.01, 0.01] by clipping</button>
+          <button class="option-btn" onclick="sel(this,'q10','wrong')"><span class="option-key">A</span> Vanishing gradients — it amplifies small gradients</button>
+          <button class="option-btn" onclick="sel(this,'q10','correct')"><span class="option-key">B</span> Exploding gradients — it caps the gradient norm to prevent catastrophically large weight updates</button>
+          <button class="option-btn" onclick="sel(this,'q10','wrong')"><span class="option-key">C</span> Overfitting — it acts as a regularizer on the gradient space</button>
+          <button class="option-btn" onclick="sel(this,'q10','wrong')"><span class="option-key">D</span> Dead neurons — it ensures gradients are never zero</button>
         </div>
-        <div class="feedback" id="fb-q10-correct correct">✅ <strong>Correct!</strong> randn() samples from N(0,1). Multiplying by 0.01 scales to N(0, 0.01²) = N(0, 0.0001). Small initial weights prevent the forward pass activations from becoming huge (and causing exploding gradients) or too small (vanishing gradients) before any learning has occurred. This connects back to Section 2 of Tutorial 02 — the Gaussian weight initialization strategy.</div>
-        <div class="feedback" id="fb-q10-wrong wrong">❌ <strong>Incorrect.</strong> np.random.randn() draws from N(0,1). Scaling by 0.01 gives N(0, 0.0001) — a Gaussian with very small variance. This ensures initial weights are close to zero but not exactly zero (which would cause symmetry problems). The goal: keep initial activations in a range where gradients flow well. This is basic weight initialization, the precursor to Xavier/He initialization.</div>
+        <div class="feedback correct" id="fb-q10-correct">✅ <strong>Correct!</strong> Exploding gradients occur when gradients grow exponentially through many layers (especially in RNNs and early Transformer training). Clipping rescales the gradient vector so its L2 norm never exceeds max_norm. This stabilizes training without distorting the gradient direction — just scaling down its magnitude when it's too large.</div>
+        <div class="feedback wrong" id="fb-q10-wrong">❌ Gradient clipping addresses exploding gradients. When gradients become very large, weight updates are enormous and destabilize training (you see the loss suddenly spike to NaN). clip_grad_norm_ rescales the gradient vector: if ‖g‖ > max_norm, then g ← g·(max_norm/‖g‖). Direction is preserved, magnitude is capped. Standard in RNN and Transformer training.</div>
       </div>
 
       <button class="exam-submit" id="submit-btn" onclick="submitExam()" disabled>Answer all 10 questions to submit</button>
@@ -647,71 +607,54 @@ C = A + B → ?</div>
         <div class="result-score" id="result-score"></div>
         <div class="result-label" id="result-label"></div>
         <div class="result-message" id="result-message"></div>
-        <div><a href="index.html" class="result-next">🎓 Back to Course Home</a></div>
+        <div><a href="tutorial-04.html" class="result-next">Continue to Tutorial 04 →</a></div>
         <button class="retry-btn" onclick="retryExam()">↺ Retry Exam</button>
       </div>
     </div>
 
     <div class="next-tutorial">
       <div class="next-info">
-        <div class="next-label">Coming Next · Tutorial 04</div>
-        <div class="next-title">Introduction to Machine Learning</div>
-        <div class="next-desc">Supervised vs unsupervised learning, bias-variance tradeoff, your first models with scikit-learn.</div>
+        <div class="next-label">Up Next · Tutorial 04</div>
+        <div class="next-title">Python & NumPy for AI Engineers</div>
+        <div class="next-desc">Python essentials, NumPy arrays & broadcasting, Pandas — your primary toolkit as an AI engineer.</div>
       </div>
-      <a href="index.html" class="next-btn">View Full Schedule →</a>
+      <a href="tutorial-04.html" class="next-btn">Start Tutorial 04 →</a>
     </div>
-
   </main>
 </div>
 
 <script>
-  window.addEventListener('scroll', () => {
-    const d = document.documentElement.scrollHeight - window.innerHeight;
-    const s = (window.scrollY / d) * 100;
-    document.getElementById('progress-fill').style.width = Math.min(s, 100) + '%';
-    document.getElementById('progress-text').textContent = Math.round(s) + '% read';
-  });
-  const answers = {};
-  function selectOption(btn, qId, choice, correctness) {
-    const block = document.getElementById(qId);
-    if (block.classList.contains('answered-correct') || block.classList.contains('answered-wrong')) return;
-    if (correctness === 'correct') {
-      btn.classList.add('correct'); block.classList.add('answered-correct');
-      const fb = document.getElementById(`fb-${qId}-correct`); if (fb) fb.className = 'feedback correct show';
-    } else {
-      btn.classList.add('wrong'); block.classList.add('answered-wrong');
-      block.querySelectorAll('.option-btn').forEach(b => { if (b.getAttribute('onclick').includes(",'correct'")) b.classList.add('correct'); });
-      const fb = document.getElementById(`fb-${qId}-wrong`); if (fb) fb.className = 'feedback wrong show';
-    }
-    block.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
-    answers[qId] = correctness === 'correct';
-    const n = Object.keys(answers).length;
-    document.getElementById('exam-progress').style.width = (n/10*100) + '%';
-    document.getElementById('answered-count').textContent = `${n} of 10 answered`;
-    if (n === 10) { const s = document.getElementById('submit-btn'); s.disabled = false; s.textContent = 'Submit Exam →'; }
+  window.addEventListener('scroll',()=>{const d=document.documentElement.scrollHeight-window.innerHeight;const s=(window.scrollY/d)*100;document.getElementById('progress-fill').style.width=Math.min(s,100)+'%';document.getElementById('progress-text').textContent=Math.round(s)+'% read';});
+  const answers={};
+  function sel(btn,qId,correctness){
+    const block=document.getElementById(qId);
+    if(block.classList.contains('answered-correct')||block.classList.contains('answered-wrong'))return;
+    if(correctness==='correct'){btn.classList.add('correct');block.classList.add('answered-correct');const fb=document.getElementById('fb-'+qId+'-correct');if(fb)fb.classList.add('show');}
+    else{btn.classList.add('wrong');block.classList.add('answered-wrong');block.querySelectorAll('.option-btn').forEach(b=>{if(b.getAttribute('onclick').includes("'correct'"))b.classList.add('correct');});const fb=document.getElementById('fb-'+qId+'-wrong');if(fb)fb.classList.add('show');}
+    block.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
+    answers[qId]=correctness==='correct';
+    const n=Object.keys(answers).length;
+    document.getElementById('exam-progress').style.width=(n/10*100)+'%';
+    document.getElementById('answered-count').textContent=n+' of 10 answered';
+    if(n===10){const s=document.getElementById('submit-btn');s.disabled=false;s.textContent='Submit Exam →';}
   }
-  function submitExam() {
-    const c = Object.values(answers).filter(v=>v).length;
-    const r = document.getElementById('exam-results');
-    document.getElementById('result-score').textContent = `${c} / 10`;
-    if (c >= 9) { document.getElementById('result-score').style.color='#6ee7b7'; document.getElementById('result-label').textContent='🏆 Excellent! — '+Math.round(c/10*100)+'%'; document.getElementById('result-message').textContent='Perfect command of Python and NumPy! You\'re ready for the ML phase.'; }
-    else if (c >= 7) { document.getElementById('result-score').style.color='#67e8f9'; document.getElementById('result-label').textContent='✅ Passed — '+Math.round(c/10*100)+'%'; document.getElementById('result-message').textContent='Good work! Solid understanding of the stack. Continue to the ML tutorials.'; }
-    else if (c >= 5) { document.getElementById('result-score').style.color='#fcd34d'; document.getElementById('result-label').textContent='⚠️ Borderline — '+Math.round(c/10*100)+'%'; document.getElementById('result-message').textContent='Review broadcasting (Section 4) and NumPy shapes — they appear in every ML tutorial.'; }
-    else { document.getElementById('result-score').style.color='#fca5a5'; document.getElementById('result-label').textContent='❌ Needs Review — '+Math.round(c/10*100)+'%'; document.getElementById('result-message').textContent='Work through all sections and run the code examples in a Jupyter notebook. NumPy mastery is non-negotiable.'; }
-    r.classList.add('show'); r.scrollIntoView({behavior:'smooth',block:'center'});
-    document.getElementById('submit-btn').disabled = true;
+  function submitExam(){
+    const c=Object.values(answers).filter(v=>v).length;
+    const pct=Math.round(c/10*100);
+    document.getElementById('result-score').textContent=c+' / 10';
+    if(c>=9){document.getElementById('result-score').style.color='#6ee7b7';document.getElementById('result-label').textContent='🏆 Excellent! — '+pct+'%';document.getElementById('result-message').textContent='Outstanding! You deeply understand optimization. Move on to Tutorial 04.';}
+    else if(c>=7){document.getElementById('result-score').style.color='#fcd34d';document.getElementById('result-label').textContent='✅ Passed — '+pct+'%';document.getElementById('result-message').textContent='Good work! You understand the key concepts. Proceed to Tutorial 04.';}
+    else if(c>=5){document.getElementById('result-score').style.color='#f59e0b';document.getElementById('result-label').textContent='⚠️ Borderline — '+pct+'%';document.getElementById('result-message').textContent='Review gradient descent and the PyTorch training loop (Sections 4–5) before continuing.';}
+    else{document.getElementById('result-score').style.color='#fca5a5';document.getElementById('result-label').textContent='❌ Needs Review — '+pct+'%';document.getElementById('result-message').textContent='Go back through all sections. Calculus & optimization underlie every neural network training run.';}
+    document.getElementById('exam-results').classList.add('show');
+    document.getElementById('exam-results').scrollIntoView({behavior:'smooth',block:'center'});
+    document.getElementById('submit-btn').disabled=true;
   }
-  function retryExam() {
-    for (let i=1;i<=10;i++) {
-      const b = document.getElementById(`q${i}`);
-      b.classList.remove('answered-correct','answered-wrong');
-      b.querySelectorAll('.option-btn').forEach(btn => { btn.classList.remove('selected','correct','wrong'); btn.disabled=false; });
-      b.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
-    }
-    for (const k in answers) delete answers[k];
-    document.getElementById('exam-progress').style.width='0%';
-    document.getElementById('answered-count').textContent='0 of 10 answered';
-    const s=document.getElementById('submit-btn'); s.disabled=true; s.textContent='Answer all 10 questions to submit';
+  function retryExam(){
+    for(let i=1;i<=10;i++){const b=document.getElementById('q'+i);b.classList.remove('answered-correct','answered-wrong');b.querySelectorAll('.option-btn').forEach(btn=>{btn.classList.remove('correct','wrong');btn.disabled=false;});b.querySelectorAll('.feedback').forEach(f=>f.classList.remove('show'));}
+    for(const k in answers)delete answers[k];
+    document.getElementById('exam-progress').style.width='0%';document.getElementById('answered-count').textContent='0 of 10 answered';
+    const s=document.getElementById('submit-btn');s.disabled=true;s.textContent='Answer all 10 questions to submit';
     document.getElementById('exam-results').classList.remove('show');
     document.getElementById('exam').scrollIntoView({behavior:'smooth'});
   }

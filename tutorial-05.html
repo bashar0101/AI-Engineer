@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Tutorial 05: Data Wrangling & Visualization — AI Engineer Bootcamp</title>
+  <style>
+    :root{--bg:#0a0e1a;--surface:#111827;--surface2:#1f2937;--surface3:#263042;--border:#374151;--accent:#10b981;--accent3:#06b6d4;--green:#10b981;--red:#ef4444;--text:#f9fafb;--text2:#9ca3af;--text3:#6b7280;--code-bg:#0d1117;}
+    *{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7}
+    .top-nav{background:rgba(17,24,39,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:14px 40px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100}
+    .nav-back{color:var(--text2);text-decoration:none;font-size:.85rem;transition:color .2s}.nav-back:hover{color:var(--text)}.nav-sep{color:var(--border)}.nav-current{font-size:.85rem;color:var(--text);font-weight:600}
+    .nav-progress{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--text3)}.progress-bar{width:120px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));width:5%;transition:width .5s}
+    .tutorial-hero{background:linear-gradient(135deg,#0a1a14,#0a1a10,#0a0e1a);border-bottom:1px solid var(--border);padding:50px 40px}.tutorial-hero .container{max-width:860px;margin:0 auto}
+    .tut-meta{display:flex;gap:16px;align-items:center;margin-bottom:20px;flex-wrap:wrap}.tut-badge{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:#10b981;padding:4px 12px;border-radius:6px;font-size:.78rem;font-weight:600}
+    .tut-phase{color:var(--text3);font-size:.82rem}.tutorial-hero h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;margin-bottom:14px;line-height:1.2}.tutorial-hero .subtitle{font-size:1.05rem;color:var(--text2);margin-bottom:24px}
+    .tut-info-row{display:flex;gap:24px;flex-wrap:wrap}.tut-info-item{font-size:.85rem;color:var(--text2)}
+    .content-layout{max-width:1060px;margin:0 auto;padding:40px 24px;display:grid;grid-template-columns:220px 1fr;gap:40px;align-items:start}
+    .sidebar{position:sticky;top:70px}.toc{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px}
+    .toc h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:14px}.toc-list{list-style:none}.toc-item{margin-bottom:2px}
+    .toc-link{display:block;padding:6px 8px;border-radius:6px;color:var(--text2);text-decoration:none;font-size:.82rem;transition:all .15s;line-height:1.3}.toc-link:hover{background:var(--surface2);color:var(--text)}.toc-link.active{background:rgba(16,185,129,.12);color:#10b981}
+    .lesson-content{min-width:0}.lesson-section{margin-bottom:52px}
+    .section-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);font-weight:700;margin-bottom:8px}
+    h2.section-title{font-size:1.7rem;font-weight:800;margin-bottom:20px;line-height:1.2}h3.subsection{font-size:1.15rem;font-weight:700;margin:32px 0 12px;color:#e2e8f0;padding-left:12px;border-left:3px solid var(--accent)}
+    p{margin-bottom:14px;color:var(--text2);font-size:.95rem}strong{color:var(--text)}
+    .math-block{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;padding:20px 24px;margin:20px 0;overflow-x:auto}
+    .math-block .math-title{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:#10b981;margin-bottom:10px;font-weight:600}
+    .math-formula{font-family:'Courier New',monospace;font-size:.95rem;color:#e2e8f0;line-height:1.8}.math-formula .highlight{color:#10b981}.math-formula .comment{color:var(--text3);font-style:italic}
+    .code-block{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:20px 0}.code-header{background:#161b22;padding:10px 16px;display:flex;align-items:center;border-bottom:1px solid var(--border)}.code-lang{font-size:.75rem;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.05em}.code-body{padding:20px;overflow-x:auto}
+    pre{font-family:'Courier New',Consolas,monospace;font-size:.87rem;line-height:1.6;color:#e2e8f0}.py-kw{color:#ff7b72}.py-fn{color:#d2a8ff}.py-str{color:#a5d6ff}.py-num{color:#79c0ff}.py-cm{color:#8b949e;font-style:italic}
+    .callout{border-radius:10px;padding:18px 20px;margin:20px 0;display:flex;gap:14px}.callout-icon{font-size:1.2rem;flex-shrink:0;margin-top:2px}.callout-body h4{font-size:.9rem;font-weight:700;margin-bottom:6px}.callout-body p{font-size:.87rem;margin-bottom:0}
+    .callout.info{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2)}.callout.info .callout-body h4{color:#10b981}
+    .callout.tip{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2)}.callout.tip .callout-body h4{color:#6ee7b7}
+    .callout.important{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2)}.callout.important .callout-body h4{color:#10b981}
+    .ai-connection{background:linear-gradient(135deg,rgba(16,185,129,.06),rgba(6,182,212,.06));border:1px solid rgba(16,185,129,.2);border-radius:12px;padding:20px 24px;margin:20px 0}.ai-title{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:#10b981;font-weight:700;margin-bottom:10px}.ai-connection p{color:var(--text2);font-size:.9rem}
+    .key-terms{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin:20px 0}.term-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px}.term-name{font-size:.9rem;font-weight:700;color:#10b981;margin-bottom:6px;font-family:monospace}.term-def{font-size:.82rem;color:var(--text2)}
+    .section-divider{border:none;border-top:1px solid var(--border);margin:52px 0}
+    #exam{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px;margin-top:60px}.exam-header{text-align:center;margin-bottom:40px}
+    .exam-badge{display:inline-block;background:linear-gradient(135deg,rgba(16,185,129,.2),rgba(6,182,212,.2));border:1px solid rgba(16,185,129,.3);color:#10b981;padding:6px 16px;border-radius:20px;font-size:.8rem;font-weight:600;letter-spacing:.05em;margin-bottom:14px}
+    .exam-header h2{font-size:1.8rem;font-weight:800;margin-bottom:10px}.exam-header p{font-size:.92rem;color:var(--text2)}
+    .exam-progress-bar{background:var(--surface2);border-radius:4px;height:6px;margin:20px 0 30px;overflow:hidden}.exam-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));transition:width .4s;width:0%}.exam-progress-label{font-size:.78rem;color:var(--text3);text-align:right;margin-bottom:6px}
+    .question-block{margin-bottom:32px;padding:24px;background:var(--surface2);border:1px solid var(--border);border-radius:14px;transition:border-color .2s}.question-block.answered-correct{border-color:rgba(16,185,129,.5)}.question-block.answered-wrong{border-color:rgba(239,68,68,.3)}
+    .q-num{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);font-weight:600;margin-bottom:8px}.q-text{font-size:.98rem;font-weight:600;color:var(--text);margin-bottom:18px;line-height:1.5}
+    .options{display:flex;flex-direction:column;gap:10px}.option-btn{background:var(--surface3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;color:var(--text2);font-size:.9rem;cursor:pointer;transition:all .15s;text-align:left;display:flex;align-items:center;gap:12px}
+    .option-btn:hover:not(:disabled){border-color:var(--accent);color:var(--text);background:rgba(16,185,129,.08)}.option-btn.correct{border-color:var(--green);background:rgba(16,185,129,.1);color:#6ee7b7}.option-btn.wrong{border-color:var(--red);background:rgba(239,68,68,.08);color:#fca5a5}
+    .option-key{width:26px;height:26px;border-radius:6px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0}.option-btn.correct .option-key{background:rgba(16,185,129,.2);border-color:var(--green)}.option-btn.wrong .option-key{background:rgba(239,68,68,.15);border-color:var(--red)}
+    .feedback{margin-top:14px;padding:14px 16px;border-radius:8px;font-size:.87rem;display:none}.feedback.show{display:block}.feedback.correct{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#6ee7b7}.feedback.wrong{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#fca5a5}
+    .exam-submit{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),var(--accent3));border:none;border-radius:12px;color:white;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s;margin-top:10px}.exam-submit:hover{opacity:.9;transform:translateY(-1px)}.exam-submit:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    .exam-results{display:none;text-align:center;padding:40px;background:var(--surface2);border:1px solid var(--border);border-radius:16px;margin-top:24px}.exam-results.show{display:block}.result-score{font-size:3.5rem;font-weight:800;margin-bottom:8px}.result-label{font-size:1.1rem;color:var(--text2);margin-bottom:20px}.result-message{font-size:.95rem;color:var(--text2);max-width:500px;margin:0 auto 24px}
+    .result-next{display:inline-block;background:linear-gradient(135deg,var(--accent),var(--accent3));color:white;text-decoration:none;padding:12px 28px;border-radius:10px;font-weight:700;font-size:.95rem}.retry-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:12px 28px;border-radius:10px;font-size:.9rem;cursor:pointer;margin:12px auto 0;display:block;transition:all .2s}.retry-btn:hover{border-color:var(--accent);color:var(--text)}
+    .next-tutorial{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;margin-top:40px;display:flex;align-items:center;gap:20px}.next-info{flex:1}.next-label{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:6px}.next-title{font-size:1.05rem;font-weight:700;margin-bottom:4px}.next-desc{font-size:.83rem;color:var(--text2)}.next-btn{background:linear-gradient(135deg,var(--accent),var(--accent3));color:white;text-decoration:none;padding:12px 24px;border-radius:10px;font-weight:700;font-size:.88rem;white-space:nowrap}
+    @media(max-width:768px){.content-layout{grid-template-columns:1fr}.sidebar{display:none}#exam{padding:24px 20px}}
+  </style>
+</head>
+<body>
+<nav class="top-nav">
+  <a href="index.html" class="nav-back">← Course Home</a><span class="nav-sep">/</span>
+  <span class="nav-current">Tutorial 05: Data Wrangling & Visualization</span>
+  <div class="nav-progress"><span id="progress-text">0% read</span><div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div></div>
+</nav>
+<div class="tutorial-hero">
+  <div class="container">
+    <div class="tut-meta"><span class="tut-badge">📊 Tutorial 05</span><span class="tut-phase">Phase 2 · Python & Data Science Stack · Week 4</span></div>
+    <h1>Data Wrangling & Visualization</h1>
+    <p class="subtitle">Feature engineering, EDA, Matplotlib, Seaborn — preparing data is 80% of AI engineering work.</p>
+    <div class="tut-info-row">
+      <div class="tut-info-item">📖 ~2 hour read</div>
+      <div class="tut-info-item">🎯 6 core concepts</div>
+      <div class="tut-info-item">✏️ 10-question exam</div>
+      <div class="tut-info-item">💻 Python code included</div>
+    </div>
+  </div>
+</div>
+<div class="content-layout">
+  <aside class="sidebar"><nav class="toc"><h3>Contents</h3><ul class="toc-list"><li class="toc-item"><a href="#sec1" class="toc-link">1. The Data Science Workflow</a></li>
+<li class="toc-item"><a href="#sec2" class="toc-link">2. Pandas Deep Dive</a></li>
+<li class="toc-item"><a href="#sec3" class="toc-link">3. Feature Engineering</a></li>
+<li class="toc-item"><a href="#sec4" class="toc-link">4. Handling Missing Data</a></li>
+<li class="toc-item"><a href="#sec5" class="toc-link">5. Matplotlib & Seaborn</a></li>
+<li class="toc-item"><a href="#sec6" class="toc-link">6. EDA Checklist</a></li>
+<li class="toc-item"><a href="#exam" class="toc-link" style="color:#10b981;font-weight:600;">✏️ Exam</a></li></ul></nav></aside>
+  <main class="lesson-content">
+
+    <div class="callout info"><span class="callout-icon">🎓</span><div class="callout-body"><h4>Professor's Opening</h4><p>Garbage in, garbage out. 80% of a real AI engineer's time is spent on data — loading, cleaning, transforming, and understanding it. A model trained on poorly prepared data will always underperform. Master data wrangling and your models will too.</p></div></div>
+
+    <div class="lesson-section" id="sec1"><div class="section-label">Section 1</div><h2 class="section-title">The Data Science Workflow</h2>
+    <p>Every AI project follows a cycle: <strong>Collect → Clean → Explore → Feature Engineer → Model → Evaluate → Deploy</strong>. The first three steps are often the most time-consuming and highest-leverage.</p>
+    <div class="ai-connection"><div class="ai-title">🤖 AI Connection</div><p>The quality of training data determines the ceiling of model performance. GPT-4 was trained on carefully filtered, deduplicated data. Even the best architecture cannot compensate for noisy, imbalanced, or mislabeled data. Data curation is an AI engineering core skill.</p></div></div>
+
+    <hr class="section-divider"/>
+    <div class="lesson-section" id="sec2"><div class="section-label">Section 2</div><h2 class="section-title">Pandas Deep Dive</h2>
+    <h3 class="subsection">Groupby, Merge, Pivot</h3>
+    <div class="code-block"><div class="code-header"><span class="code-lang">Python</span></div><div class="code-body"><pre><span class="py-kw">import</span> pandas <span class="py-kw">as</span> pd
+<span class="py-kw">import</span> numpy <span class="py-kw">as</span> np
+
+df = pd.read_csv(<span class="py-str">'sales.csv'</span>)
+
+<span class="py-cm"># GroupBy — aggregate by category</span>
+summary = df.groupby(<span class="py-str">'category'</span>).agg(
+    total_sales=(<span class="py-str">'revenue'</span>, <span class="py-str">'sum'</span>),
+    avg_price=(<span class="py-str">'price'</span>, <span class="py-str">'mean'</span>),
+    count=(<span class="py-str">'id'</span>, <span class="py-str">'count'</span>)
+).reset_index()
+
+<span class="py-cm"># Merge — SQL-style joins</span>
+merged = pd.merge(df_orders, df_customers, on=<span class="py-str">'customer_id'</span>, how=<span class="py-str">'left'</span>)
+
+<span class="py-cm"># Apply — transform with custom function</span>
+df[<span class="py-str">'log_revenue'</span>] = df[<span class="py-str">'revenue'</span>].apply(np.log1p)
+df[<span class="py-str">'revenue_scaled'</span>] = (df[<span class="py-str">'revenue'</span>] - df[<span class="py-str">'revenue'</span>].mean()) / df[<span class="py-str">'revenue'</span>].std()
+
+<span class="py-cm"># One-hot encoding — categorical → numeric</span>
+df_encoded = pd.get_dummies(df, columns=[<span class="py-str">'category'</span>, <span class="py-str">'region'</span>])</pre></div></div></div>
+
+    <hr class="section-divider"/>
+    <div class="lesson-section" id="sec3"><div class="section-label">Section 3</div><h2 class="section-title">Feature Engineering</h2>
+    <p><strong>Feature engineering</strong> is the art of transforming raw data into informative representations for the model. Even deep learning benefits from thoughtful features.</p>
+    <div class="code-block"><div class="code-header"><span class="code-lang">Python — Common Transformations</span></div><div class="code-body"><pre><span class="py-kw">from</span> sklearn.preprocessing <span class="py-kw">import</span> StandardScaler, MinMaxScaler, LabelEncoder
+
+<span class="py-cm"># Normalization (Z-score) — zero mean, unit variance</span>
+scaler = StandardScaler()
+X_scaled = scaler.fit_transform(X_train)
+
+<span class="py-cm"># Log transform — compresses skewed distributions</span>
+df[<span class="py-str">'log_price'</span>] = np.log1p(df[<span class="py-str">'price'</span>])  <span class="py-cm"># log(1+x) handles zeros</span>
+
+<span class="py-cm"># Binning — turn continuous into categorical</span>
+df[<span class="py-str">'age_group'</span>] = pd.cut(df[<span class="py-str">'age'</span>], bins=[<span class="py-num">0</span>,<span class="py-num">18</span>,<span class="py-num">35</span>,<span class="py-num">60</span>,<span class="py-num">100</span>],
+                         labels=[<span class="py-str">'teen'</span>,<span class="py-str">'young'</span>,<span class="py-str">'adult'</span>,<span class="py-str">'senior'</span>])
+
+<span class="py-cm"># Date features</span>
+df[<span class="py-str">'hour'</span>]    = pd.to_datetime(df[<span class="py-str">'timestamp'</span>]).dt.hour
+df[<span class="py-str">'weekday'</span>] = pd.to_datetime(df[<span class="py-str">'timestamp'</span>]).dt.dayofweek
+df[<span class="py-str">'is_weekend'</span>] = (df[<span class="py-str">'weekday'</span>] &gt;= <span class="py-num">5</span>).astype(int)</pre></div></div></div>
+
+    <hr class="section-divider"/>
+    <div class="lesson-section" id="sec4"><div class="section-label">Section 4</div><h2 class="section-title">Handling Missing Data</h2>
+    <div class="code-block"><div class="code-header"><span class="code-lang">Python</span></div><div class="code-body"><pre><span class="py-cm"># Detect missing values</span>
+missing = df.isnull().sum()
+missing_pct = df.isnull().mean() * <span class="py-num">100</span>
+
+<span class="py-cm"># Strategy 1: Drop — only if very few rows affected (&lt;1%)</span>
+df_clean = df.dropna(subset=[<span class="py-str">'target_label'</span>])
+
+<span class="py-cm"># Strategy 2: Mean/median imputation</span>
+<span class="py-kw">from</span> sklearn.impute <span class="py-kw">import</span> SimpleImputer
+imputer = SimpleImputer(strategy=<span class="py-str">'median'</span>)
+X_imputed = imputer.fit_transform(X)
+
+<span class="py-cm"># Strategy 3: Forward fill for time series</span>
+df[<span class="py-str">'sensor_reading'</span>].fillna(method=<span class="py-str">'ffill'</span>, inplace=<span class="py-num">True</span>)
+
+<span class="py-cm"># Strategy 4: Indicator column — tell the model "this was missing"</span>
+df[<span class="py-str">'income_missing'</span>] = df[<span class="py-str">'income'</span>].isnull().astype(int)
+df[<span class="py-str">'income'</span>].fillna(df[<span class="py-str">'income'</span>].median(), inplace=<span class="py-num">True</span>)</pre></div></div></div>
+
+    <hr class="section-divider"/>
+    <div class="lesson-section" id="sec5"><div class="section-label">Section 5</div><h2 class="section-title">Matplotlib & Seaborn Visualization</h2>
+    <div class="code-block"><div class="code-header"><span class="code-lang">Python</span></div><div class="code-body"><pre><span class="py-kw">import</span> matplotlib.pyplot <span class="py-kw">as</span> plt
+<span class="py-kw">import</span> seaborn <span class="py-kw">as</span> sns
+
+<span class="py-cm"># Distribution — always check your data distribution</span>
+sns.histplot(df[<span class="py-str">'feature'</span>], kde=<span class="py-num">True</span>)
+plt.title(<span class="py-str">'Feature Distribution'</span>); plt.show()
+
+<span class="py-cm"># Correlation heatmap — spot redundant features</span>
+corr = df.corr()
+sns.heatmap(corr, annot=<span class="py-num">True</span>, cmap=<span class="py-str">'coolwarm'</span>, center=<span class="py-num">0</span>)
+
+<span class="py-cm"># Training curves — essential for debugging models</span>
+fig, (ax1, ax2) = plt.subplots(<span class="py-num">1</span>, <span class="py-num">2</span>, figsize=(<span class="py-num">12</span>, <span class="py-num">4</span>))
+ax1.plot(train_losses, label=<span class="py-str">'Train'</span>); ax1.plot(val_losses, label=<span class="py-str">'Val'</span>)
+ax1.set_title(<span class="py-str">'Loss'</span>); ax1.legend()
+ax2.plot(train_accs, label=<span class="py-str">'Train'</span>); ax2.plot(val_accs, label=<span class="py-str">'Val'</span>)
+ax2.set_title(<span class="py-str">'Accuracy'</span>); ax2.legend()
+plt.tight_layout(); plt.savefig(<span class="py-str">'training_curves.png'</span>, dpi=<span class="py-num">150</span>)</pre></div></div></div>
+
+    <hr class="section-divider"/>
+    <div class="lesson-section" id="sec6"><div class="section-label">Section 6</div><h2 class="section-title">EDA Checklist</h2>
+    <div class="key-terms">
+      <div class="term-card"><div class="term-name">Shape & Types</div><div class="term-def">df.shape, df.dtypes — how many rows, columns, and what data types.</div></div>
+      <div class="term-card"><div class="term-name">Missing Values</div><div class="term-def">df.isnull().sum() — where are the gaps and how many?</div></div>
+      <div class="term-card"><div class="term-name">Distribution</div><div class="term-def">df.describe(), histplots — are features skewed? Are there outliers?</div></div>
+      <div class="term-card"><div class="term-name">Class Balance</div><div class="term-def">df['label'].value_counts() — imbalanced classes need special handling.</div></div>
+      <div class="term-card"><div class="term-name">Correlations</div><div class="term-def">Correlation matrix — are features redundant? Is target correlated with features?</div></div>
+      <div class="term-card"><div class="term-name">Duplicates</div><div class="term-def">df.duplicated().sum() — duplicate rows inflate training data artificially.</div></div>
+    </div>
+    <div class="callout important"><span class="callout-icon">⭐</span><div class="callout-body"><h4>Summary</h4><p>Data wrangling is the unsexy but critical foundation of AI engineering. Clean, well-engineered features routinely outperform elaborate architectures on messy data. Every tutorial from here on assumes you can prepare data properly — this skill will be exercised in every project.</p></div></div></div>
+
+    <hr class="section-divider"/>
+    <div id="exam">
+      <div class="exam-header">
+        <div class="exam-badge">📝 End-of-Tutorial Exam</div>
+        <h2>Tutorial 05 Exam — Data Wrangling & Visualization</h2>
+        <p>10 questions covering all sections. Passing grade: 7/10.</p>
+      </div>
+      <div class="exam-progress-label" id="answered-count">0 of 10 answered</div>
+      <div class="exam-progress-bar"><div class="exam-progress-fill" id="exam-progress"></div></div>
+
+      <div class="question-block" id="q1">
+        <div class="q-num">Question 1 of 10</div>
+        <div class="q-text">Which Pandas method lets you aggregate data by a categorical column (e.g., total sales per region)?</div>
+        <div class="options"><button class="option-btn" onclick="sel(this,'q1','wrong')"><span class="option-key">A</span> df.sort_values()</button>
+<button class="option-btn" onclick="sel(this,'q1','wrong')"><span class="option-key">B</span> df.pivot()</button>
+<button class="option-btn" onclick="sel(this,'q1','correct')"><span class="option-key">C</span> df.groupby().agg()</button>
+<button class="option-btn" onclick="sel(this,'q1','wrong')"><span class="option-key">D</span> df.apply()</button>
+</div>
+        <div class="feedback correct" id="fb-q1-correct">✅ <strong>Correct!</strong> groupby() splits the DataFrame by category, agg() applies aggregation functions (sum, mean, count). This pattern is used constantly in EDA and feature engineering.</div>
+        <div class="feedback wrong" id="fb-q1-wrong">❌ df.groupby('region').agg(total=('revenue','sum')) is the pattern. sort_values sorts rows. pivot reshapes the table. apply applies a function row/column-wise without grouping.</div>
+      </div>
+      <div class="question-block" id="q2">
+        <div class="q-num">Question 2 of 10</div>
+        <div class="q-text">What is the primary purpose of StandardScaler (Z-score normalization)?</div>
+        <div class="options"><button class="option-btn" onclick="sel(this,'q2','wrong')"><span class="option-key">A</span> Convert all values to integers</button>
+<button class="option-btn" onclick="sel(this,'q2','wrong')"><span class="option-key">B</span> Remove outliers from the data</button>
+<button class="option-btn" onclick="sel(this,'q2','correct')"><span class="option-key">C</span> Transform features to have zero mean and unit variance</button>
+<button class="option-btn" onclick="sel(this,'q2','wrong')"><span class="option-key">D</span> Map values to the range [0, 1]</button>
+</div>
+        <div class="feedback correct" id="fb-q2-correct">✅ <strong>Correct!</strong> StandardScaler computes (x - μ)/σ per feature, giving zero mean and unit variance. This prevents features with large scales (e.g., income in thousands) from dominating features with small scales (e.g., age). MinMaxScaler maps to [0,1].</div>
+        <div class="feedback wrong" id="fb-q2-wrong">❌ StandardScaler applies (x - μ)/σ → zero mean, unit variance. MinMaxScaler maps to [0,1]. StandardScaler doesn't remove outliers or change data type. Scale normalization is critical when features have very different ranges — otherwise gradient descent converges slowly.</div>
+      </div>
+      <div class="question-block" id="q3">
+        <div class="q-num">Question 3 of 10</div>
+        <div class="q-text">You have a column 'price' with highly right-skewed distribution (many low values, a few very high). What transformation helps?</div>
+        <div class="options"><button class="option-btn" onclick="sel(this,'q3','wrong')"><span class="option-key">A</span> StandardScaler normalization</button>
+<button class="option-btn" onclick="sel(this,'q3','wrong')"><span class="option-key">B</span> One-hot encoding</button>
+<button class="option-btn" onclick="sel(this,'q3','correct')"><span class="option-key">C</span> Log transform: np.log1p(price)</button>
+<button class="option-btn" onclick="sel(this,'q3','wrong')"><span class="option-key">D</span> Binning into quartiles</button>
+</div>
+        <div class="feedback correct" id="fb-q3-correct">✅ <strong>Correct!</strong> Log transform compresses the long tail of skewed distributions. np.log1p (log(1+x)) handles zeros. This makes the distribution more Gaussian, which helps many ML models. StandardScaler doesn't address skewness — it just shifts and scales.</div>
+        <div class="feedback wrong" id="fb-q3-wrong">❌ Log transform is the standard fix for right-skewed positive features. np.log1p handles zero values (log(0) is undefined). After log transform, the large outliers become much less extreme and the distribution approaches Gaussian — which most ML algorithms implicitly assume.</div>
+      </div>
+      <div class="question-block" id="q4">
+        <div class="q-num">Question 4 of 10</div>
+        <div class="q-text">What is one-hot encoding, and when is it needed?</div>
+        <div class="options"><button class="option-btn" onclick="sel(this,'q4','wrong')"><span class="option-key">A</span> A method to normalize numerical features to [0,1]</button>
+<button class="option-btn" onclick="sel(this,'q4','correct')"><span class="option-key">B</span> Converting categorical labels to binary vectors so ML models can use them</button>
+<button class="option-btn" onclick="sel(this,'q4','wrong')"><span class="option-key">C</span> A technique to handle missing values in categorical columns</button>
+<button class="option-btn" onclick="sel(this,'q4','wrong')"><span class="option-key">D</span> A way to reduce dimensionality of text features</button>
+</div>
+        <div class="feedback correct" id="fb-q4-correct">✅ <strong>Correct!</strong> ML models need numerical inputs. 'cat'/'dog'/'bird' cannot be fed directly. One-hot encoding converts category k into a binary vector: cat=[1,0,0], dog=[0,1,0], bird=[0,0,1]. pd.get_dummies() or sklearn's OneHotEncoder do this automatically.</div>
+        <div class="feedback wrong" id="fb-q4-wrong">❌ One-hot encoding converts categories to binary vectors. 'red','green','blue' → [1,0,0],[0,1,0],[0,0,1]. Without this, models would treat category codes as ordered numbers (3 > 2 > 1), which is incorrect for nominal categories. Neural networks with embedding layers learn their own representations instead.</div>
+      </div>
+      <div class="question-block" id="q5">
+        <div class="q-num">Question 5 of 10</div>
+        <div class="q-text">When would you use forward-fill (ffill) for missing value imputation?</div>
+        <div class="options"><button class="option-btn" onclick="sel(this,'q5','wrong')"><span class="option-key">A</span> When data is randomly missing across the dataset</button>
+<button class="option-btn" onclick="sel(this,'q5','wrong')"><span class="option-key">B</span> When there are too many missing values to impute</button>
+<button class="option-btn" onclick="sel(this,'q5','correct')"><span class="option-key">C</span> In time series data where the last known value is a reasonable estimate</button>
+<button class="option-btn" onclick="sel(this,'q5','wrong')"><span class="option-key">D</span> When the column has a bimodal distribution</button>
+</div>
+        <div class="feedback correct" id="fb-q5-correct">✅ <strong>Correct!</strong> Forward-fill propagates the last observed value forward in time. This makes sense for time series (sensor readings, stock prices, IoT data) where a gap often means the value hasn't changed — not that it's unknown. For random missing data, mean/median imputation is better.</div>
+        <div class="feedback wrong" id="fb-q5-wrong">❌ Forward-fill (ffill) is specifically for time series. If a temperature sensor misses readings for 2 hours, carrying forward the last known temperature is reasonable. For non-temporal random missingness, use mean/median imputation or a dedicated imputer.</div>
+      </div>
+      <div class="question-block" id="q6">
+        <div class="q-num">Question 6 of 10</div>
+        <div class="q-text">A training curve shows train loss decreasing but validation loss increasing after epoch 20. What does this indicate?</div>
+        <div class="options"><button class="option-btn" onclick="sel(this,'q6','wrong')"><span class="option-key">A</span> Underfitting — the model is too simple</button>
+<button class="option-btn" onclick="sel(this,'q6','wrong')"><span class="option-key">B</span> A bug in the data pipeline</button>
+<button class="option-btn" onclick="sel(this,'q6','correct')"><span class="option-key">C</span> Overfitting — the model memorizes training data but fails to generalize</button>
+<button class="option-btn" onclick="sel(this,'q6','wrong')"><span class="option-key">D</span> The learning rate is too small</button>
+</div>
+        <div class="feedback correct" id="fb-q6-correct">✅ <strong>Correct!</strong> Classic overfitting signature: train loss ↓ while val loss ↑. The model has memorized the training set (including its noise) and loses generalization ability. Fixes: early stopping, more data, regularization (L2, dropout), or a simpler model.</div>
+        <div class="feedback wrong" id="fb-q6-wrong">❌ Train loss down, val loss up = overfitting. The divergence point is when the model stops learning general patterns and starts memorizing training-specific details. Visualization of training curves is the #1 debugging tool for deep learning — always plot them.</div>
+      </div>
+      <div class="question-block" id="q7">
+        <div class="q-num">Question 7 of 10</div>
+        <div class="q-text">What does df.describe() return?</div>
+        <div class="options"><button class="option-btn" onclick="sel(this,'q7','wrong')"><span class="option-key">A</span> The data types and non-null counts for each column</button>
+<button class="option-btn" onclick="sel(this,'q7','wrong')"><span class="option-key">B</span> The first 5 rows of the DataFrame</button>
+<button class="option-btn" onclick="sel(this,'q7','correct')"><span class="option-key">C</span> Summary statistics: count, mean, std, min, quartiles, max for numeric columns</button>
+<button class="option-btn" onclick="sel(this,'q7','wrong')"><span class="option-key">D</span> The correlation matrix of all features</button>
+</div>
+        <div class="feedback correct" id="fb-q7-correct">✅ <strong>Correct!</strong> describe() gives: count, mean, std, min, 25th/50th/75th percentile, max — per numeric column. This is your first stop in EDA: quickly understand the scale, central tendency, and spread of each feature. dtypes() gives types, head() gives first rows, corr() gives correlations.</div>
+        <div class="feedback wrong" id="fb-q7-wrong">❌ df.describe() returns summary statistics (mean, std, min, max, quartiles) for all numeric columns. Combined with df.isnull().sum(), df.dtypes, and df.shape, it forms the core EDA toolkit. Learn to read it quickly — you'll use it on every new dataset.</div>
+      </div>
+      <div class="question-block" id="q8">
+        <div class="q-num">Question 8 of 10</div>
+        <div class="q-text">You have highly correlated features (correlation = 0.97). What risk does this create for ML models?</div>
+        <div class="options"><button class="option-btn" onclick="sel(this,'q8','wrong')"><span class="option-key">A</span> The model trains too fast and underfits</button>
+<button class="option-btn" onclick="sel(this,'q8','correct')"><span class="option-key">B</span> Multicollinearity — redundant information, unstable coefficients, harder to interpret</button>
+<button class="option-btn" onclick="sel(this,'q8','wrong')"><span class="option-key">C</span> The features will cause division by zero errors</button>
+<button class="option-btn" onclick="sel(this,'q8','wrong')"><span class="option-key">D</span> The model will overfit to only those two features</button>
+</div>
+        <div class="feedback correct" id="fb-q8-correct">✅ <strong>Correct!</strong> Highly correlated features (multicollinearity) create redundancy. For linear models, it makes coefficients unstable. For all models, it wastes capacity and can slow training. PCA is one solution. For tree-based models it matters less, but for neural networks, redundant features add noise. Drop one of the correlated features or apply dimensionality reduction.</div>
+        <div class="feedback wrong" id="fb-q8-wrong">❌ Highly correlated features contain redundant information. For linear models, multicollinearity makes coefficients numerically unstable (small data changes → large coefficient swings). For all models, it adds noise without information value. Correlation heatmaps help identify these pairs — then drop one or use PCA to combine them.</div>
+      </div>
+      <div class="question-block" id="q9">
+        <div class="q-num">Question 9 of 10</div>
+        <div class="q-text">What is the purpose of a train/validation/test split?</div>
+        <div class="options"><button class="option-btn" onclick="sel(this,'q9','wrong')"><span class="option-key">A</span> Train on all data, validate performance on a separate run</button>
+<button class="option-btn" onclick="sel(this,'q9','correct')"><span class="option-key">B</span> Train: fit model; Validation: tune hyperparameters; Test: unbiased final evaluation</button>
+<button class="option-btn" onclick="sel(this,'q9','wrong')"><span class="option-key">C</span> Split data to prevent data leakage between GPUs</button>
+<button class="option-btn" onclick="sel(this,'q9','wrong')"><span class="option-key">D</span> Train and validate are the same set, test is unseen</button>
+</div>
+        <div class="feedback correct" id="fb-q9-correct">✅ <strong>Correct!</strong> The 3-way split: Train (fit weights), Validation (tune hyperparameters, choose architecture, early stopping), Test (final unbiased performance estimate — used ONCE at the very end). Using test set for decisions introduces data leakage and overly optimistic metrics.</div>
+        <div class="feedback wrong" id="fb-q9-wrong">❌ Train/val/test serves 3 purposes: (1) Train: fit model parameters; (2) Val: tune hyperparameters, compare models, early stopping — all decisions that affect the model use the val set; (3) Test: held-out final evaluation you look at only once. Looking at test set multiple times introduces selection bias.</div>
+      </div>
+      <div class="question-block" id="q10">
+        <div class="q-num">Question 10 of 10</div>
+        <div class="q-text">df.duplicated().sum() returns 500 in a dataset of 10,000 rows. What should you do?</div>
+        <div class="options"><button class="option-btn" onclick="sel(this,'q10','wrong')"><span class="option-key">A</span> Keep them — more data always helps</button>
+<button class="option-btn" onclick="sel(this,'q10','wrong')"><span class="option-key">B</span> Drop all 10,000 rows and collect fresh data</button>
+<button class="option-btn" onclick="sel(this,'q10','correct')"><span class="option-key">C</span> Drop the 500 duplicate rows with df.drop_duplicates()</button>
+<button class="option-btn" onclick="sel(this,'q10','wrong')"><span class="option-key">D</span> Replace duplicates with NaN values</button>
+</div>
+        <div class="feedback correct" id="fb-q10-correct">✅ <strong>Correct!</strong> Duplicates inflate the training set — the model sees those examples more often than it should, creating implicit over-weighting. df.drop_duplicates() removes exact duplicate rows. 500 duplicates in 10,000 rows (5%) is significant and should be removed before training.</div>
+        <div class="feedback wrong" id="fb-q10-wrong">❌ Duplicates should be dropped. They make the model treat certain samples as if they appear multiple times in the true data distribution, introducing bias. df.drop_duplicates() is the fix. Always check for duplicates as part of your EDA checklist — they're surprisingly common in real-world datasets.</div>
+      </div>
+      <button class="exam-submit" id="submit-btn" onclick="submitExam()" disabled>Answer all 10 questions to submit</button>
+      <div class="exam-results" id="exam-results">
+        <div class="result-score" id="result-score"></div>
+        <div class="result-label" id="result-label"></div>
+        <div class="result-message" id="result-message"></div>
+        <div><a href="tutorial-06.html" class="result-next">Continue to Tutorial 06 →</a></div>
+        <button class="retry-btn" onclick="retryExam()">↺ Retry Exam</button>
+      </div>
+    </div>
+    <div class="next-tutorial">
+      <div class="next-info">
+        <div class="next-label">Up Next · Tutorial 06</div>
+        <div class="next-title">Introduction to Machine Learning</div>
+        <div class="next-desc">Supervised vs unsupervised, bias-variance tradeoff, your first models with scikit-learn.</div>
+      </div>
+      <a href="tutorial-06.html" class="next-btn">Start Tutorial 06 →</a>
+    </div>
+  </main>
+</div>
+<script>
+  window.addEventListener('scroll',()=>{const d=document.documentElement.scrollHeight-window.innerHeight;const s=(window.scrollY/d)*100;document.getElementById('progress-fill').style.width=Math.min(s,100)+'%';document.getElementById('progress-text').textContent=Math.round(s)+'% read';});
+  const answers={};
+  function sel(btn,qId,correctness){
+    const block=document.getElementById(qId);
+    if(block.classList.contains('answered-correct')||block.classList.contains('answered-wrong'))return;
+    if(correctness==='correct'){btn.classList.add('correct');block.classList.add('answered-correct');const fb=document.getElementById('fb-'+qId+'-correct');if(fb)fb.classList.add('show');}
+    else{btn.classList.add('wrong');block.classList.add('answered-wrong');block.querySelectorAll('.option-btn').forEach(b=>{if(b.getAttribute('onclick').includes("'correct'"))b.classList.add('correct');});const fb=document.getElementById('fb-'+qId+'-wrong');if(fb)fb.classList.add('show');}
+    block.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
+    answers[qId]=correctness==='correct';
+    const n=Object.keys(answers).length;
+    document.getElementById('exam-progress').style.width=(n/10*100)+'%';
+    document.getElementById('answered-count').textContent=n+' of 10 answered';
+    if(n===10){const s=document.getElementById('submit-btn');s.disabled=false;s.textContent='Submit Exam →';}
+  }
+  function submitExam(){
+    const c=Object.values(answers).filter(v=>v).length;const pct=Math.round(c/10*100);
+    document.getElementById('result-score').textContent=c+' / 10';
+    if(c>=9){document.getElementById('result-score').style.color='#6ee7b7';document.getElementById('result-label').textContent='🏆 Excellent! — '+pct+'%';document.getElementById('result-message').textContent='Outstanding! Move on to Tutorial 06.';}
+    else if(c>=7){document.getElementById('result-score').style.color='#10b981';document.getElementById('result-label').textContent='✅ Passed — '+pct+'%';document.getElementById('result-message').textContent='Good work! Proceed to Tutorial 06.';}
+    else if(c>=5){document.getElementById('result-score').style.color='#f59e0b';document.getElementById('result-label').textContent='⚠️ Borderline — '+pct+'%';document.getElementById('result-message').textContent='Review the sections you missed before moving on.';}
+    else{document.getElementById('result-score').style.color='#fca5a5';document.getElementById('result-label').textContent='❌ Needs Review — '+pct+'%';document.getElementById('result-message').textContent='Go back through all sections carefully before proceeding.';}
+    document.getElementById('exam-results').classList.add('show');
+    document.getElementById('exam-results').scrollIntoView({behavior:'smooth',block:'center'});
+    document.getElementById('submit-btn').disabled=true;
+  }
+  function retryExam(){
+    for(let i=1;i<=10;i++){const b=document.getElementById('q'+i);b.classList.remove('answered-correct','answered-wrong');b.querySelectorAll('.option-btn').forEach(btn=>{btn.classList.remove('correct','wrong');btn.disabled=false;});b.querySelectorAll('.feedback').forEach(f=>f.classList.remove('show'));}
+    for(const k in answers)delete answers[k];
+    document.getElementById('exam-progress').style.width='0%';document.getElementById('answered-count').textContent='0 of 10 answered';
+    const s=document.getElementById('submit-btn');s.disabled=true;s.textContent='Answer all 10 questions to submit';
+    document.getElementById('exam-results').classList.remove('show');
+    document.getElementById('exam').scrollIntoView({behavior:'smooth'});
+  }
+</script>
+</body>
+</html>

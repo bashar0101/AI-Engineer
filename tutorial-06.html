@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Tutorial 06: Introduction to Machine Learning — AI Engineer Bootcamp</title>
+  <style>
+    :root{--bg:#0a0e1a;--surface:#111827;--surface2:#1f2937;--surface3:#263042;--border:#374151;--accent:#10b981;--accent3:#06b6d4;--green:#10b981;--red:#ef4444;--text:#f9fafb;--text2:#9ca3af;--text3:#6b7280;--code-bg:#0d1117;}
+    *{box-sizing:border-box;margin:0;padding:0}body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;line-height:1.7}
+    .top-nav{background:rgba(17,24,39,.95);backdrop-filter:blur(10px);border-bottom:1px solid var(--border);padding:14px 40px;display:flex;align-items:center;gap:16px;position:sticky;top:0;z-index:100}
+    .nav-back{color:var(--text2);text-decoration:none;font-size:.85rem;transition:color .2s}.nav-back:hover{color:var(--text)}.nav-sep{color:var(--border)}.nav-current{font-size:.85rem;color:var(--text);font-weight:600}
+    .nav-progress{margin-left:auto;display:flex;align-items:center;gap:8px;font-size:.78rem;color:var(--text3)}.progress-bar{width:120px;height:4px;background:var(--border);border-radius:2px;overflow:hidden}.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));width:5%;transition:width .5s}
+    .tutorial-hero{background:linear-gradient(135deg,#0a1a10,#051a0a,#0a0e1a);border-bottom:1px solid var(--border);padding:50px 40px}.tutorial-hero .container{max-width:860px;margin:0 auto}
+    .tut-meta{display:flex;gap:16px;align-items:center;margin-bottom:20px;flex-wrap:wrap}.tut-badge{background:rgba(16,185,129,.15);border:1px solid rgba(16,185,129,.3);color:#10b981;padding:4px 12px;border-radius:6px;font-size:.78rem;font-weight:600}
+    .tut-phase{color:var(--text3);font-size:.82rem}.tutorial-hero h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;margin-bottom:14px;line-height:1.2}.tutorial-hero .subtitle{font-size:1.05rem;color:var(--text2);margin-bottom:24px}
+    .tut-info-row{display:flex;gap:24px;flex-wrap:wrap}.tut-info-item{font-size:.85rem;color:var(--text2)}
+    .content-layout{max-width:1060px;margin:0 auto;padding:40px 24px;display:grid;grid-template-columns:220px 1fr;gap:40px;align-items:start}
+    .sidebar{position:sticky;top:70px}.toc{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px}
+    .toc h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:14px}.toc-list{list-style:none}.toc-item{margin-bottom:2px}
+    .toc-link{display:block;padding:6px 8px;border-radius:6px;color:var(--text2);text-decoration:none;font-size:.82rem;transition:all .15s;line-height:1.3}.toc-link:hover{background:var(--surface2);color:var(--text)}.toc-link.active{background:rgba(16,185,129,.12);color:#10b981}
+    .lesson-content{min-width:0}.lesson-section{margin-bottom:52px}
+    .section-label{font-size:.72rem;text-transform:uppercase;letter-spacing:.1em;color:var(--accent);font-weight:700;margin-bottom:8px}
+    h2.section-title{font-size:1.7rem;font-weight:800;margin-bottom:20px;line-height:1.2}h3.subsection{font-size:1.15rem;font-weight:700;margin:32px 0 12px;color:#e2e8f0;padding-left:12px;border-left:3px solid var(--accent)}
+    p{margin-bottom:14px;color:var(--text2);font-size:.95rem}strong{color:var(--text)}
+    .math-block{background:var(--code-bg);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:10px;padding:20px 24px;margin:20px 0;overflow-x:auto}
+    .math-block .math-title{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:#10b981;margin-bottom:10px;font-weight:600}
+    .math-formula{font-family:'Courier New',monospace;font-size:.95rem;color:#e2e8f0;line-height:1.8}.math-formula .highlight{color:#10b981}.math-formula .comment{color:var(--text3);font-style:italic}
+    .code-block{background:var(--code-bg);border:1px solid var(--border);border-radius:10px;overflow:hidden;margin:20px 0}.code-header{background:#161b22;padding:10px 16px;display:flex;align-items:center;border-bottom:1px solid var(--border)}.code-lang{font-size:.75rem;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.05em}.code-body{padding:20px;overflow-x:auto}
+    pre{font-family:'Courier New',Consolas,monospace;font-size:.87rem;line-height:1.6;color:#e2e8f0}.py-kw{color:#ff7b72}.py-fn{color:#d2a8ff}.py-str{color:#a5d6ff}.py-num{color:#79c0ff}.py-cm{color:#8b949e;font-style:italic}
+    .callout{border-radius:10px;padding:18px 20px;margin:20px 0;display:flex;gap:14px}.callout-icon{font-size:1.2rem;flex-shrink:0;margin-top:2px}.callout-body h4{font-size:.9rem;font-weight:700;margin-bottom:6px}.callout-body p{font-size:.87rem;margin-bottom:0}
+    .callout.info{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2)}.callout.info .callout-body h4{color:#10b981}
+    .callout.tip{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.2)}.callout.tip .callout-body h4{color:#6ee7b7}
+    .callout.important{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.2)}.callout.important .callout-body h4{color:#10b981}
+    .ai-connection{background:linear-gradient(135deg,rgba(16,185,129,.06),rgba(6,182,212,.06));border:1px solid rgba(16,185,129,.2);border-radius:12px;padding:20px 24px;margin:20px 0}.ai-title{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:#10b981;font-weight:700;margin-bottom:10px}.ai-connection p{color:var(--text2);font-size:.9rem}
+    .key-terms{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin:20px 0}.term-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px}.term-name{font-size:.9rem;font-weight:700;color:#10b981;margin-bottom:6px;font-family:monospace}.term-def{font-size:.82rem;color:var(--text2)}
+    .section-divider{border:none;border-top:1px solid var(--border);margin:52px 0}
+    #exam{background:var(--surface);border:1px solid var(--border);border-radius:20px;padding:40px;margin-top:60px}.exam-header{text-align:center;margin-bottom:40px}
+    .exam-badge{display:inline-block;background:linear-gradient(135deg,rgba(16,185,129,.2),rgba(6,182,212,.2));border:1px solid rgba(16,185,129,.3);color:#10b981;padding:6px 16px;border-radius:20px;font-size:.8rem;font-weight:600;letter-spacing:.05em;margin-bottom:14px}
+    .exam-header h2{font-size:1.8rem;font-weight:800;margin-bottom:10px}.exam-header p{font-size:.92rem;color:var(--text2)}
+    .exam-progress-bar{background:var(--surface2);border-radius:4px;height:6px;margin:20px 0 30px;overflow:hidden}.exam-progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent3));transition:width .4s;width:0%}.exam-progress-label{font-size:.78rem;color:var(--text3);text-align:right;margin-bottom:6px}
+    .question-block{margin-bottom:32px;padding:24px;background:var(--surface2);border:1px solid var(--border);border-radius:14px;transition:border-color .2s}.question-block.answered-correct{border-color:rgba(16,185,129,.5)}.question-block.answered-wrong{border-color:rgba(239,68,68,.3)}
+    .q-num{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);font-weight:600;margin-bottom:8px}.q-text{font-size:.98rem;font-weight:600;color:var(--text);margin-bottom:18px;line-height:1.5}
+    .options{display:flex;flex-direction:column;gap:10px}.option-btn{background:var(--surface3);border:1px solid var(--border);border-radius:10px;padding:14px 18px;color:var(--text2);font-size:.9rem;cursor:pointer;transition:all .15s;text-align:left;display:flex;align-items:center;gap:12px}
+    .option-btn:hover:not(:disabled){border-color:var(--accent);color:var(--text);background:rgba(16,185,129,.08)}.option-btn.correct{border-color:var(--green);background:rgba(16,185,129,.1);color:#6ee7b7}.option-btn.wrong{border-color:var(--red);background:rgba(239,68,68,.08);color:#fca5a5}
+    .option-key{width:26px;height:26px;border-radius:6px;background:var(--surface);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;flex-shrink:0}.option-btn.correct .option-key{background:rgba(16,185,129,.2);border-color:var(--green)}.option-btn.wrong .option-key{background:rgba(239,68,68,.15);border-color:var(--red)}
+    .feedback{margin-top:14px;padding:14px 16px;border-radius:8px;font-size:.87rem;display:none}.feedback.show{display:block}.feedback.correct{background:rgba(16,185,129,.1);border:1px solid rgba(16,185,129,.25);color:#6ee7b7}.feedback.wrong{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:#fca5a5}
+    .exam-submit{width:100%;padding:16px;background:linear-gradient(135deg,var(--accent),var(--accent3));border:none;border-radius:12px;color:white;font-size:1rem;font-weight:700;cursor:pointer;transition:opacity .2s,transform .1s;margin-top:10px}.exam-submit:hover{opacity:.9;transform:translateY(-1px)}.exam-submit:disabled{opacity:.4;cursor:not-allowed;transform:none}
+    .exam-results{display:none;text-align:center;padding:40px;background:var(--surface2);border:1px solid var(--border);border-radius:16px;margin-top:24px}.exam-results.show{display:block}.result-score{font-size:3.5rem;font-weight:800;margin-bottom:8px}.result-label{font-size:1.1rem;color:var(--text2);margin-bottom:20px}.result-message{font-size:.95rem;color:var(--text2);max-width:500px;margin:0 auto 24px}
+    .result-next{display:inline-block;background:linear-gradient(135deg,var(--accent),var(--accent3));color:white;text-decoration:none;padding:12px 28px;border-radius:10px;font-weight:700;font-size:.95rem}.retry-btn{background:var(--surface);border:1px solid var(--border);color:var(--text2);padding:12px 28px;border-radius:10px;font-size:.9rem;cursor:pointer;margin:12px auto 0;display:block;transition:all .2s}.retry-btn:hover{border-color:var(--accent);color:var(--text)}
+    .next-tutorial{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:28px;margin-top:40px;display:flex;align-items:center;gap:20px}.next-info{flex:1}.next-label{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--text3);margin-bottom:6px}.next-title{font-size:1.05rem;font-weight:700;margin-bottom:4px}.next-desc{font-size:.83rem;color:var(--text2)}.next-btn{background:linear-gradient(135deg,var(--accent),var(--accent3));color:white;text-decoration:none;padding:12px 24px;border-radius:10px;font-weight:700;font-size:.88rem;white-space:nowrap}
+    @media(max-width:768px){.content-layout{grid-template-columns:1fr}.sidebar{display:none}#exam{padding:24px 20px}}
+  </style>
+</head>
+<body>
+<nav class="top-nav">
+  <a href="index.html" class="nav-back">← Course Home</a><span class="nav-sep">/</span>
+  <span class="nav-current">Tutorial 06: Introduction to Machine Learning</span>
+  <div class="nav-progress"><span id="progress-text">0% read</span><div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div></div>
+</nav>
+<div class="tutorial-hero">
+  <div class="container">
+    <div class="tut-meta"><span class="tut-badge">🤖 Tutorial 06</span><span class="tut-phase">Phase 3 · ML Fundamentals · Week 5</span></div>
+    <h1>Introduction to Machine Learning</h1>
+    <p class="subtitle">Supervised vs unsupervised learning, bias-variance tradeoff, regularization — the conceptual foundation every AI engineer needs.</p>
+    <div class="tut-info-row">
+      <div class="tut-info-item">📖 ~2 hour read</div>
+      <div class="tut-info-item">🎯 6 core concepts</div>
+      <div class="tut-info-item">✏️ 10-question exam</div>
+      <div class="tut-info-item">💻 Python code included</div>
+    </div>
+  </div>
+</div>
+<div class="content-layout">
+  <aside class="sidebar"><nav class="toc"><h3>Contents</h3><ul class="toc-list"><li class="toc-item"><a href="#sec1" class="toc-link">1. What is Machine Learning?</a></li>
+<li class="toc-item"><a href="#sec2" class="toc-link">2. Supervised Learning</a></li>
+<li class="toc-item"><a href="#sec3" class="toc-link">3. Unsupervised Learning</a></li>
+<li class="toc-item"><a href="#sec4" class="toc-link">4. Bias-Variance Tradeoff</a></li>
+<li class="toc-item"><a href="#sec5" class="toc-link">5. Overfitting & Regularization</a></li>
+<li class="toc-item"><a href="#sec6" class="toc-link">6. The ML Workflow</a></li>
+<li class="toc-item"><a href="#exam" class="toc-link" style="color:#10b981;font-weight:600;">✏️ Exam</a></li></ul></nav></aside>
+  <main class="lesson-content">
+
+    <div class="callout info"><span class="callout-icon">🎓</span><div class="callout-body"><h4>Professor's Opening</h4><p>Machine learning is the art of getting computers to learn from data without being explicitly programmed. As a Computer Engineer, think of it as engineering a system that writes its own algorithms — given enough examples. This tutorial is the conceptual map for the entire ML field.</p></div></div>
+
+    <div class="lesson-section" id="sec1"><div class="section-label">Section 1</div><h2 class="section-title">What is Machine Learning?</h2>
+    <p>Machine learning algorithms <strong>learn a mapping from inputs to outputs</strong> by optimizing over training examples. Instead of hand-coded rules, the model discovers patterns automatically.</p>
+    <div class="math-block"><div class="math-title">The ML Problem</div><div class="math-formula">Find f: X → Y such that f(x) ≈ y for all (x,y) in training data<br/><br/>· X = input space (features, images, text)<br/>· Y = output space (labels, values, embeddings)<br/>· f = the model (neural network, decision tree, SVM...)<br/><br/><span class="comment">// Training: adjust f to minimize Loss(f(x), y) over training data</span><br/><span class="comment">// Goal: generalize to unseen data (low loss on test set)</span></div></div>
+    <div class="ai-connection"><div class="ai-title">🤖 AI Connection</div><p>A language model learns f: (previous tokens) → (next token probabilities). An image classifier learns f: (pixel values) → (class probabilities). A recommendation system learns f: (user history) → (item scores). The framework is universal — what changes is the architecture of f and the loss function.</p></div></div>
+
+    <hr class="section-divider"/>
+    <div class="lesson-section" id="sec2"><div class="section-label">Section 2</div><h2 class="section-title">Supervised Learning</h2>
+    <p>Learn from labeled examples (x, y). The two main tasks: <strong>Classification</strong> (discrete y) and <strong>Regression</strong> (continuous y).</p>
+    <div class="code-block"><div class="code-header"><span class="code-lang">Python — First ML Model with scikit-learn</span></div><div class="code-body"><pre><span class="py-kw">from</span> sklearn.datasets <span class="py-kw">import</span> load_iris
+<span class="py-kw">from</span> sklearn.model_selection <span class="py-kw">import</span> train_test_split
+<span class="py-kw">from</span> sklearn.linear_model <span class="py-kw">import</span> LogisticRegression
+<span class="py-kw">from</span> sklearn.metrics <span class="py-kw">import</span> accuracy_score, classification_report
+
+<span class="py-cm"># Load dataset</span>
+X, y = load_iris(return_X_y=<span class="py-num">True</span>)
+
+<span class="py-cm"># Split</span>
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="py-num">0.2</span>, random_state=<span class="py-num">42</span>)
+
+<span class="py-cm"># Train model (literally 2 lines!)</span>
+model = LogisticRegression(max_iter=<span class="py-num">200</span>)
+model.fit(X_train, y_train)
+
+<span class="py-cm"># Evaluate</span>
+y_pred = model.predict(X_test)
+<span class="py-fn">print</span>(<span class="py-str">f"Accuracy: {accuracy_score(y_test, y_pred):.1%}"</span>)  <span class="py-cm"># ~97%</span>
+<span class="py-fn">print</span>(classification_report(y_test, y_pred))</pre></div></div></div>
+
+    <hr class="section-divider"/>
+    <div class="lesson-section" id="sec3"><div class="section-label">Section 3</div><h2 class="section-title">Unsupervised Learning</h2>
+    <p>No labels. Find <strong>structure, patterns, or representations</strong> in unlabeled data.</p>
+    <div class="key-terms">
+      <div class="term-card"><div class="term-name">Clustering (k-Means)</div><div class="term-def">Group similar data points. Used for: customer segmentation, document clustering, finding semantic groups in embeddings.</div></div>
+      <div class="term-card"><div class="term-name">Dimensionality Reduction (PCA)</div><div class="term-def">Compress high-dim data to lower dims while preserving variance. Used for: visualization, noise reduction, feature extraction.</div></div>
+      <div class="term-card"><div class="term-name">Autoencoders</div><div class="term-def">Neural networks that learn compressed representations (encodings) of data. Encode → bottleneck → decode. Foundation of VAEs.</div></div>
+      <div class="term-card"><div class="term-name">Self-supervised Learning</div><div class="term-def">Create labels from the data itself (predict masked words, next frame, rotated image). How BERT and GPT are pre-trained.</div></div>
+    </div></div>
+
+    <hr class="section-divider"/>
+    <div class="lesson-section" id="sec4"><div class="section-label">Section 4</div><h2 class="section-title">The Bias-Variance Tradeoff</h2>
+    <p>This is the fundamental tension in ML: <strong>bias</strong> (systematic error from wrong assumptions) vs <strong>variance</strong> (sensitivity to training data fluctuations).</p>
+    <div class="math-block"><div class="math-title">Bias-Variance Decomposition</div><div class="math-formula">Expected Error = Bias² + Variance + Irreducible Noise<br/><br/><span class="highlight">High Bias (Underfitting):</span><br/>  · Model too simple for the data<br/>  · High train error AND high test error<br/>  · Fix: more complex model, more features<br/><br/><span class="highlight">High Variance (Overfitting):</span><br/>  · Model memorizes training data, doesn't generalize<br/>  · Low train error but HIGH test error<br/>  · Fix: more data, regularization, simpler model, dropout</div></div>
+    <div class="ai-connection"><div class="ai-title">🤖 AI Connection — The Modern Twist</div><p>Large neural networks (GPT-4, etc.) are highly over-parameterized — they have far more parameters than training samples. Classical theory says they should drastically overfit. But in practice, they generalize remarkably well. This "double descent" phenomenon (where very large models can actually underfit again after severely overfitting) is an active research area — modern regularization (weight decay, dropout, data augmentation) makes it work.</p></div></div>
+
+    <hr class="section-divider"/>
+    <div class="lesson-section" id="sec5"><div class="section-label">Section 5</div><h2 class="section-title">Overfitting & Regularization</h2>
+    <div class="code-block"><div class="code-header"><span class="code-lang">Python — Regularization Techniques</span></div><div class="code-body"><pre><span class="py-kw">from</span> sklearn.linear_model <span class="py-kw">import</span> Ridge, Lasso
+<span class="py-kw">import</span> torch.nn <span class="py-kw">as</span> nn
+
+<span class="py-cm"># L2 Regularization (Ridge) — penalizes large weights</span>
+ridge = Ridge(alpha=<span class="py-num">1.0</span>)  <span class="py-cm"># alpha = regularization strength</span>
+ridge.fit(X_train, y_train)
+
+<span class="py-cm"># L1 Regularization (Lasso) — promotes sparsity</span>
+lasso = Lasso(alpha=<span class="py-num">0.1</span>)  <span class="py-cm"># many weights go exactly to zero</span>
+lasso.fit(X_train, y_train)
+
+<span class="py-cm"># Dropout in PyTorch — randomly zero neurons during training</span>
+model = nn.Sequential(
+    nn.Linear(<span class="py-num">512</span>, <span class="py-num">256</span>),
+    nn.ReLU(),
+    nn.Dropout(<span class="py-num">0.3</span>),     <span class="py-cm"># 30% of neurons dropped each forward pass</span>
+    nn.Linear(<span class="py-num">256</span>, <span class="py-num">10</span>)
+)
+<span class="py-cm"># IMPORTANT: disable dropout at inference time!</span>
+model.train()  <span class="py-cm"># dropout active</span>
+model.eval()   <span class="py-cm"># dropout disabled (use full network)</span></pre></div></div></div>
+
+    <hr class="section-divider"/>
+    <div class="lesson-section" id="sec6"><div class="section-label">Section 6</div><h2 class="section-title">The Complete ML Workflow</h2>
+    <div class="key-terms">
+      <div class="term-card"><div class="term-name">1. Define Problem</div><div class="term-def">Classification or regression? What's the metric? What's the baseline? Clarify success criteria before writing any code.</div></div>
+      <div class="term-card"><div class="term-name">2. Get Data</div><div class="term-def">Collect, label, clean. More good data beats better algorithms almost always.</div></div>
+      <div class="term-card"><div class="term-name">3. Baseline Model</div><div class="term-def">Start simple (logistic regression, random forest). Understand the data before going deep.</div></div>
+      <div class="term-card"><div class="term-name">4. Iterate</div><div class="term-def">Feature engineer, tune hyperparameters, try more complex models. Always compare to baseline.</div></div>
+      <div class="term-card"><div class="term-name">5. Evaluate</div><div class="term-def">Use appropriate metrics. Check for data leakage. Test on held-out set only once.</div></div>
+      <div class="term-card"><div class="term-name">6. Deploy & Monitor</div><div class="term-def">Put model in production. Watch for data drift. Retrain when performance degrades.</div></div>
+    </div>
+    <div class="callout important"><span class="callout-icon">⭐</span><div class="callout-body"><h4>Key Insight</h4><p>The #1 mistake beginners make is jumping straight to complex models. Always build a simple baseline first — it tells you how hard the problem actually is and gives a benchmark to beat. If logistic regression achieves 95% accuracy, a complex neural network that achieves 96% may not be worth the added complexity.</p></div></div></div>
+
+    <hr class="section-divider"/>
+    <div id="exam">
+      <div class="exam-header">
+        <div class="exam-badge">📝 End-of-Tutorial Exam</div>
+        <h2>Tutorial 06 Exam — Introduction to Machine Learning</h2>
+        <p>10 questions covering all sections. Passing grade: 7/10.</p>
+      </div>
+      <div class="exam-progress-label" id="answered-count">0 of 10 answered</div>
+      <div class="exam-progress-bar"><div class="exam-progress-fill" id="exam-progress"></div></div>
+
+      <div class="question-block" id="q1">
+        <div class="q-num">Question 1 of 10</div>
+        <div class="q-text">What is the fundamental goal of machine learning?</div>
+        <div class="options"><button class="option-btn" onclick="sel(this,'q1','wrong')"><span class="option-key">A</span> Write faster algorithms than hand-coded solutions</button>
+<button class="option-btn" onclick="sel(this,'q1','correct')"><span class="option-key">B</span> Learn a function f: X → Y from data that generalizes to unseen examples</button>
+<button class="option-btn" onclick="sel(this,'q1','wrong')"><span class="option-key">C</span> Store all training data for exact lookup at inference time</button>
+<button class="option-btn" onclick="sel(this,'q1','wrong')"><span class="option-key">D</span> Replace human experts in all decision-making tasks</button>
+</div>
+        <div class="feedback correct" id="fb-q1-correct">✅ <strong>Correct!</strong> ML learns a generalization from data: find f such that f(x) ≈ y on training data AND on new unseen data. The key word is 'generalize' — a model that only works on training data is useless in production.</div>
+        <div class="feedback wrong" id="fb-q1-wrong">❌ ML learns f: X → Y from examples and generalizes. The key distinction from regular programming: instead of writing rules, you provide examples and the algorithm discovers the rules. Generalization (working on new data) is what makes it useful.</div>
+      </div>
+      <div class="question-block" id="q2">
+        <div class="q-num">Question 2 of 10</div>
+        <div class="q-text">What is the difference between classification and regression?</div>
+        <div class="options"><button class="option-btn" onclick="sel(this,'q2','wrong')"><span class="option-key">A</span> Classification uses neural networks; regression uses linear models</button>
+<button class="option-btn" onclick="sel(this,'q2','correct')"><span class="option-key">B</span> Classification predicts discrete labels; regression predicts continuous values</button>
+<button class="option-btn" onclick="sel(this,'q2','wrong')"><span class="option-key">C</span> Classification requires more data than regression</button>
+<button class="option-btn" onclick="sel(this,'q2','wrong')"><span class="option-key">D</span> They are the same — just different naming conventions</button>
+</div>
+        <div class="feedback correct" id="fb-q2-correct">✅ <strong>Correct!</strong> Classification: predict a category (spam/not-spam, dog/cat/bird, tumor/benign). Output is a discrete label. Regression: predict a number (house price, stock return, temperature). Output is continuous. Loss functions differ: cross-entropy for classification, MSE/MAE for regression.</div>
+        <div class="feedback wrong" id="fb-q2-wrong">❌ Classification: discrete outputs (yes/no, class 0/1/2). Regression: continuous outputs (price = $342,150). The distinction matters for choosing the output layer (softmax vs linear) and loss function (cross-entropy vs MSE). Both can use any architecture including neural networks.</div>
+      </div>
+      <div class="question-block" id="q3">
+        <div class="q-num">Question 3 of 10</div>
+        <div class="q-text">A model achieves 99% accuracy on training data but only 62% on test data. This is called:</div>
+        <div class="options"><button class="option-btn" onclick="sel(this,'q3','wrong')"><span class="option-key">A</span> Underfitting — the model is too simple</button>
+<button class="option-btn" onclick="sel(this,'q3','wrong')"><span class="option-key">B</span> Good performance — 99% training accuracy is excellent</button>
+<button class="option-btn" onclick="sel(this,'q3','correct')"><span class="option-key">C</span> Overfitting — the model memorizes training data but fails to generalize</button>
+<button class="option-btn" onclick="sel(this,'q3','wrong')"><span class="option-key">D</span> Bias — the model has systematic errors</button>
+</div>
+        <div class="feedback correct" id="fb-q3-correct">✅ <strong>Correct!</strong> Classic overfitting: near-perfect training accuracy but poor test accuracy. The model has memorized training examples including their noise/anomalies rather than learning generalizable patterns. The 37% gap is enormous. Fixes: regularization, more training data, simpler model, dropout.</div>
+        <div class="feedback wrong" id="fb-q3-wrong">❌ Train 99%, test 62% = severe overfitting. The model knows the training set by heart but fails on new data. This is the most common failure mode in ML. If train accuracy >> test accuracy, you're overfitting. If both are low, you're underfitting.</div>
+      </div>
+      <div class="question-block" id="q4">
+        <div class="q-num">Question 4 of 10</div>
+        <div class="q-text">In the bias-variance tradeoff, what does 'high variance' mean in practical terms?</div>
+        <div class="options"><button class="option-btn" onclick="sel(this,'q4','wrong')"><span class="option-key">A</span> The training loss function has high variance across mini-batches</button>
+<button class="option-btn" onclick="sel(this,'q4','correct')"><span class="option-key">B</span> The model is sensitive to the specific training data — small changes cause very different models</button>
+<button class="option-btn" onclick="sel(this,'q4','wrong')"><span class="option-key">C</span> The model's outputs have high standard deviation at test time</button>
+<button class="option-btn" onclick="sel(this,'q4','wrong')"><span class="option-key">D</span> The learning rate is too high, causing oscillation</button>
+</div>
+        <div class="feedback correct" id="fb-q4-correct">✅ <strong>Correct!</strong> High variance means the model changes dramatically when trained on slightly different data. Train on dataset A → model₁. Train on dataset B (same distribution) → completely different model₂. This is overfitting. The model captures dataset-specific noise rather than the true underlying pattern.</div>
+        <div class="feedback wrong" id="fb-q4-wrong">❌ High variance = the model is too sensitive to the specific training set. If you trained on a slightly different sample, you'd get a very different model. This is overfitting. The model has learned the noise in the training data rather than the signal. High bias = always makes similar systematic errors regardless of training data (underfitting).</div>
+      </div>
+      <div class="question-block" id="q5">
+        <div class="q-num">Question 5 of 10</div>
+        <div class="q-text">Dropout (p=0.5) randomly sets 50% of neuron outputs to zero during training. What is its regularization effect?</div>
+        <div class="options"><button class="option-btn" onclick="sel(this,'q5','wrong')"><span class="option-key">A</span> It speeds up training by reducing the number of computations</button>
+<button class="option-btn" onclick="sel(this,'q5','correct')"><span class="option-key">B</span> It forces the network to learn redundant representations — multiple paths to the same answer</button>
+<button class="option-btn" onclick="sel(this,'q5','wrong')"><span class="option-key">C</span> It reduces the effective learning rate by half</button>
+<button class="option-btn" onclick="sel(this,'q5','wrong')"><span class="option-key">D</span> It prevents dead neurons by randomly activating them</button>
+</div>
+        <div class="feedback correct" id="fb-q5-correct">✅ <strong>Correct!</strong> Dropout forces each neuron to learn features that are useful independently (not relying on specific other neurons to co-adapt). This creates an ensemble effect — at inference, the full network averages over many sub-networks. The result: more robust, generalizable representations.</div>
+        <div class="feedback wrong" id="fb-q5-wrong">❌ Dropout prevents co-adaptation: neurons can't rely on specific other neurons always being present. Each neuron must learn useful features independently. This is equivalent to training an ensemble of 2^n different architectures (for n neurons) and averaging them at test time (achieved by scaling activations by p).</div>
+      </div>
+      <div class="question-block" id="q6">
+        <div class="q-num">Question 6 of 10</div>
+        <div class="q-text">What is self-supervised learning, and which major models use it?</div>
+        <div class="options"><button class="option-btn" onclick="sel(this,'q6','wrong')"><span class="option-key">A</span> Training with a supervisor (teacher) model to generate labels</button>
+<button class="option-btn" onclick="sel(this,'q6','correct')"><span class="option-key">B</span> Learning from automatically generated labels derived from the data itself</button>
+<button class="option-btn" onclick="sel(this,'q6','wrong')"><span class="option-key">C</span> Training on only the labeled portion of a large unlabeled dataset</button>
+<button class="option-btn" onclick="sel(this,'q6','wrong')"><span class="option-key">D</span> A form of reinforcement learning where rewards are self-generated</button>
+</div>
+        <div class="feedback correct" id="fb-q6-correct">✅ <strong>Correct!</strong> Self-supervised learning creates labels from the data itself: mask a word and predict it (BERT), predict the next token (GPT), predict a rotated image's angle (SimCLR). This allows training on massive unlabeled datasets — the internet. It's how virtually all modern foundation models are pre-trained.</div>
+        <div class="feedback wrong" id="fb-q6-wrong">❌ Self-supervised learning automatically creates labels from the data: BERT masks random words and predicts them; GPT predicts the next token; contrastive methods like CLIP pair images with their captions. No human labeling needed — just raw data. This is how models scale to trillion-token datasets.</div>
+      </div>
+      <div class="question-block" id="q7">
+        <div class="q-num">Question 7 of 10</div>
+        <div class="q-text">Which scikit-learn method fits a model AND returns a transformed result in one step?</div>
+        <div class="options"><button class="option-btn" onclick="sel(this,'q7','wrong')"><span class="option-key">A</span> model.predict(X)</button>
+<button class="option-btn" onclick="sel(this,'q7','wrong')"><span class="option-key">B</span> model.fit(X).transform(X)</button>
+<button class="option-btn" onclick="sel(this,'q7','correct')"><span class="option-key">C</span> model.fit_transform(X)</button>
+<button class="option-btn" onclick="sel(this,'q7','wrong')"><span class="option-key">D</span> model.fit(X, y)</button>
+</div>
+        <div class="feedback correct" id="fb-q7-correct">✅ <strong>Correct!</strong> fit_transform(X) combines fit() (compute statistics from X) and transform() (apply transformation) in one efficient call. Important: only use fit_transform() on training data! On test data, use transform() only — never re-fit, as that would cause data leakage (using test statistics to transform test data).</div>
+        <div class="feedback wrong" id="fb-q7-wrong">❌ fit_transform(X) is shorthand for fit(X) then transform(X). IMPORTANT: only call it on training data. On test/val data, only call transform() — never fit again. Re-fitting on test data introduces data leakage (your preprocessing learns from test data, making test metrics optimistic).</div>
+      </div>
+      <div class="question-block" id="q8">
+        <div class="q-num">Question 8 of 10</div>
+        <div class="q-text">The irreducible error (noise) in the bias-variance decomposition represents:</div>
+        <div class="options"><button class="option-btn" onclick="sel(this,'q8','wrong')"><span class="option-key">A</span> The error from using the wrong model architecture</button>
+<button class="option-btn" onclick="sel(this,'q8','correct')"><span class="option-key">B</span> The inherent randomness in the data that no model can eliminate</button>
+<button class="option-btn" onclick="sel(this,'q8','wrong')"><span class="option-key">C</span> The error caused by insufficient training data</button>
+<button class="option-btn" onclick="sel(this,'q8','wrong')"><span class="option-key">D</span> The gradient approximation error in mini-batch training</button>
+</div>
+        <div class="feedback correct" id="fb-q8-correct">✅ <strong>Correct!</strong> Irreducible error is the Bayes error rate — the minimum possible error due to inherent randomness or unmeasured variables. Example: predicting tomorrow's stock price — even a perfect model can't predict it exactly because some randomness is fundamental. No model, however complex, can beat the Bayes error rate.</div>
+        <div class="feedback wrong" id="fb-q8-wrong">❌ Total error = Bias² + Variance + Irreducible noise. The irreducible part comes from inherent randomness in the data generating process — e.g., two patients with identical symptoms but different outcomes, or inherent quantum randomness in physics. No model can reduce it below the Bayes rate.</div>
+      </div>
+      <div class="question-block" id="q9">
+        <div class="q-num">Question 9 of 10</div>
+        <div class="q-text">What is the key difference between L1 (Lasso) and L2 (Ridge) regularization?</div>
+        <div class="options"><button class="option-btn" onclick="sel(this,'q9','wrong')"><span class="option-key">A</span> L2 is stronger regularization than L1</button>
+<button class="option-btn" onclick="sel(this,'q9','correct')"><span class="option-key">B</span> L1 promotes sparse solutions (many zero weights); L2 shrinks all weights toward zero</button>
+<button class="option-btn" onclick="sel(this,'q9','wrong')"><span class="option-key">C</span> L1 is only for regression; L2 is only for classification</button>
+<button class="option-btn" onclick="sel(this,'q9','wrong')"><span class="option-key">D</span> L1 uses the squared penalty; L2 uses the absolute value penalty</button>
+</div>
+        <div class="feedback correct" id="fb-q9-correct">✅ <strong>Correct!</strong> L1 penalty (Σ|wᵢ|) creates sparse solutions — many weights become exactly zero, effectively doing feature selection. L2 penalty (Σwᵢ²) shrinks all weights toward zero but rarely to exactly zero. L1 is useful when you suspect only a few features matter. L2 is the default for neural networks (weight decay).</div>
+        <div class="feedback wrong" id="fb-q9-wrong">❌ L1 regularization (Σ|wᵢ|) → sparse solutions (many exact zeros) → built-in feature selection. L2 regularization (Σwᵢ²) → all weights small but non-zero. The geometry explains this: L1's diamond-shaped constraint region has corners that touch the loss function contours at axes, causing zeros. L2's circular region doesn't have this property.</div>
+      </div>
+      <div class="question-block" id="q10">
+        <div class="q-num">Question 10 of 10</div>
+        <div class="q-text">You train on data from 2020-2022 and deploy in 2024. Model performance degrades significantly. This is:</div>
+        <div class="options"><button class="option-btn" onclick="sel(this,'q10','wrong')"><span class="option-key">A</span> Overfitting to the training set</button>
+<button class="option-btn" onclick="sel(this,'q10','wrong')"><span class="option-key">B</span> A bug in the deployment pipeline</button>
+<button class="option-btn" onclick="sel(this,'q10','correct')"><span class="option-key">C</span> Data drift — the distribution of real-world data has shifted since training</button>
+<button class="option-btn" onclick="sel(this,'q10','wrong')"><span class="option-key">D</span> Underfitting — the model was always too simple</button>
+</div>
+        <div class="feedback correct" id="fb-q10-correct">✅ <strong>Correct!</strong> Data drift (also called distribution shift) occurs when the test distribution diverges from the training distribution over time. The world changes: customer behavior shifts, products change, language evolves. This is why ML systems need monitoring and periodic retraining — a model frozen in 2022 will degrade by 2024 in dynamic domains.</div>
+        <div class="feedback wrong" id="fb-q10-wrong">❌ Data drift: the world changes after deployment. A model trained in 2020 may have learned patterns specific to that era (COVID behavior, 2020 pricing, etc.) that no longer hold in 2024. This is a production ML concern, not a training bug. The solution: monitor model metrics in production and retrain periodically with fresh data.</div>
+      </div>
+      <button class="exam-submit" id="submit-btn" onclick="submitExam()" disabled>Answer all 10 questions to submit</button>
+      <div class="exam-results" id="exam-results">
+        <div class="result-score" id="result-score"></div>
+        <div class="result-label" id="result-label"></div>
+        <div class="result-message" id="result-message"></div>
+        <div><a href="tutorial-07.html" class="result-next">Continue to Tutorial 07 →</a></div>
+        <button class="retry-btn" onclick="retryExam()">↺ Retry Exam</button>
+      </div>
+    </div>
+    <div class="next-tutorial">
+      <div class="next-info">
+        <div class="next-label">Up Next · Tutorial 07</div>
+        <div class="next-title">Supervised Learning Algorithms</div>
+        <div class="next-desc">Linear regression, logistic regression, decision trees, random forests, SVMs with scikit-learn.</div>
+      </div>
+      <a href="tutorial-07.html" class="next-btn">Start Tutorial 07 →</a>
+    </div>
+  </main>
+</div>
+<script>
+  window.addEventListener('scroll',()=>{const d=document.documentElement.scrollHeight-window.innerHeight;const s=(window.scrollY/d)*100;document.getElementById('progress-fill').style.width=Math.min(s,100)+'%';document.getElementById('progress-text').textContent=Math.round(s)+'% read';});
+  const answers={};
+  function sel(btn,qId,correctness){
+    const block=document.getElementById(qId);
+    if(block.classList.contains('answered-correct')||block.classList.contains('answered-wrong'))return;
+    if(correctness==='correct'){btn.classList.add('correct');block.classList.add('answered-correct');const fb=document.getElementById('fb-'+qId+'-correct');if(fb)fb.classList.add('show');}
+    else{btn.classList.add('wrong');block.classList.add('answered-wrong');block.querySelectorAll('.option-btn').forEach(b=>{if(b.getAttribute('onclick').includes("'correct'"))b.classList.add('correct');});const fb=document.getElementById('fb-'+qId+'-wrong');if(fb)fb.classList.add('show');}
+    block.querySelectorAll('.option-btn').forEach(b=>b.disabled=true);
+    answers[qId]=correctness==='correct';
+    const n=Object.keys(answers).length;
+    document.getElementById('exam-progress').style.width=(n/10*100)+'%';
+    document.getElementById('answered-count').textContent=n+' of 10 answered';
+    if(n===10){const s=document.getElementById('submit-btn');s.disabled=false;s.textContent='Submit Exam →';}
+  }
+  function submitExam(){
+    const c=Object.values(answers).filter(v=>v).length;const pct=Math.round(c/10*100);
+    document.getElementById('result-score').textContent=c+' / 10';
+    if(c>=9){document.getElementById('result-score').style.color='#6ee7b7';document.getElementById('result-label').textContent='🏆 Excellent! — '+pct+'%';document.getElementById('result-message').textContent='Outstanding! Move on to Tutorial 07.';}
+    else if(c>=7){document.getElementById('result-score').style.color='#10b981';document.getElementById('result-label').textContent='✅ Passed — '+pct+'%';document.getElementById('result-message').textContent='Good work! Proceed to Tutorial 07.';}
+    else if(c>=5){document.getElementById('result-score').style.color='#f59e0b';document.getElementById('result-label').textContent='⚠️ Borderline — '+pct+'%';document.getElementById('result-message').textContent='Review the sections you missed before moving on.';}
+    else{document.getElementById('result-score').style.color='#fca5a5';document.getElementById('result-label').textContent='❌ Needs Review — '+pct+'%';document.getElementById('result-message').textContent='Go back through all sections carefully before proceeding.';}
+    document.getElementById('exam-results').classList.add('show');
+    document.getElementById('exam-results').scrollIntoView({behavior:'smooth',block:'center'});
+    document.getElementById('submit-btn').disabled=true;
+  }
+  function retryExam(){
+    for(let i=1;i<=10;i++){const b=document.getElementById('q'+i);b.classList.remove('answered-correct','answered-wrong');b.querySelectorAll('.option-btn').forEach(btn=>{btn.classList.remove('correct','wrong');btn.disabled=false;});b.querySelectorAll('.feedback').forEach(f=>f.classList.remove('show'));}
+    for(const k in answers)delete answers[k];
+    document.getElementById('exam-progress').style.width='0%';document.getElementById('answered-count').textContent='0 of 10 answered';
+    const s=document.getElementById('submit-btn');s.disabled=true;s.textContent='Answer all 10 questions to submit';
+    document.getElementById('exam-results').classList.remove('show');
+    document.getElementById('exam').scrollIntoView({behavior:'smooth'});
+  }
+</script>
+</body>
+</html>

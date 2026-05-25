@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial 01: Linear Algebra for AI — AI Engineer Bootcamp</title>
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --surface2: #1f2937;
+      --surface3: #263042;
+      --border: #374151;
+      --accent: #6366f1;
+      --accent2: #8b5cf6;
+      --accent3: #06b6d4;
+      --green: #10b981;
+      --yellow: #f59e0b;
+      --red: #ef4444;
+      --text: #f9fafb;
+      --text2: #9ca3af;
+      --text3: #6b7280;
+      --code-bg: #0d1117;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.7;
+    }
+
+    /* TOP NAV */
+    .top-nav {
+      background: rgba(17,24,39,0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 40px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-back {
+      color: var(--text2);
+      text-decoration: none;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: color 0.2s;
+    }
+    .nav-back:hover { color: var(--text); }
+    .nav-sep { color: var(--border); }
+    .nav-current { font-size: 0.85rem; color: var(--text); font-weight: 600; }
+    .nav-progress {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: var(--text3);
+    }
+    .progress-bar {
+      width: 120px; height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      width: 5%;
+      transition: width 0.5s;
+    }
+
+    /* HERO */
+    .tutorial-hero {
+      background: linear-gradient(135deg, #0d0a1e, #0a1528, #0a0e1a);
+      border-bottom: 1px solid var(--border);
+      padding: 50px 40px;
+    }
+    .tutorial-hero .container { max-width: 860px; margin: 0 auto; }
+    .tut-meta {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .tut-badge {
+      background: rgba(99,102,241,0.15);
+      border: 1px solid rgba(99,102,241,0.3);
+      color: #a5b4fc;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+    .tut-phase { color: var(--text3); font-size: 0.82rem; }
+    .tutorial-hero h1 {
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      font-weight: 800;
+      margin-bottom: 14px;
+      line-height: 1.2;
+    }
+    .tutorial-hero .subtitle {
+      font-size: 1.05rem;
+      color: var(--text2);
+      margin-bottom: 24px;
+    }
+    .tut-info-row {
+      display: flex;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .tut-info-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--text2);
+    }
+    .tut-info-icon { font-size: 1rem; }
+
+    /* LAYOUT */
+    .content-layout {
+      max-width: 1060px;
+      margin: 0 auto;
+      padding: 40px 24px;
+      display: grid;
+      grid-template-columns: 220px 1fr;
+      gap: 40px;
+      align-items: start;
+    }
+
+    /* SIDEBAR TOC */
+    .sidebar {
+      position: sticky;
+      top: 70px;
+    }
+    .toc {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .toc h3 {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text3);
+      margin-bottom: 14px;
+    }
+    .toc-list { list-style: none; }
+    .toc-item { margin-bottom: 2px; }
+    .toc-link {
+      display: block;
+      padding: 6px 8px;
+      border-radius: 6px;
+      color: var(--text2);
+      text-decoration: none;
+      font-size: 0.82rem;
+      transition: all 0.15s;
+      line-height: 1.3;
+    }
+    .toc-link:hover { background: var(--surface2); color: var(--text); }
+    .toc-link.active { background: rgba(99,102,241,0.12); color: #a5b4fc; }
+    .toc-sub { padding-left: 16px; font-size: 0.78rem; }
+
+    /* CONTENT */
+    .lesson-content { min-width: 0; }
+
+    /* SECTION */
+    .lesson-section { margin-bottom: 52px; }
+    .section-label {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    h2.section-title {
+      font-size: 1.7rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+      line-height: 1.2;
+    }
+    h3.subsection {
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin: 32px 0 12px;
+      color: #e2e8f0;
+      padding-left: 12px;
+      border-left: 3px solid var(--accent);
+    }
+    p { margin-bottom: 14px; color: var(--text2); font-size: 0.95rem; }
+    strong { color: var(--text); }
+
+    /* MATH BLOCK */
+    .math-block {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-left: 3px solid var(--accent);
+      border-radius: 10px;
+      padding: 20px 24px;
+      margin: 20px 0;
+      overflow-x: auto;
+    }
+    .math-block .math-title {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #a5b4fc;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+    .math-formula {
+      font-family: 'Courier New', monospace;
+      font-size: 1rem;
+      color: #e2e8f0;
+      line-height: 1.8;
+    }
+    .math-formula .highlight { color: #67e8f9; }
+    .math-formula .comment { color: var(--text3); font-style: italic; }
+
+    /* CODE BLOCK */
+    .code-block {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin: 20px 0;
+    }
+    .code-header {
+      background: #161b22;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .code-lang {
+      font-size: 0.75rem;
+      color: var(--text3);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .code-body {
+      padding: 20px;
+      overflow-x: auto;
+    }
+    pre {
+      font-family: 'Courier New', Consolas, monospace;
+      font-size: 0.87rem;
+      line-height: 1.6;
+      color: #e2e8f0;
+    }
+    .py-kw { color: #ff7b72; }
+    .py-fn { color: #d2a8ff; }
+    .py-str { color: #a5d6ff; }
+    .py-num { color: #79c0ff; }
+    .py-cm { color: #8b949e; font-style: italic; }
+    .py-op { color: #ff7b72; }
+
+    /* CALLOUT */
+    .callout {
+      border-radius: 10px;
+      padding: 18px 20px;
+      margin: 20px 0;
+      display: flex;
+      gap: 14px;
+    }
+    .callout-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+    .callout-body h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 6px; }
+    .callout-body p { font-size: 0.87rem; margin-bottom: 0; }
+    .callout.info { background: rgba(6,182,212,0.08); border: 1px solid rgba(6,182,212,0.2); }
+    .callout.info .callout-body h4 { color: #67e8f9; }
+    .callout.tip { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); }
+    .callout.tip .callout-body h4 { color: #6ee7b7; }
+    .callout.warning { background: rgba(245,158,11,0.08); border: 1px solid rgba(245,158,11,0.2); }
+    .callout.warning .callout-body h4 { color: #fcd34d; }
+    .callout.important { background: rgba(99,102,241,0.08); border: 1px solid rgba(99,102,241,0.2); }
+    .callout.important .callout-body h4 { color: #a5b4fc; }
+
+    /* VISUAL MATRIX */
+    .matrix-visual {
+      display: inline-flex;
+      flex-direction: column;
+      gap: 4px;
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 16px 20px;
+      font-family: monospace;
+      font-size: 0.9rem;
+      margin: 8px 0;
+    }
+    .matrix-row { display: flex; gap: 16px; }
+    .matrix-cell {
+      min-width: 32px;
+      text-align: center;
+      color: #67e8f9;
+    }
+    .matrix-bracket { color: var(--text3); font-size: 1.1rem; }
+
+    /* ANALOGY BOX */
+    .analogy-box {
+      background: linear-gradient(135deg, rgba(99,102,241,0.06), rgba(139,92,246,0.06));
+      border: 1px solid rgba(99,102,241,0.2);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin: 20px 0;
+    }
+    .analogy-box .analogy-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #a5b4fc;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .analogy-box p { color: var(--text2); font-size: 0.9rem; }
+
+    /* AI CONNECTION */
+    .ai-connection {
+      background: linear-gradient(135deg, rgba(6,182,212,0.06), rgba(16,185,129,0.06));
+      border: 1px solid rgba(6,182,212,0.2);
+      border-radius: 12px;
+      padding: 20px 24px;
+      margin: 20px 0;
+    }
+    .ai-connection .ai-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: #67e8f9;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .ai-connection p { color: var(--text2); font-size: 0.9rem; }
+
+    /* KEY TERMS */
+    .key-terms {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 12px;
+      margin: 20px 0;
+    }
+    .term-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    .term-name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #a5b4fc;
+      margin-bottom: 6px;
+      font-family: monospace;
+    }
+    .term-def { font-size: 0.82rem; color: var(--text2); }
+
+    /* DIVIDER */
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 52px 0;
+    }
+
+    /* ===== EXAM SECTION ===== */
+    #exam {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px;
+      margin-top: 60px;
+    }
+    .exam-header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+    .exam-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, rgba(99,102,241,0.2), rgba(139,92,246,0.2));
+      border: 1px solid rgba(99,102,241,0.3);
+      color: #a5b4fc;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      margin-bottom: 14px;
+    }
+    .exam-header h2 {
+      font-size: 1.8rem;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+    .exam-header p { font-size: 0.92rem; color: var(--text2); }
+
+    .exam-progress-bar {
+      background: var(--surface2);
+      border-radius: 4px;
+      height: 6px;
+      margin: 20px 0 30px;
+      overflow: hidden;
+    }
+    .exam-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width 0.4s;
+      width: 0%;
+    }
+    .exam-progress-label {
+      font-size: 0.78rem;
+      color: var(--text3);
+      text-align: right;
+      margin-bottom: 6px;
+    }
+
+    .question-block {
+      margin-bottom: 32px;
+      padding: 24px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      transition: border-color 0.2s;
+    }
+    .question-block.answered-correct { border-color: rgba(16,185,129,0.5); }
+    .question-block.answered-wrong { border-color: rgba(239,68,68,0.3); }
+
+    .q-num {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: var(--text3);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .q-text {
+      font-size: 0.98rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 18px;
+      line-height: 1.5;
+    }
+    .q-code {
+      background: var(--code-bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-family: monospace;
+      font-size: 0.85rem;
+      color: #67e8f9;
+      margin-bottom: 16px;
+    }
+
+    .options { display: flex; flex-direction: column; gap: 10px; }
+    .option-btn {
+      background: var(--surface3);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 18px;
+      color: var(--text2);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.15s;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .option-btn:hover:not(:disabled) {
+      border-color: var(--accent);
+      color: var(--text);
+      background: rgba(99,102,241,0.08);
+    }
+    .option-btn.selected { border-color: var(--accent); background: rgba(99,102,241,0.12); color: var(--text); }
+    .option-btn.correct { border-color: var(--green); background: rgba(16,185,129,0.1); color: #6ee7b7; }
+    .option-btn.wrong { border-color: var(--red); background: rgba(239,68,68,0.08); color: #fca5a5; }
+    .option-key {
+      width: 26px; height: 26px;
+      border-radius: 6px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .option-btn.correct .option-key { background: rgba(16,185,129,0.2); border-color: var(--green); }
+    .option-btn.wrong .option-key { background: rgba(239,68,68,0.15); border-color: var(--red); }
+
+    .feedback {
+      margin-top: 14px;
+      padding: 14px 16px;
+      border-radius: 8px;
+      font-size: 0.87rem;
+      display: none;
+    }
+    .feedback.show { display: block; }
+    .feedback.correct { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); color: #6ee7b7; }
+    .feedback.wrong { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); color: #fca5a5; }
+    .feedback strong { color: inherit; }
+
+    /* SUBMIT BTN */
+    .exam-submit {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity 0.2s, transform 0.1s;
+      margin-top: 10px;
+    }
+    .exam-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+    .exam-submit:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+    /* RESULTS */
+    .exam-results {
+      display: none;
+      text-align: center;
+      padding: 40px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      margin-top: 24px;
+    }
+    .exam-results.show { display: block; }
+    .result-score {
+      font-size: 3.5rem;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+    .result-label { font-size: 1.1rem; color: var(--text2); margin-bottom: 20px; }
+    .result-message { font-size: 0.95rem; color: var(--text2); max-width: 500px; margin: 0 auto 24px; }
+    .result-next {
+      display: inline-block;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      text-decoration: none;
+      padding: 12px 28px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      transition: opacity 0.2s;
+    }
+    .result-next:hover { opacity: 0.9; }
+    .retry-btn {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text2);
+      padding: 12px 28px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-top: 12px;
+      transition: all 0.2s;
+    }
+    .retry-btn:hover { border-color: var(--accent); color: var(--text); }
+
+    /* NEXT PAGE LINK */
+    .next-tutorial {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 28px;
+      margin-top: 40px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+    .next-info { flex: 1; }
+    .next-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 6px; }
+    .next-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 4px; }
+    .next-desc { font-size: 0.83rem; color: var(--text2); }
+    .next-btn {
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: white;
+      text-decoration: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+    .next-btn:hover { opacity: 0.9; }
+
+    @media (max-width: 768px) {
+      .content-layout { grid-template-columns: 1fr; }
+      .sidebar { position: static; display: none; }
+      #exam { padding: 24px 20px; }
+      .tutorial-hero { padding: 36px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="top-nav">
+    <a href="index.html" class="nav-back">← Course Home</a>
+    <span class="nav-sep">/</span>
+    <span class="nav-current">Tutorial 01: Linear Algebra for AI</span>
+    <div class="nav-progress">
+      <span id="progress-text">0% read</span>
+      <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    </div>
+  </nav>
+
+  <div class="tutorial-hero">
+    <div class="container">
+      <div class="tut-meta">
+        <span class="tut-badge">📐 Tutorial 01</span>
+        <span class="tut-phase">Phase 1 · Mathematical Foundations · Week 1</span>
+      </div>
+      <h1>Linear Algebra for AI</h1>
+      <p class="subtitle">Vectors, matrices, transformations, and decompositions — the mathematical backbone of every neural network, embedding, and ML algorithm you'll ever use.</p>
+      <div class="tut-info-row">
+        <div class="tut-info-item"><span class="tut-info-icon">📖</span> ~2 hour read</div>
+        <div class="tut-info-item"><span class="tut-info-icon">🎯</span> 6 core concepts</div>
+        <div class="tut-info-item"><span class="tut-info-icon">✏️</span> 10-question exam</div>
+        <div class="tut-info-item"><span class="tut-info-icon">💻</span> Python code included</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="content-layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <nav class="toc">
+        <h3>Contents</h3>
+        <ul class="toc-list">
+          <li class="toc-item"><a href="#sec1" class="toc-link">1. Scalars, Vectors & Spaces</a></li>
+          <li class="toc-item"><a href="#sec2" class="toc-link">2. Matrices & Operations</a></li>
+          <li class="toc-item"><a href="#sec3" class="toc-link">3. Dot Product & Similarity</a></li>
+          <li class="toc-item"><a href="#sec4" class="toc-link">4. Matrix Transformations</a></li>
+          <li class="toc-item"><a href="#sec5" class="toc-link">5. Eigenvalues & Eigenvectors</a></li>
+          <li class="toc-item"><a href="#sec6" class="toc-link">6. SVD & Dimensionality</a></li>
+          <li class="toc-item"><a href="#exam" class="toc-link" style="color:#a5b4fc;font-weight:600;">✏️ Exam</a></li>
+        </ul>
+      </nav>
+    </aside>
+
+    <!-- LESSON -->
+    <main class="lesson-content">
+
+      <!-- INTRO -->
+      <div class="callout info">
+        <span class="callout-icon">🎓</span>
+        <div class="callout-body">
+          <h4>Professor's Opening</h4>
+          <p>As a Computer Engineer, you have seen matrices in circuit analysis and signal processing. Now we're going to re-examine linear algebra through the lens of AI — where a vector is not just a mathematical object, but a <strong>representation of meaning</strong>, and a matrix is a <strong>learned transformation</strong>. This shift in perspective is everything.</p>
+        </div>
+      </div>
+
+      <!-- SECTION 1 -->
+      <div class="lesson-section" id="sec1">
+        <div class="section-label">Section 1</div>
+        <h2 class="section-title">Scalars, Vectors & High-Dimensional Spaces</h2>
+
+        <p>In AI, a <strong>scalar</strong> is any single number — a loss value, a learning rate, a confidence score. A <strong>vector</strong> is an ordered list of numbers, but more importantly, it is a <em>point in space</em> — or a <em>direction and magnitude</em>.</p>
+
+        <h3 class="subsection">What is a Vector in AI Context?</h3>
+        <p>When a language model processes the word "king", it doesn't see letters — it sees a vector of 768 or 1024 floating-point numbers. This vector encodes the word's <strong>meaning in high-dimensional space</strong>. Words with similar meanings have vectors that point in similar directions.</p>
+
+        <div class="ai-connection">
+          <div class="ai-title">🤖 AI Connection</div>
+          <p>Word embeddings (Word2Vec, GloVe, BERT embeddings) are vectors. Image features from a CNN are vectors. A user's preferences in a recommendation system are vectors. <strong>Everything in ML eventually becomes a vector.</strong></p>
+        </div>
+
+        <div class="math-block">
+          <div class="math-title">Vector Notation</div>
+          <div class="math-formula">
+            <span class="highlight">x</span> = [x₁, x₂, x₃, ..., xₙ]  ← a vector in ℝⁿ<br/><br/>
+            Example — word embedding of "king":<br/>
+            <span class="highlight">king</span> = [0.25, -0.13, 0.87, 0.04, ..., -0.32]  ← 768 dimensions<br/><br/>
+            <span class="comment">// "queen" would be a vector very close to "king" in this 768D space</span>
+          </div>
+        </div>
+
+        <h3 class="subsection">Vector Operations</h3>
+        <p>The operations you'll use daily in ML:</p>
+
+        <div class="math-block">
+          <div class="math-title">Essential Vector Operations</div>
+          <div class="math-formula">
+            <span class="comment">// Addition: combine two information sources</span><br/>
+            <span class="highlight">a</span> + <span class="highlight">b</span> = [a₁+b₁, a₂+b₂, ..., aₙ+bₙ]<br/><br/>
+            <span class="comment">// Scalar multiplication: scale an embedding</span><br/>
+            α · <span class="highlight">v</span> = [α·v₁, α·v₂, ..., α·vₙ]<br/><br/>
+            <span class="comment">// Magnitude (L2 norm): how "big" is this vector?</span><br/>
+            ‖<span class="highlight">v</span>‖ = √(v₁² + v₂² + ... + vₙ²)
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">Python — NumPy</span>
+          </div>
+          <div class="code-body">
+<pre><span class="py-kw">import</span> numpy <span class="py-kw">as</span> np
+
+<span class="py-cm"># Define two vectors (imagine word embeddings)</span>
+king  = np.array([<span class="py-num">0.25</span>, -<span class="py-num">0.13</span>, <span class="py-num">0.87</span>, <span class="py-num">0.04</span>])
+queen = np.array([<span class="py-num">0.22</span>, -<span class="py-num">0.10</span>, <span class="py-num">0.89</span>, <span class="py-num">0.06</span>])
+man   = np.array([<span class="py-num">0.60</span>,  <span class="py-num">0.45</span>, <span class="py-num">0.11</span>, <span class="py-num">0.80</span>])
+woman = np.array([<span class="py-num">0.58</span>,  <span class="py-num">0.43</span>, <span class="py-num">0.13</span>, <span class="py-num">0.78</span>])
+
+<span class="py-cm"># The famous analogy: king - man + woman ≈ queen</span>
+result = king - man + woman
+<span class="py-fn">print</span>(result)  <span class="py-cm"># should be close to queen</span>
+
+<span class="py-cm"># Vector magnitude (L2 norm)</span>
+magnitude = np.linalg.norm(king)
+<span class="py-fn">print</span>(<span class="py-str">f"Magnitude of 'king' vector: {magnitude:.3f}"</span>)
+
+<span class="py-cm"># Normalized vector (unit vector — direction only)</span>
+king_unit = king / np.linalg.norm(king)
+<span class="py-fn">print</span>(<span class="py-str">f"Unit vector norm: {np.linalg.norm(king_unit):.3f}"</span>)  <span class="py-cm"># always 1.0</span></pre>
+          </div>
+        </div>
+
+        <div class="callout tip">
+          <span class="callout-icon">💡</span>
+          <div class="callout-body">
+            <h4>CE to AI Mindset Shift</h4>
+            <p>In signal processing you worked with 1D, 2D, or 3D vectors. In AI, vectors routinely have 768, 1024, or 4096 dimensions. You can't visualize them, but the math is identical. Your brain doesn't need to picture it — the operations are the same.</p>
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- SECTION 2 -->
+      <div class="lesson-section" id="sec2">
+        <div class="section-label">Section 2</div>
+        <h2 class="section-title">Matrices & Their Operations</h2>
+
+        <p>A matrix is a 2D array of numbers — but in AI, it's almost always a <strong>transformation</strong> or a <strong>set of learned parameters</strong>. The weight matrix in a neural network layer is literally a matrix that transforms one vector space into another.</p>
+
+        <h3 class="subsection">Matrix Anatomy</h3>
+
+        <p>An <strong>m × n matrix</strong> has m rows and n columns. In deep learning, a weight matrix <strong>W</strong> of shape (input_dim × output_dim) transforms an input vector into an output vector.</p>
+
+        <div style="display:flex; gap:24px; flex-wrap:wrap; align-items:flex-start; margin:20px 0;">
+          <div>
+            <p style="font-size:0.8rem;color:var(--text3);margin-bottom:8px;">3×3 Matrix A</p>
+            <div class="matrix-visual">
+              <div class="matrix-row">
+                <span class="matrix-bracket">[</span>
+                <span class="matrix-cell">1</span><span class="matrix-cell">2</span><span class="matrix-cell">3</span>
+                <span class="matrix-bracket">]</span>
+              </div>
+              <div class="matrix-row">
+                <span class="matrix-bracket"> </span>
+                <span class="matrix-cell">4</span><span class="matrix-cell">5</span><span class="matrix-cell">6</span>
+                <span class="matrix-bracket"> </span>
+              </div>
+              <div class="matrix-row">
+                <span class="matrix-bracket">[</span>
+                <span class="matrix-cell">7</span><span class="matrix-cell">8</span><span class="matrix-cell">9</span>
+                <span class="matrix-bracket">]</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <h3 class="subsection">Matrix Multiplication — The Core Operation</h3>
+        <p>Matrix multiplication is <strong>the</strong> fundamental operation in deep learning. Every forward pass through a neural network layer is essentially: <code style="background:var(--code-bg);padding:2px 6px;border-radius:4px;font-size:0.85rem;">output = activation(W · input + b)</code></p>
+
+        <div class="math-block">
+          <div class="math-title">Matrix Multiplication Rule</div>
+          <div class="math-formula">
+            <span class="highlight">C</span> = <span class="highlight">A</span> · <span class="highlight">B</span>  where  C[i,j] = Σₖ A[i,k] · B[k,j]<br/><br/>
+            Shape rule: (m×k) · (k×n) = (m×n)<br/><br/>
+            <span class="comment">// Inner dimensions must match! This is why layer shapes matter so much in PyTorch.</span>
+          </div>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">Python — NumPy</span>
+          </div>
+          <div class="code-body">
+<pre><span class="py-kw">import</span> numpy <span class="py-kw">as</span> np
+
+<span class="py-cm"># Simulating one neural network layer forward pass</span>
+batch_size   = <span class="py-num">32</span>    <span class="py-cm"># 32 samples</span>
+input_dim    = <span class="py-num">512</span>   <span class="py-cm"># input features per sample</span>
+output_dim   = <span class="py-num">256</span>   <span class="py-cm"># neurons in this layer</span>
+
+<span class="py-cm"># Input: 32 samples, each with 512 features → shape (32, 512)</span>
+X = np.random.randn(batch_size, input_dim)
+
+<span class="py-cm"># Weight matrix (learned params) → shape (512, 256)</span>
+W = np.random.randn(input_dim, output_dim) * <span class="py-num">0.01</span>
+
+<span class="py-cm"># Bias → shape (256,)</span>
+b = np.zeros(output_dim)
+
+<span class="py-cm"># Forward pass: (32,512) · (512,256) + (256,) = (32,256)</span>
+output = X @ W + b   <span class="py-cm"># @ is matrix multiply in NumPy</span>
+<span class="py-fn">print</span>(<span class="py-str">f"Output shape: {output.shape}"</span>)  <span class="py-cm"># (32, 256) ✓</span>
+
+<span class="py-cm"># Transpose — used in backpropagation</span>
+W_T = W.T  <span class="py-cm"># shape (256, 512)</span>
+<span class="py-fn">print</span>(<span class="py-str">f"Transposed W: {W_T.shape}"</span>)</pre>
+          </div>
+        </div>
+
+        <div class="analogy-box">
+          <div class="analogy-title">🔧 CE Analogy: Matrix as Circuit Transform</div>
+          <p>Think of a weight matrix like a transfer function in your circuits course. It takes a signal (input vector) and transforms it into another signal (output vector). Neural network training is finding the best "transfer function" (weight matrix) that maps inputs to the desired outputs. Backprop is just gradient-based tuning of this function.</p>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- SECTION 3 -->
+      <div class="lesson-section" id="sec3">
+        <div class="section-label">Section 3</div>
+        <h2 class="section-title">Dot Product & Cosine Similarity</h2>
+
+        <p>The <strong>dot product</strong> is arguably the most used operation in all of AI. It measures how aligned two vectors are — and alignment is a proxy for <em>similarity</em>.</p>
+
+        <div class="math-block">
+          <div class="math-title">Dot Product & Cosine Similarity</div>
+          <div class="math-formula">
+            <span class="highlight">a</span> · <span class="highlight">b</span> = Σᵢ aᵢ · bᵢ = ‖a‖ · ‖b‖ · cos(θ)<br/><br/>
+            Cosine similarity = (<span class="highlight">a</span> · <span class="highlight">b</span>) / (‖<span class="highlight">a</span>‖ · ‖<span class="highlight">b</span>‖)<br/><br/>
+            <span class="comment">// Result is between -1 and 1:</span><br/>
+            <span class="comment">// +1 → same direction (very similar)</span><br/>
+            <span class="comment">// 0  → perpendicular (unrelated)</span><br/>
+            <span class="comment">// -1 → opposite direction (opposites)</span>
+          </div>
+        </div>
+
+        <div class="ai-connection">
+          <div class="ai-title">🤖 AI Connection — Attention Mechanism</div>
+          <p>The <strong>Transformer's attention mechanism</strong> is fundamentally a set of dot products. When processing the word "bank" in "I went to the river bank", the model computes dot products between the query vector of "bank" and the key vectors of every other word — finding which words are most relevant (highest dot product = most attended to). This is how GPT-4 and Claude work at the core.</p>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">Python — Semantic Search using Cosine Similarity</span>
+          </div>
+          <div class="code-body">
+<pre><span class="py-kw">import</span> numpy <span class="py-kw">as</span> np
+
+<span class="py-kw">def</span> <span class="py-fn">cosine_similarity</span>(a, b):
+    <span class="py-str">"""Measure how similar two vectors are."""</span>
+    <span class="py-kw">return</span> np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))
+
+<span class="py-cm"># Simulated word embeddings (in reality these are 768-dim)</span>
+dog   = np.array([<span class="py-num">0.9</span>, <span class="py-num">0.1</span>, <span class="py-num">0.05</span>, <span class="py-num">0.8</span>])   <span class="py-cm"># "animal-like"</span>
+cat   = np.array([<span class="py-num">0.85</span>, <span class="py-num">0.12</span>, <span class="py-num">0.07</span>, <span class="py-num">0.75</span>]) <span class="py-cm"># similar to dog</span>
+car   = np.array([<span class="py-num">0.1</span>, <span class="py-num">0.9</span>, <span class="py-num">0.95</span>, <span class="py-num">0.05</span>])   <span class="py-cm"># very different</span>
+
+<span class="py-fn">print</span>(<span class="py-str">f"dog vs cat: {cosine_similarity(dog, cat):.3f}"</span>)   <span class="py-cm"># high ~0.99</span>
+<span class="py-fn">print</span>(<span class="py-str">f"dog vs car: {cosine_similarity(dog, car):.3f}"</span>)   <span class="py-cm"># low ~0.15</span>
+
+<span class="py-cm"># This is how semantic search works!</span>
+<span class="py-cm"># Query: "I want a pet" → find top-k most similar vectors in database</span>
+query = np.array([<span class="py-num">0.88</span>, <span class="py-num">0.11</span>, <span class="py-num">0.06</span>, <span class="py-num">0.77</span>])
+database = {<span class="py-str">"dog"</span>: dog, <span class="py-str">"cat"</span>: cat, <span class="py-str">"car"</span>: car}
+scores = {word: cosine_similarity(query, vec) <span class="py-kw">for</span> word, vec <span class="py-kw">in</span> database.items()}
+best = <span class="py-fn">max</span>(scores, key=scores.get)
+<span class="py-fn">print</span>(<span class="py-str">f"Most relevant to query: '{best}' (score: {scores[best]:.3f})"</span>)</pre>
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- SECTION 4 -->
+      <div class="lesson-section" id="sec4">
+        <div class="section-label">Section 4</div>
+        <h2 class="section-title">Linear Transformations</h2>
+
+        <p>A matrix <strong>A</strong> applied to a vector <strong>x</strong> performs a <em>linear transformation</em> — it rotates, scales, shears, or projects the vector in space. Neural network layers <strong>are</strong> linear transformations (followed by non-linear activation functions).</p>
+
+        <h3 class="subsection">Identity, Inverse, and Determinant</h3>
+
+        <div class="key-terms">
+          <div class="term-card">
+            <div class="term-name">Identity Matrix (I)</div>
+            <div class="term-def">Leaves every vector unchanged. Like multiplying by 1. Used as a baseline and in residual connections (ResNets).</div>
+          </div>
+          <div class="term-card">
+            <div class="term-name">Inverse Matrix (A⁻¹)</div>
+            <div class="term-def">Undoes the transformation of A. Not all matrices are invertible. Critical in optimization math.</div>
+          </div>
+          <div class="term-card">
+            <div class="term-name">Determinant (det(A))</div>
+            <div class="term-def">Measures how much the transformation scales volume. det = 0 means the matrix collapses space (rank-deficient — bad for training).</div>
+          </div>
+          <div class="term-card">
+            <div class="term-name">Transpose (Aᵀ)</div>
+            <div class="term-def">Flips rows and columns. Essential in backpropagation — gradient flows backwards through the transposed weight matrix.</div>
+          </div>
+        </div>
+
+        <div class="ai-connection">
+          <div class="ai-title">🤖 AI Connection — Residual Connections</div>
+          <p>ResNet (the architecture behind many modern vision models) adds the input back to the output of a layer: <code style="color:#fff">output = F(x) + x</code>. The "+ x" part is adding the identity transformation — it lets gradients flow unchanged through many layers, solving the vanishing gradient problem. This is pure linear algebra intuition.</p>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- SECTION 5 -->
+      <div class="lesson-section" id="sec5">
+        <div class="section-label">Section 5</div>
+        <h2 class="section-title">Eigenvalues & Eigenvectors</h2>
+
+        <p>An eigenvector of matrix <strong>A</strong> is a special vector that, when transformed by A, only <em>scales</em> — it doesn't rotate. The scale factor is the <strong>eigenvalue</strong>.</p>
+
+        <div class="math-block">
+          <div class="math-title">Eigendecomposition</div>
+          <div class="math-formula">
+            <span class="highlight">A</span> · <span class="highlight">v</span> = λ · <span class="highlight">v</span><br/><br/>
+            where:<br/>
+            · <span class="highlight">v</span> = eigenvector (direction preserved under A)<br/>
+            · λ (lambda) = eigenvalue (how much v is stretched/shrunk)<br/><br/>
+            <span class="comment">// A matrix can be decomposed: A = Q · Λ · Q⁻¹</span><br/>
+            <span class="comment">// Q = matrix of eigenvectors, Λ = diagonal matrix of eigenvalues</span>
+          </div>
+        </div>
+
+        <div class="ai-connection">
+          <div class="ai-title">🤖 AI Connection — PCA & Covariance</div>
+          <p><strong>Principal Component Analysis (PCA)</strong> — one of the most important dimensionality reduction techniques — is entirely about computing eigenvectors of the covariance matrix. The eigenvectors are the "principal components" (directions of maximum variance), and the eigenvalues tell you how much information each direction captures. Used for: data visualization, noise reduction, feature compression, and more.</p>
+        </div>
+
+        <div class="code-block">
+          <div class="code-header">
+            <span class="code-lang">Python — Eigendecomposition with NumPy</span>
+          </div>
+          <div class="code-body">
+<pre><span class="py-kw">import</span> numpy <span class="py-kw">as</span> np
+
+<span class="py-cm"># A covariance matrix (symmetric positive semi-definite)</span>
+A = np.array([[<span class="py-num">4</span>, <span class="py-num">2</span>],
+              [<span class="py-num">2</span>, <span class="py-num">3</span>]])
+
+eigenvalues, eigenvectors = np.linalg.eig(A)
+<span class="py-fn">print</span>(<span class="py-str">"Eigenvalues:"</span>, eigenvalues)    <span class="py-cm"># [5.56, 1.44]</span>
+<span class="py-fn">print</span>(<span class="py-str">"Eigenvectors:\n"</span>, eigenvectors) <span class="py-cm"># columns are eigenvectors</span>
+
+<span class="py-cm"># Verify: A·v = λ·v</span>
+v0 = eigenvectors[:, <span class="py-num">0</span>]  <span class="py-cm"># first eigenvector</span>
+l0 = eigenvalues[<span class="py-num">0</span>]      <span class="py-cm"># first eigenvalue</span>
+<span class="py-fn">print</span>(<span class="py-str">"A·v0:"</span>, A @ v0)
+<span class="py-fn">print</span>(<span class="py-str">"λ·v0:"</span>, l0 * v0)     <span class="py-cm"># should be the same!</span>
+
+<span class="py-cm"># PCA on random data (dimensionality reduction 4D → 2D)</span>
+<span class="py-kw">from</span> sklearn.decomposition <span class="py-kw">import</span> PCA
+data = np.random.randn(<span class="py-num">100</span>, <span class="py-num">4</span>)     <span class="py-cm"># 100 samples, 4 features</span>
+pca = PCA(n_components=<span class="py-num">2</span>)
+reduced = pca.fit_transform(data)  <span class="py-cm"># 100 samples, 2 features</span>
+<span class="py-fn">print</span>(<span class="py-str">f"Variance retained: {pca.explained_variance_ratio_.sum():.1%}"</span>)</pre>
+          </div>
+        </div>
+      </div>
+
+      <hr class="section-divider" />
+
+      <!-- SECTION 6 -->
+      <div class="lesson-section" id="sec6">
+        <div class="section-label">Section 6</div>
+        <h2 class="section-title">Singular Value Decomposition (SVD)</h2>
+
+        <p>SVD is the generalization of eigendecomposition to <em>non-square</em> matrices. It's one of the most powerful tools in numerical linear algebra and shows up everywhere in modern AI.</p>
+
+        <div class="math-block">
+          <div class="math-title">SVD Decomposition</div>
+          <div class="math-formula">
+            <span class="highlight">A</span> = <span class="highlight">U</span> · Σ · <span class="highlight">Vᵀ</span><br/><br/>
+            where (for an m×n matrix A):<br/>
+            · <span class="highlight">U</span> = m×m orthogonal matrix (left singular vectors)<br/>
+            · Σ = m×n diagonal matrix (singular values, always ≥ 0)<br/>
+            · <span class="highlight">Vᵀ</span> = n×n orthogonal matrix (right singular vectors)<br/><br/>
+            <span class="comment">// Truncated SVD: keep only top-k singular values → compressed representation</span>
+          </div>
+        </div>
+
+        <div class="ai-connection">
+          <div class="ai-title">🤖 AI Connection — LoRA Fine-tuning</div>
+          <p><strong>LoRA (Low-Rank Adaptation)</strong> — the dominant method for fine-tuning large language models cheaply — uses SVD intuition. Instead of modifying the full weight matrix W (billions of parameters), it approximates the change ΔW as a product of two small matrices: ΔW = A · B. This is a low-rank approximation, exactly like truncated SVD. Fine-tuning GPT-4-level models on a single GPU with LoRA is possible because of this math.</p>
+        </div>
+
+        <div class="callout important">
+          <span class="callout-icon">⭐</span>
+          <div class="callout-body">
+            <h4>Summary: Why Linear Algebra is the Backbone of AI</h4>
+            <p>Neural networks are compositions of linear transformations (matrix multiplications) and non-linearities (activation functions). Embeddings are vectors. Attention is dot products. PCA is eigenvectors. LoRA is SVD. Virtually every major AI technique traces directly back to the concepts in this tutorial. Master these, and you understand what's happening under the hood of every model you'll ever use.</p>
+          </div>
+        </div>
+
+        <div class="key-terms">
+          <div class="term-card">
+            <div class="term-name">Broadcasting</div>
+            <div class="term-def">NumPy automatically stretches smaller arrays to match shapes. Critical for efficient batch operations in deep learning.</div>
+          </div>
+          <div class="term-card">
+            <div class="term-name">Batch Matrix Multiply</div>
+            <div class="term-def">Processing multiple matrices simultaneously. In PyTorch: torch.bmm(). Every training step processes a "batch" this way.</div>
+          </div>
+          <div class="term-card">
+            <div class="term-name">Hadamard Product</div>
+            <div class="term-def">Element-wise multiplication (not matrix multiply). Used in LSTM gates, attention masking, and many other places.</div>
+          </div>
+          <div class="term-card">
+            <div class="term-name">Rank of a Matrix</div>
+            <div class="term-def">Number of linearly independent rows/columns. Low-rank matrices are common in efficient AI (LoRA, adapters, distillation).</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXAM -->
+      <hr class="section-divider" />
+      <div id="exam">
+        <div class="exam-header">
+          <div class="exam-badge">📝 End-of-Tutorial Exam</div>
+          <h2>Tutorial 01 Exam — Linear Algebra for AI</h2>
+          <p>10 questions covering all sections. Answer each question, then submit to see your score. Passing grade: 7/10.</p>
+        </div>
+
+        <div class="exam-progress-label" id="answered-count">0 of 10 answered</div>
+        <div class="exam-progress-bar">
+          <div class="exam-progress-fill" id="exam-progress"></div>
+        </div>
+
+        <!-- Q1 -->
+        <div class="question-block" id="q1">
+          <div class="q-num">Question 1 of 10</div>
+          <div class="q-text">In a neural network layer with input dimension 512 and output dimension 256, what is the shape of the weight matrix W?</div>
+          <div class="options">
+            <button class="option-btn" onclick="selectOption(this,'q1','A','wrong')"><span class="option-key">A</span> (256, 256)</button>
+            <button class="option-btn" onclick="selectOption(this,'q1','B','wrong')"><span class="option-key">B</span> (512, 512)</button>
+            <button class="option-btn" onclick="selectOption(this,'q1','C','correct')"><span class="option-key">C</span> (512, 256)</button>
+            <button class="option-btn" onclick="selectOption(this,'q1','D','wrong')"><span class="option-key">D</span> (256, 512)</button>
+          </div>
+          <div class="feedback" id="fb-q1-correct correct">✅ <strong>Correct!</strong> The weight matrix maps from input_dim → output_dim, so shape is (input_dim, output_dim) = (512, 256). The operation is X @ W where X is (batch, 512) → output is (batch, 256).</div>
+          <div class="feedback" id="fb-q1-wrong wrong">❌ <strong>Not quite.</strong> For a layer transforming 512 inputs to 256 outputs: W must have shape (512, 256) so that X @ W works: (batch, 512) · (512, 256) = (batch, 256). The inner dimensions must match!</div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="question-block" id="q2">
+          <div class="q-num">Question 2 of 10</div>
+          <div class="q-text">You compute the cosine similarity between two word embeddings and get a value of 0.98. What does this tell you?</div>
+          <div class="options">
+            <button class="option-btn" onclick="selectOption(this,'q2','A','wrong')"><span class="option-key">A</span> The words are antonyms (opposite meanings)</button>
+            <button class="option-btn" onclick="selectOption(this,'q2','B','correct')"><span class="option-key">B</span> The words are semantically very similar (near-parallel vectors)</button>
+            <button class="option-btn" onclick="selectOption(this,'q2','C','wrong')"><span class="option-key">C</span> The words are unrelated (perpendicular vectors)</button>
+            <button class="option-btn" onclick="selectOption(this,'q2','D','wrong')"><span class="option-key">D</span> One vector has a much larger magnitude than the other</button>
+          </div>
+          <div class="feedback" id="fb-q2-correct correct">✅ <strong>Correct!</strong> Cosine similarity of 0.98 (close to 1.0) means the vectors point in nearly the same direction → the words are semantically very similar. Example: "car" and "automobile" would have high cosine similarity.</div>
+          <div class="feedback" id="fb-q2-wrong wrong">❌ <strong>Incorrect.</strong> Cosine similarity ranges from -1 to 1. A value of 0.98 (close to +1) means the vectors are nearly parallel → semantically very similar. Note: cosine similarity is magnitude-independent (it only measures direction).</div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="question-block" id="q3">
+          <div class="q-num">Question 3 of 10</div>
+          <div class="q-text">Which operation is at the core of the Transformer's self-attention mechanism?</div>
+          <div class="options">
+            <button class="option-btn" onclick="selectOption(this,'q3','A','wrong')"><span class="option-key">A</span> Matrix determinant computation</button>
+            <button class="option-btn" onclick="selectOption(this,'q3','B','wrong')"><span class="option-key">B</span> Singular Value Decomposition</button>
+            <button class="option-btn" onclick="selectOption(this,'q3','C','correct')"><span class="option-key">C</span> Dot products between query and key vectors</button>
+            <button class="option-btn" onclick="selectOption(this,'q3','D','wrong')"><span class="option-key">D</span> Eigendecomposition of the input matrix</button>
+          </div>
+          <div class="feedback" id="fb-q3-correct correct">✅ <strong>Correct!</strong> Attention(Q,K,V) = softmax(Q·Kᵀ / √d_k)·V — the core is Q·Kᵀ, a dot product between query and key matrices. High dot product → high attention weight → "attend to this token".</div>
+          <div class="feedback" id="fb-q3-wrong wrong">❌ <strong>Incorrect.</strong> The self-attention mechanism computes dot products between query (Q) and key (K) vectors: softmax(Q·Kᵀ / √d_k). These dot products measure how relevant each position is to every other position — the attention scores.</div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="question-block" id="q4">
+          <div class="q-num">Question 4 of 10</div>
+          <div class="q-text">In NumPy, what does the expression <code style="background:var(--code-bg);padding:1px 5px;border-radius:3px;">A @ B</code> compute?</div>
+          <div class="options">
+            <button class="option-btn" onclick="selectOption(this,'q4','A','wrong')"><span class="option-key">A</span> Element-wise (Hadamard) product</button>
+            <button class="option-btn" onclick="selectOption(this,'q4','B','correct')"><span class="option-key">B</span> Matrix multiplication (dot product of rows and columns)</button>
+            <button class="option-btn" onclick="selectOption(this,'q4','C','wrong')"><span class="option-key">C</span> Kronecker product</button>
+            <button class="option-btn" onclick="selectOption(this,'q4','D','wrong')"><span class="option-key">D</span> Outer product</button>
+          </div>
+          <div class="feedback" id="fb-q4-correct correct">✅ <strong>Correct!</strong> In Python 3.5+, the @ operator is matrix multiplication (matmul). This is equivalent to np.matmul(A, B). Element-wise multiplication uses A * B. You'll use @ constantly when working with PyTorch and NumPy.</div>
+          <div class="feedback" id="fb-q4-wrong wrong">❌ <strong>Incorrect.</strong> The @ operator in NumPy (and PyTorch) performs matrix multiplication. Element-wise multiplication uses the * operator. This distinction is critical — confusing the two is a very common bug in neural network code!</div>
+        </div>
+
+        <!-- Q5 -->
+        <div class="question-block" id="q5">
+          <div class="q-num">Question 5 of 10</div>
+          <div class="q-text">Principal Component Analysis (PCA) is based on finding the eigenvectors of which matrix?</div>
+          <div class="options">
+            <button class="option-btn" onclick="selectOption(this,'q5','A','wrong')"><span class="option-key">A</span> The weight matrix of the first neural network layer</button>
+            <button class="option-btn" onclick="selectOption(this,'q5','B','wrong')"><span class="option-key">B</span> The identity matrix of the data</button>
+            <button class="option-btn" onclick="selectOption(this,'q5','C','correct')"><span class="option-key">C</span> The covariance matrix of the data</button>
+            <button class="option-btn" onclick="selectOption(this,'q5','D','wrong')"><span class="option-key">D</span> The Gram matrix of the kernel function</button>
+          </div>
+          <div class="feedback" id="fb-q5-correct correct">✅ <strong>Correct!</strong> PCA computes the covariance matrix Σ = (1/n) XᵀX, then finds its eigenvectors. These eigenvectors (principal components) point in the directions of maximum variance. Eigenvectors with the largest eigenvalues capture the most information.</div>
+          <div class="feedback" id="fb-q5-wrong wrong">❌ <strong>Incorrect.</strong> PCA finds eigenvectors of the data's covariance matrix. The covariance matrix encodes how features vary together. Eigenvectors of this matrix are the principal components — directions along which the data varies most.</div>
+        </div>
+
+        <!-- Q6 -->
+        <div class="question-block" id="q6">
+          <div class="q-num">Question 6 of 10</div>
+          <div class="q-text">LoRA (Low-Rank Adaptation) fine-tuning represents weight updates as ΔW = A · B. What mathematical concept does this leverage?</div>
+          <div class="options">
+            <button class="option-btn" onclick="selectOption(this,'q6','A','wrong')"><span class="option-key">A</span> The Cayley-Hamilton theorem</button>
+            <button class="option-btn" onclick="selectOption(this,'q6','B','correct')"><span class="option-key">B</span> Low-rank matrix approximation (related to SVD)</button>
+            <button class="option-btn" onclick="selectOption(this,'q6','C','wrong')"><span class="option-key">C</span> Matrix inversion via Gaussian elimination</button>
+            <button class="option-btn" onclick="selectOption(this,'q6','D','wrong')"><span class="option-key">D</span> The spectral theorem for symmetric matrices</button>
+          </div>
+          <div class="feedback" id="fb-q6-correct correct">✅ <strong>Correct!</strong> LoRA uses the insight that weight updates for fine-tuning have low intrinsic rank. Instead of updating W (e.g., 4096×4096 = 16M params), it learns small matrices A (4096×r) and B (r×4096) where r≪4096. With r=8, that's just 65,536 parameters — a 99.6% reduction!</div>
+          <div class="feedback" id="fb-q6-wrong wrong">❌ <strong>Incorrect.</strong> LoRA exploits low-rank approximation. SVD tells us any matrix can be written as U·Σ·Vᵀ, and if we keep only the top-k singular values, we get the best rank-k approximation. LoRA applies this idea: the change in weights during fine-tuning is low-rank, so A·B approximates it with far fewer parameters.</div>
+        </div>
+
+        <!-- Q7 -->
+        <div class="question-block" id="q7">
+          <div class="q-num">Question 7 of 10</div>
+          <div class="q-text">You have a batch of 64 samples, each with 128 features. You apply a linear layer with 64 output neurons. What is the shape of the output?</div>
+          <div class="options">
+            <button class="option-btn" onclick="selectOption(this,'q7','A','wrong')"><span class="option-key">A</span> (128, 64)</button>
+            <button class="option-btn" onclick="selectOption(this,'q7','B','wrong')"><span class="option-key">B</span> (64, 128)</button>
+            <button class="option-btn" onclick="selectOption(this,'q7','C','correct')"><span class="option-key">C</span> (64, 64)</button>
+            <button class="option-btn" onclick="selectOption(this,'q7','D','wrong')"><span class="option-key">D</span> (128, 128)</button>
+          </div>
+          <div class="feedback" id="fb-q7-correct correct">✅ <strong>Correct!</strong> Input X has shape (64, 128). Weight matrix W has shape (128, 64). Matrix multiply: (64, 128) · (128, 64) = (64, 64). The batch dimension (64 samples) is preserved; the feature dimension changes from 128 → 64.</div>
+          <div class="feedback" id="fb-q7-wrong wrong">❌ <strong>Incorrect.</strong> Follow the shapes: Input = (batch=64, features=128). W = (128, 64). Output = X @ W = (64, 128) · (128, 64) = (64, 64). The batch size stays 64, and features transform from 128 → 64.</div>
+        </div>
+
+        <!-- Q8 -->
+        <div class="question-block" id="q8">
+          <div class="q-num">Question 8 of 10</div>
+          <div class="q-text">What does it mean for the determinant of a weight matrix to be 0?</div>
+          <div class="options">
+            <button class="option-btn" onclick="selectOption(this,'q8','A','wrong')"><span class="option-key">A</span> The matrix performs only rotations, no scaling</button>
+            <button class="option-btn" onclick="selectOption(this,'q8','B','wrong')"><span class="option-key">B</span> The matrix is perfectly optimized for the task</button>
+            <button class="option-btn" onclick="selectOption(this,'q8','C','correct')"><span class="option-key">C</span> The matrix collapses space — multiple inputs map to the same output (information loss)</button>
+            <button class="option-btn" onclick="selectOption(this,'q8','D','wrong')"><span class="option-key">D</span> The matrix has only positive eigenvalues</button>
+          </div>
+          <div class="feedback" id="fb-q8-correct correct">✅ <strong>Correct!</strong> Det(A) = 0 means the matrix is singular (non-invertible). It collapses the input space — multiple different inputs produce the same output. In neural networks, this means the layer is losing information. This relates to "dead neurons" and why weight initialization matters.</div>
+          <div class="feedback" id="fb-q8-wrong wrong">❌ <strong>Incorrect.</strong> Determinant = 0 means the transformation collapses volume to zero — the matrix is singular/non-invertible. In practical terms, it means the transformation is rank-deficient: multiple input vectors map to the same output, losing information. This is generally bad in neural networks.</div>
+        </div>
+
+        <!-- Q9 -->
+        <div class="question-block" id="q9">
+          <div class="q-num">Question 9 of 10</div>
+          <div class="q-text">In backpropagation, gradients flow backward through a layer using the transpose of the weight matrix (Wᵀ). Why?</div>
+          <div class="options">
+            <button class="option-btn" onclick="selectOption(this,'q9','A','wrong')"><span class="option-key">A</span> Because the transpose is always faster to compute than the original matrix</button>
+            <button class="option-btn" onclick="selectOption(this,'q9','B','correct')"><span class="option-key">B</span> Because the chain rule of calculus requires the transpose to correctly propagate gradients back through the linear transformation</button>
+            <button class="option-btn" onclick="selectOption(this,'q9','C','wrong')"><span class="option-key">C</span> Because the transpose converts the loss gradient from a column to a row vector</button>
+            <button class="option-btn" onclick="selectOption(this,'q9','D','wrong')"><span class="option-key">D</span> Because transpose is used to prevent gradient explosion</button>
+          </div>
+          <div class="feedback" id="fb-q9-correct correct">✅ <strong>Correct!</strong> For y = Wx, the gradient ∂L/∂x = Wᵀ · (∂L/∂y). This follows directly from the chain rule applied to matrix operations. If W transforms (input_dim → output_dim), then Wᵀ transforms back (output_dim → input_dim), matching gradient dimensions correctly.</div>
+          <div class="feedback" id="fb-q9-wrong wrong">❌ <strong>Incorrect.</strong> The chain rule of calculus, applied to matrix operations, gives: for y = Wx, the gradient with respect to x is Wᵀ·(∂L/∂y). This is a mathematical consequence of how matrix derivatives work — the transpose is needed to match dimensions and correctly propagate the gradient through the linear transformation.</div>
+        </div>
+
+        <!-- Q10 -->
+        <div class="question-block" id="q10">
+          <div class="q-num">Question 10 of 10</div>
+          <div class="q-text">Consider this NumPy code. What does it compute?
+          <div class="q-code">a = np.array([3, 4])<br/>b = np.array([4, 3])<br/>result = np.dot(a, b) / (np.linalg.norm(a) * np.linalg.norm(b))</div>
+          </div>
+          <div class="options">
+            <button class="option-btn" onclick="selectOption(this,'q10','A','wrong')"><span class="option-key">A</span> The Euclidean distance between vectors a and b</button>
+            <button class="option-btn" onclick="selectOption(this,'q10','B','wrong')"><span class="option-key">B</span> The cross product of a and b</button>
+            <button class="option-btn" onclick="selectOption(this,'q10','C','correct')"><span class="option-key">C</span> The cosine similarity between a and b, which equals 0.96</button>
+            <button class="option-btn" onclick="selectOption(this,'q10','D','wrong')"><span class="option-key">D</span> The L1 norm of the combined vector</button>
+          </div>
+          <div class="feedback" id="fb-q10-correct correct">✅ <strong>Correct!</strong> This is cosine similarity. dot(a,b) = 3·4 + 4·3 = 24. ‖a‖ = ‖b‖ = 5. Cosine sim = 24/25 = 0.96. Even though a and b have swapped values, they're highly similar vectors pointing in nearly the same direction — just rotated slightly.</div>
+          <div class="feedback" id="fb-q10-wrong wrong">❌ <strong>Incorrect.</strong> This formula is cosine similarity: dot(a,b) / (‖a‖ · ‖b‖). Let's calculate: dot([3,4],[4,3]) = 12+12 = 24. ‖[3,4]‖ = 5, ‖[4,3]‖ = 5. Result = 24/25 = 0.96. Very similar vectors! Euclidean distance would be ‖a-b‖ = ‖[-1,1]‖ = √2 ≈ 1.41.</div>
+        </div>
+
+        <button class="exam-submit" id="submit-btn" onclick="submitExam()" disabled>
+          Answer all 10 questions to submit
+        </button>
+
+        <div class="exam-results" id="exam-results">
+          <div class="result-score" id="result-score"></div>
+          <div class="result-label" id="result-label"></div>
+          <div class="result-message" id="result-message"></div>
+          <div>
+            <a href="tutorial-02.html" class="result-next" id="next-link">Continue to Tutorial 02 →</a>
+          </div>
+          <div><button class="retry-btn" onclick="retryExam()">↺ Retry Exam</button></div>
+        </div>
+      </div>
+
+      <!-- NEXT TUTORIAL -->
+      <div class="next-tutorial">
+        <div class="next-info">
+          <div class="next-label">Up Next · Tutorial 02</div>
+          <div class="next-title">Statistics & Probability for AI</div>
+          <div class="next-desc">Distributions, Bayes' theorem, MLE, MAP — the language of uncertainty every AI engineer must speak fluently.</div>
+        </div>
+        <a href="tutorial-02.html" class="next-btn">Start Tutorial 02 →</a>
+      </div>
+
+    </main>
+  </div>
+
+  <script>
+    // ========== READING PROGRESS ==========
+    window.addEventListener('scroll', () => {
+      const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+      const scrolled = (window.scrollY / docHeight) * 100;
+      document.getElementById('progress-fill').style.width = Math.min(scrolled, 100) + '%';
+      document.getElementById('progress-text').textContent = Math.round(scrolled) + '% read';
+    });
+
+    // ========== EXAM LOGIC ==========
+    const answers = {};
+    const totalQ = 10;
+
+    function selectOption(btn, qId, choice, correctness) {
+      const block = document.getElementById(qId);
+      if (block.classList.contains('answered-correct') || block.classList.contains('answered-wrong')) return;
+
+      // Remove previous selection in this question
+      block.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+
+      if (correctness === 'correct') {
+        btn.classList.add('correct');
+        block.classList.add('answered-correct');
+        showFeedback(qId, 'correct');
+      } else {
+        btn.classList.add('wrong');
+        block.classList.add('answered-wrong');
+        // Highlight the correct one
+        block.querySelectorAll('.option-btn').forEach(b => {
+          if (b.getAttribute('onclick').includes(",'correct'")) b.classList.add('correct');
+        });
+        showFeedback(qId, 'wrong');
+      }
+
+      // Disable all options in this question
+      block.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+
+      answers[qId] = correctness === 'correct';
+      updateExamProgress();
+    }
+
+    function showFeedback(qId, type) {
+      // Hide all feedback for this question first
+      document.querySelectorAll(`[id^="fb-${qId}"]`).forEach(el => el.classList.remove('show'));
+      const fb = document.getElementById(`fb-${qId}-${type}`);
+      if (fb) { fb.className = `feedback ${type} show`; }
+    }
+
+    function updateExamProgress() {
+      const answered = Object.keys(answers).length;
+      const pct = (answered / totalQ) * 100;
+      document.getElementById('exam-progress').style.width = pct + '%';
+      document.getElementById('answered-count').textContent = `${answered} of ${totalQ} answered`;
+
+      const submitBtn = document.getElementById('submit-btn');
+      if (answered === totalQ) {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Submit Exam →';
+      }
+    }
+
+    function submitExam() {
+      const correct = Object.values(answers).filter(v => v).length;
+      const pct = Math.round((correct / totalQ) * 100);
+      const resultsEl = document.getElementById('exam-results');
+      const scoreEl = document.getElementById('result-score');
+      const labelEl = document.getElementById('result-label');
+      const messageEl = document.getElementById('result-message');
+
+      scoreEl.textContent = `${correct} / ${totalQ}`;
+
+      if (correct >= 9) {
+        scoreEl.style.color = '#6ee7b7';
+        labelEl.textContent = '🏆 Excellent! — ' + pct + '%';
+        messageEl.textContent = 'Outstanding performance! You have a strong grasp of linear algebra for AI. You\'re ready to move to Tutorial 02: Statistics & Probability.';
+      } else if (correct >= 7) {
+        scoreEl.style.color = '#67e8f9';
+        labelEl.textContent = '✅ Passed — ' + pct + '%';
+        messageEl.textContent = 'Good work! You understand the core concepts. Review any questions you missed, then proceed to Tutorial 02.';
+      } else if (correct >= 5) {
+        scoreEl.style.color = '#fcd34d';
+        labelEl.textContent = '⚠️ Borderline — ' + pct + '%';
+        messageEl.textContent = 'You have a partial understanding. I recommend reviewing Sections 1–3 again before moving on. Re-take the exam when ready.';
+      } else {
+        scoreEl.style.color = '#fca5a5';
+        labelEl.textContent = '❌ Needs Review — ' + pct + '%';
+        messageEl.textContent = 'This material needs more study. Go back through all sections carefully, run the Python examples, and re-take the exam. Linear algebra is the foundation — it\'s worth mastering before proceeding.';
+      }
+
+      resultsEl.classList.add('show');
+      resultsEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      document.getElementById('submit-btn').disabled = true;
+    }
+
+    function retryExam() {
+      // Reset all questions
+      for (let i = 1; i <= totalQ; i++) {
+        const block = document.getElementById(`q${i}`);
+        block.classList.remove('answered-correct', 'answered-wrong');
+        block.querySelectorAll('.option-btn').forEach(b => {
+          b.classList.remove('selected', 'correct', 'wrong');
+          b.disabled = false;
+        });
+        block.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+      }
+      // Reset state
+      for (const k in answers) delete answers[k];
+      document.getElementById('exam-progress').style.width = '0%';
+      document.getElementById('answered-count').textContent = '0 of 10 answered';
+      const submitBtn = document.getElementById('submit-btn');
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Answer all 10 questions to submit';
+      document.getElementById('exam-results').classList.remove('show');
+      document.getElementById('exam').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // TOC active state on scroll
+    const sections = document.querySelectorAll('[id^="sec"], #exam');
+    const tocLinks = document.querySelectorAll('.toc-link');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          tocLinks.forEach(l => l.classList.remove('active'));
+          const active = document.querySelector(`.toc-link[href="#${entry.target.id}"]`);
+          if (active) active.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    sections.forEach(s => observer.observe(s));
+  </script>
+
+</body>
+</html>

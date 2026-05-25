@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI Engineer Bootcamp — From Computer Engineer to AI Engineer</title>
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --surface2: #1f2937;
+      --border: #374151;
+      --accent: #6366f1;
+      --accent2: #8b5cf6;
+      --accent3: #06b6d4;
+      --green: #10b981;
+      --yellow: #f59e0b;
+      --red: #ef4444;
+      --text: #f9fafb;
+      --text2: #9ca3af;
+      --text3: #6b7280;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* HERO */
+    .hero {
+      background: linear-gradient(135deg, #0a0e1a 0%, #1a0a2e 50%, #0a1a2e 100%);
+      border-bottom: 1px solid var(--border);
+      padding: 60px 40px 50px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -100px; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-block;
+      background: rgba(99,102,241,0.15);
+      border: 1px solid rgba(99,102,241,0.4);
+      color: #a5b4fc;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 20px;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 0%, #a5b4fc 50%, #67e8f9 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--text2);
+      max-width: 650px;
+      margin: 0 auto 32px;
+    }
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      flex-wrap: wrap;
+    }
+    .stat { text-align: center; }
+    .stat-num {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+    .stat-label {
+      font-size: 0.8rem;
+      color: var(--text3);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* NAV */
+    .top-nav {
+      background: rgba(17,24,39,0.9);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      padding: 12px 40px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .nav-brand {
+      font-weight: 700;
+      font-size: 1rem;
+      background: linear-gradient(90deg, var(--accent), var(--accent3));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-right: auto;
+    }
+    .nav-link {
+      color: var(--text2);
+      text-decoration: none;
+      font-size: 0.85rem;
+      transition: color 0.2s;
+    }
+    .nav-link:hover { color: var(--text); }
+
+    /* MAIN */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 24px; }
+
+    /* PROFESSOR NOTE */
+    .professor-note {
+      background: linear-gradient(135deg, rgba(99,102,241,0.08), rgba(139,92,246,0.08));
+      border: 1px solid rgba(99,102,241,0.25);
+      border-left: 4px solid var(--accent);
+      border-radius: 12px;
+      padding: 24px 28px;
+      margin: 40px 0;
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .prof-avatar {
+      width: 54px; height: 54px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+    .prof-text h3 { font-size: 1rem; margin-bottom: 6px; color: #a5b4fc; }
+    .prof-text p { font-size: 0.92rem; color: var(--text2); }
+
+    /* PHASE HEADER */
+    .phases { margin: 40px 0; }
+    .phase-block { margin-bottom: 40px; }
+    .phase-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 20px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .phase-num {
+      width: 42px; height: 42px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 800;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+    .phase-info h2 { font-size: 1.2rem; }
+    .phase-info p { font-size: 0.85rem; color: var(--text2); margin-top: 2px; }
+    .phase-duration {
+      margin-left: auto;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text2);
+      font-size: 0.78rem;
+      padding: 4px 10px;
+      border-radius: 6px;
+    }
+
+    /* TUTORIAL CARDS */
+    .tutorials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+    .tutorial-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      text-decoration: none;
+      color: var(--text);
+      transition: all 0.2s;
+      display: block;
+      position: relative;
+      overflow: hidden;
+    }
+    .tutorial-card:hover {
+      border-color: var(--accent);
+      background: var(--surface2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 24px rgba(99,102,241,0.15);
+    }
+    .tutorial-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .tutorial-card:hover::before { opacity: 1; }
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    .card-num {
+      font-size: 0.75rem;
+      color: var(--text3);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+    .card-tag {
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+      font-weight: 600;
+    }
+    .card-title { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+    .card-desc { font-size: 0.83rem; color: var(--text2); margin-bottom: 14px; }
+    .card-footer {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+    }
+    .card-meta {
+      font-size: 0.75rem;
+      color: var(--text3);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .card-status {
+      margin-left: auto;
+      font-size: 0.72rem;
+      padding: 3px 8px;
+      border-radius: 4px;
+    }
+
+    /* Color themes per phase */
+    .phase-1 .phase-num { background: rgba(99,102,241,0.15); color: #a5b4fc; }
+    .phase-1 .card-tag { background: rgba(99,102,241,0.12); color: #a5b4fc; }
+    .phase-2 .phase-num { background: rgba(6,182,212,0.15); color: #67e8f9; }
+    .phase-2 .card-tag { background: rgba(6,182,212,0.12); color: #67e8f9; }
+    .phase-3 .phase-num { background: rgba(16,185,129,0.15); color: #6ee7b7; }
+    .phase-3 .card-tag { background: rgba(16,185,129,0.12); color: #6ee7b7; }
+    .phase-4 .phase-num { background: rgba(245,158,11,0.15); color: #fcd34d; }
+    .phase-4 .card-tag { background: rgba(245,158,11,0.12); color: #fcd34d; }
+    .phase-5 .phase-num { background: rgba(239,68,68,0.15); color: #fca5a5; }
+    .phase-5 .card-tag { background: rgba(239,68,68,0.12); color: #fca5a5; }
+    .phase-6 .phase-num { background: rgba(139,92,246,0.15); color: #c4b5fd; }
+    .phase-6 .card-tag { background: rgba(139,92,246,0.12); color: #c4b5fd; }
+
+    .status-available { background: rgba(16,185,129,0.1); color: #6ee7b7; }
+    .status-soon { background: rgba(245,158,11,0.1); color: #fcd34d; }
+    .status-locked { background: rgba(107,114,128,0.1); color: #6b7280; }
+
+    /* TIMELINE */
+    .timeline {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      margin: 40px 0;
+    }
+    .timeline h2 {
+      font-size: 1.2rem;
+      margin-bottom: 24px;
+      color: var(--text);
+    }
+    .timeline-grid {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      gap: 8px;
+    }
+    .week-col { text-align: center; }
+    .week-label {
+      font-size: 0.72rem;
+      color: var(--text3);
+      margin-bottom: 8px;
+      font-weight: 600;
+    }
+    .week-block {
+      padding: 8px 4px;
+      border-radius: 8px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+
+    /* PREREQUISITES */
+    .prereq {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      margin: 0 0 40px;
+    }
+    .prereq h2 { font-size: 1.2rem; margin-bottom: 20px; }
+    .prereq-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+    .prereq-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--surface2);
+      padding: 12px 16px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+    }
+    .prereq-icon { font-size: 1.1rem; }
+
+    /* FOOTER */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 40px;
+      text-align: center;
+      color: var(--text3);
+      font-size: 0.82rem;
+      margin-top: 60px;
+    }
+
+    @media (max-width: 600px) {
+      .hero { padding: 40px 20px 32px; }
+      .top-nav { padding: 12px 20px; }
+      .hero-stats { gap: 24px; }
+      .timeline-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <nav class="top-nav">
+    <span class="nav-brand">⚡ AI Engineer Bootcamp</span>
+    <a href="#schedule" class="nav-link">Schedule</a>
+    <a href="#tutorials" class="nav-link">Tutorials</a>
+    <a href="#prereqs" class="nav-link">Prerequisites</a>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-badge">🎓 Tailored for Computer Engineers</div>
+    <h1>From Computer Engineer<br/>to AI Engineer</h1>
+    <p>A structured, professor-guided journey through the fundamentals and frontier of Artificial Intelligence — built on your existing engineering foundation.</p>
+    <div class="hero-stats">
+      <div class="stat">
+        <div class="stat-num">20</div>
+        <div class="stat-label">Tutorials</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">6</div>
+        <div class="stat-label">Phases</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">16</div>
+        <div class="stat-label">Weeks</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">20</div>
+        <div class="stat-label">Exams</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <div class="professor-note">
+      <div class="prof-avatar">👨‍🏫</div>
+      <div class="prof-text">
+        <h3>A Note from Your Professor</h3>
+        <p>Welcome, Bashar. As a Computer Engineer you already understand hardware, algorithms, data structures, and systems programming — these are enormous advantages. This course skips basic CS theory and dives straight into AI-specific mathematics, modern ML frameworks, and production deployment. We move fast, we go deep, and every tutorial ends with an exam to solidify your knowledge. Let's build something great.</p>
+      </div>
+    </div>
+
+    <!-- PREREQUISITES -->
+    <div class="prereq" id="prereqs">
+      <h2>✅ Your Starting Advantages (Prerequisites You Already Have)</h2>
+      <div class="prereq-grid">
+        <div class="prereq-item"><span class="prereq-icon">💻</span> C / C++ Programming</div>
+        <div class="prereq-item"><span class="prereq-icon">🔢</span> Discrete Mathematics</div>
+        <div class="prereq-item"><span class="prereq-icon">🧮</span> Calculus I & II</div>
+        <div class="prereq-item"><span class="prereq-icon">📊</span> Basic Linear Algebra</div>
+        <div class="prereq-item"><span class="prereq-icon">⚙️</span> Data Structures & Algorithms</div>
+        <div class="prereq-item"><span class="prereq-icon">🖥️</span> Computer Architecture</div>
+        <div class="prereq-item"><span class="prereq-icon">🌐</span> Computer Networks Basics</div>
+        <div class="prereq-item"><span class="prereq-icon">🐧</span> Linux / Command Line</div>
+      </div>
+    </div>
+
+    <!-- SCHEDULE OVERVIEW -->
+    <div class="timeline" id="schedule">
+      <h2>📅 16-Week Course Schedule</h2>
+      <div class="timeline-grid">
+        <div class="week-col">
+          <div class="week-label">WEEKS 1–2</div>
+          <div class="week-block" style="background:rgba(99,102,241,0.15);color:#a5b4fc;">
+            Phase 1<br/>Math Foundations
+          </div>
+        </div>
+        <div class="week-col">
+          <div class="week-label">WEEKS 3–4</div>
+          <div class="week-block" style="background:rgba(6,182,212,0.15);color:#67e8f9;">
+            Phase 2<br/>Python & Data
+          </div>
+        </div>
+        <div class="week-col">
+          <div class="week-label">WEEKS 5–7</div>
+          <div class="week-block" style="background:rgba(16,185,129,0.15);color:#6ee7b7;">
+            Phase 3<br/>ML Fundamentals
+          </div>
+        </div>
+        <div class="week-col">
+          <div class="week-label">WEEKS 8–11</div>
+          <div class="week-block" style="background:rgba(245,158,11,0.15);color:#fcd34d;">
+            Phase 4<br/>Deep Learning
+          </div>
+        </div>
+        <div class="week-col">
+          <div class="week-label">WEEKS 12–14</div>
+          <div class="week-block" style="background:rgba(239,68,68,0.15);color:#fca5a5;">
+            Phase 5<br/>Modern AI / LLMs
+          </div>
+        </div>
+        <div class="week-col">
+          <div class="week-label">WEEKS 15–16</div>
+          <div class="week-block" style="background:rgba(139,92,246,0.15);color:#c4b5fd;">
+            Phase 6<br/>MLOps & Prod
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TUTORIALS -->
+    <div class="phases" id="tutorials">
+
+      <!-- PHASE 1 -->
+      <div class="phase-block phase-1">
+        <div class="phase-header">
+          <div class="phase-num">1</div>
+          <div class="phase-info">
+            <h2>Mathematical Foundations for AI</h2>
+            <p>Rebuild your math intuition specifically for ML — vectors, probability, and optimization</p>
+          </div>
+          <div class="phase-duration">⏱ Weeks 1–2</div>
+        </div>
+        <div class="tutorials-grid">
+          <a href="tutorial-01.html" class="tutorial-card">
+            <div class="card-top">
+              <span class="card-num">TUTORIAL 01</span>
+              <span class="card-tag">Math</span>
+            </div>
+            <div class="card-title">Linear Algebra for AI</div>
+            <div class="card-desc">Vectors, matrices, dot products, matrix multiplication, eigenvalues & eigenvectors, SVD — the engine behind neural networks.</div>
+            <div class="card-footer">
+              <span class="card-meta">📖 ~2h read</span>
+              <span class="card-meta">✏️ 10-question exam</span>
+              <span class="card-status status-available">Available</span>
+            </div>
+          </a>
+          <a href="tutorial-02.html" class="tutorial-card">
+            <div class="card-top">
+              <span class="card-num">TUTORIAL 02</span>
+              <span class="card-tag">Math</span>
+            </div>
+            <div class="card-title">Statistics & Probability for AI</div>
+            <div class="card-desc">Probability distributions, Bayes' theorem, hypothesis testing, MLE, MAP — the language of uncertainty in ML.</div>
+            <div class="card-footer">
+              <span class="card-meta">📖 ~2h read</span>
+              <span class="card-meta">✏️ 10-question exam</span>
+              <span class="card-status status-available">Available</span>
+            </div>
+          </a>
+          <a href="tutorial-03.html" class="tutorial-card">
+            <div class="card-top">
+              <span class="card-num">TUTORIAL 03</span>
+              <span class="card-tag">Math</span>
+            </div>
+            <div class="card-title">Calculus & Optimization</div>
+            <div class="card-desc">Partial derivatives, chain rule, gradient descent, learning rate schedules — how models actually learn.</div>
+            <div class="card-footer">
+              <span class="card-meta">📖 ~1.5h read</span>
+              <span class="card-meta">✏️ 10-question exam</span>
+              <span class="card-status status-soon">Coming Soon</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- PHASE 2 -->
+      <div class="phase-block phase-2">
+        <div class="phase-header">
+          <div class="phase-num">2</div>
+          <div class="phase-info">
+            <h2>Python & Data Science Stack</h2>
+            <p>Master the AI engineer's primary toolkit: Python, NumPy, Pandas, and visualization</p>
+          </div>
+          <div class="phase-duration">⏱ Weeks 3–4</div>
+        </div>
+        <div class="tutorials-grid">
+          <a href="tutorial-04.html" class="tutorial-card">
+            <div class="card-top">
+              <span class="card-num">TUTORIAL 04</span>
+              <span class="card-tag">Python</span>
+            </div>
+            <div class="card-title">Python for AI Engineers</div>
+            <div class="card-desc">Python essentials, NumPy arrays, broadcasting, Pandas DataFrames — from a C++ engineer's perspective.</div>
+            <div class="card-footer">
+              <span class="card-meta">📖 ~2h read</span>
+              <span class="card-meta">✏️ 10-question exam</span>
+              <span class="card-status status-available">Available</span>
+            </div>
+          </a>
+          <a href="#" class="tutorial-card">
+            <div class="card-top">
+              <span class="card-num">TUTORIAL 05</span>
+              <span class="card-tag">Python</span>
+            </div>
+            <div class="card-title">Data Wrangling & Visualization</div>
+            <div class="card-desc">Feature engineering, EDA, Matplotlib, Seaborn — turn raw data into insight.</div>
+            <div class="card-footer">
+              <span class="card-meta">📖 ~1.5h read</span>
+              <span class="card-meta">✏️ 10-question exam</span>
+              <span class="card-status status-soon">Coming Soon</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- PHASE 3 -->
+      <div class="phase-block phase-3">
+        <div class="phase-header">
+          <div class="phase-num">3</div>
+          <div class="phase-info">
+            <h2>Machine Learning Fundamentals</h2>
+            <p>Classical ML algorithms — the foundation every AI engineer must deeply understand</p>
+          </div>
+          <div class="phase-duration">⏱ Weeks 5–7</div>
+        </div>
+        <div class="tutorials-grid">
+          <a href="#" class="tutorial-card">
+            <div class="card-top">
+              <span class="card-num">TUTORIAL 06</span>
+              <span class="card-tag">ML</span>
+            </div>
+            <div class="card-title">Introduction to Machine Learning</div>
+            <div class="card-desc">Supervised vs unsupervised vs RL, bias-variance tradeoff, overfitting, regularization.</div>
+            <div class="card-footer">
+              <span class="card-meta">📖 ~1.5h read</span>
+              <span class="card-meta">✏️ 10-question exam</span>
+              <span class="card-status status-soon">Coming Soon</span>
+            </div>
+          </a>
+          <a href="#" class="tutorial-card">
+            <div class="card-top">
+              <span class="card-num">TUTORIAL 07</span>
+              <span class="card-tag">ML</span>
+            </div>
+            <div class="card-title">Supervised Learning Algorithms</div>
+            <div class="card-desc">Linear/logistic regression, decision trees, random forests, SVMs, k-NN with scikit-learn.</div>
+            <div class="card-footer">
+              <span class="card-meta">📖 ~2h read</span>
+              <span class="card-meta">✏️ 10-question exam</span>
+              <span class="card-status status-soon">Coming Soon</span>
+            </div>
+          </a>
+          <a href="#" class="tutorial-card">
+            <div class="card-top">
+              <span class="card-num">TUTORIAL 08</span>
+              <span class="card-tag">ML</span>
+            </div>
+            <div class="card-title">Model Evaluation & Selection</div>
+            <div class="card-desc">Cross-validation, metrics (accuracy, F1, AUC-ROC), hyperparameter tuning, pipelines.</div>
+            <div class="card-footer">
+              <span class="card-meta">📖 ~1.5h read</span>
+              <span class="card-meta">✏️ 10-question exam</span>
+              <span class="card-status status-soon">Coming Soon</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- PHASE 4 -->
+      <div class="phase-block phase-4">
+        <div class="phase-header">
+          <div class="phase-num">4</div>
+          <div class="phase-info">
+            <h2>Deep Learning</h2>
+            <p>Neural networks from scratch to cutting-edge architectures using PyTorch</p>
+          </div>
+          <div class="phase-duration">⏱ Weeks 8–11</div>
+        </div>
+        <div class="tutorials-grid">
+          <a href="#" class="tutorial-card">
+            <div class="card-top">
+              <span class="card-num">TUTORIAL 09</span>
+              <span class="card-tag">Deep Learning</span>
+            </div>
+            <div class="card-title">Neural Networks from Scratch</div>
+            <div class="card-desc">Perceptrons, activation functions, forward pass, backpropagation, and implementing in PyTorch.</div>
+            <div class="card-footer">
+              <span class="card-meta">📖 ~2.5h read</span>
+              <span class="card-meta">✏️ 10-question exam</span>
+              <span class="card-status status-soon">Coming Soon</span>
+            </div>
+          </a>
+          <a href="#" class="tutorial-card">
+            <div class="card-top">
+              <span class="card-num">TUTORIAL 10</span>
+              <span class="card-tag">Deep Learning</span>
+            </div>
+            <div class="card-title">Convolutional Neural Networks</div>
+            <div class="card-desc">Convolutions, pooling, ResNet, transfer learning — computer vision fundamentals.</div>
+            <div class="card-footer">
+              <span class="card-meta">📖 ~2h read</span>
+              <span class="card-meta">✏️ 10-question exam</span>
+              <span class="card-status status-soon">Coming Soon</span>
+            </div>
+          </a>
+          <a href="#" class="tutorial-card">
+            <div class="card-top">
+              <span class="card-num">TUTORIAL 11</span>
+              <span class="card-tag">Deep Learning</span>
+            </div>
+            <div class="card-title">Recurrent Networks & Sequence Models</div>
+            <div class="card-desc">RNNs, LSTMs, GRUs, seq2seq — understanding temporal data and sequence modeling.</div>
+            <div class="card-footer">
+              <span class="card-meta">📖 ~2h read</span>
+              <span class="card-meta">✏️ 10-question exam</span>
+              <span class="card-status status-soon">Coming Soon</span>
+            </div>
+          </a>
+          <a href="#" class="tutorial-card">
+            <div class="card-top">
+              <span class="card-num">TUTORIAL 12</span>
+              <span class="card-tag">Deep Learning</span>
+            </div>
+            <div class="card-title">Transformers & Attention Mechanism</div>
+            <div class="card-desc">Self-attention, multi-head attention, positional encoding — the architecture that changed everything.</div>
+            <div class="card-footer">
+              <span class="card-meta">📖 ~3h read</span>
+              <span class="card-meta">✏️ 10-question exam</span>
+              <span class="card-status status-soon">Coming Soon</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- PHASE 5 -->
+      <div class="phase-block phase-5">
+        <div class="phase-header">
+          <div class="phase-num">5</div>
+          <div class="phase-info">
+            <h2>Modern AI & Large Language Models</h2>
+            <p>LLMs, prompt engineering, RAG, fine-tuning — the frontier of applied AI</p>
+          </div>
+          <div class="phase-duration">⏱ Weeks 12–14</div>
+        </div>
+        <div class="tutorials-grid">
+          <a href="#" class="tutorial-card">
+            <div class="card-top">
+              <span class="card-num">TUTORIAL 13</span>
+              <span class="card-tag">LLMs</span>
+            </div>
+            <div class="card-title">Large Language Models Deep Dive</div>
+            <div class="card-desc">GPT architecture, tokenization, pre-training, RLHF, scaling laws — how LLMs really work.</div>
+            <div class="card-footer">
+              <span class="card-meta">📖 ~3h read</span>
+              <span class="card-meta">✏️ 10-question exam</span>
+              <span class="card-status status-soon">Coming Soon</span>
+            </div>
+          </a>
+          <a href="#" class="tutorial-card">
+            <div class="card-top">
+              <span class="card-num">TUTORIAL 14</span>
+              <span class="card-tag">LLMs</span>
+            </div>
+            <div class="card-title">Prompt Engineering & Fine-tuning</div>
+            <div class="card-desc">Zero-shot, few-shot, chain-of-thought, LoRA fine-tuning, PEFT — getting the most from any model.</div>
+            <div class="card-footer">
+              <span class="card-meta">📖 ~2h read</span>
+              <span class="card-meta">✏️ 10-question exam</span>
+              <span class="card-status status-soon">Coming Soon</span>
+            </div>
+          </a>
+          <a href="#" class="tutorial-card">
+            <div class="card-top">
+              <span class="card-num">TUTORIAL 15</span>
+              <span class="card-tag">LLMs</span>
+            </div>
+            <div class="card-title">RAG & Vector Databases</div>
+            <div class="card-desc">Embeddings, FAISS, Pinecone, retrieval-augmented generation — building knowledge-grounded AI apps.</div>
+            <div class="card-footer">
+              <span class="card-meta">📖 ~2h read</span>
+              <span class="card-meta">✏️ 10-question exam</span>
+              <span class="card-status status-soon">Coming Soon</span>
+            </div>
+          </a>
+          <a href="#" class="tutorial-card">
+            <div class="card-top">
+              <span class="card-num">TUTORIAL 16</span>
+              <span class="card-tag">LLMs</span>
+            </div>
+            <div class="card-title">AI Agents & Tool Use</div>
+            <div class="card-desc">ReAct, function calling, LangChain, building autonomous AI agents that use tools and APIs.</div>
+            <div class="card-footer">
+              <span class="card-meta">📖 ~2h read</span>
+              <span class="card-meta">✏️ 10-question exam</span>
+              <span class="card-status status-soon">Coming Soon</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+      <!-- PHASE 6 -->
+      <div class="phase-block phase-6">
+        <div class="phase-header">
+          <div class="phase-num">6</div>
+          <div class="phase-info">
+            <h2>MLOps & Production AI</h2>
+            <p>Deploy, monitor, and maintain AI systems at scale — the engineering side of AI</p>
+          </div>
+          <div class="phase-duration">⏱ Weeks 15–16</div>
+        </div>
+        <div class="tutorials-grid">
+          <a href="#" class="tutorial-card">
+            <div class="card-top">
+              <span class="card-num">TUTORIAL 17</span>
+              <span class="card-tag">MLOps</span>
+            </div>
+            <div class="card-title">MLOps Fundamentals</div>
+            <div class="card-desc">ML pipelines, experiment tracking (MLflow), versioning, CI/CD for ML systems.</div>
+            <div class="card-footer">
+              <span class="card-meta">📖 ~2h read</span>
+              <span class="card-meta">✏️ 10-question exam</span>
+              <span class="card-status status-soon">Coming Soon</span>
+            </div>
+          </a>
+          <a href="#" class="tutorial-card">
+            <div class="card-top">
+              <span class="card-num">TUTORIAL 18</span>
+              <span class="card-tag">MLOps</span>
+            </div>
+            <div class="card-title">Model Deployment & Serving</div>
+            <div class="card-desc">FastAPI, Docker, Kubernetes, TorchServe, cloud deployment (AWS/GCP), latency optimization.</div>
+            <div class="card-footer">
+              <span class="card-meta">📖 ~2h read</span>
+              <span class="card-meta">✏️ 10-question exam</span>
+              <span class="card-status status-soon">Coming Soon</span>
+            </div>
+          </a>
+          <a href="#" class="tutorial-card">
+            <div class="card-top">
+              <span class="card-num">TUTORIAL 19</span>
+              <span class="card-tag">MLOps</span>
+            </div>
+            <div class="card-title">Model Monitoring & Data Drift</div>
+            <div class="card-desc">Observability, drift detection, retraining triggers, A/B testing ML models in production.</div>
+            <div class="card-footer">
+              <span class="card-meta">📖 ~1.5h read</span>
+              <span class="card-meta">✏️ 10-question exam</span>
+              <span class="card-status status-soon">Coming Soon</span>
+            </div>
+          </a>
+          <a href="#" class="tutorial-card">
+            <div class="card-top">
+              <span class="card-num">TUTORIAL 20</span>
+              <span class="card-tag">Capstone</span>
+            </div>
+            <div class="card-title">Capstone: End-to-End AI System</div>
+            <div class="card-desc">Build a complete AI application: data pipeline → model training → deployment → monitoring → iteration.</div>
+            <div class="card-footer">
+              <span class="card-meta">📖 ~3h project</span>
+              <span class="card-meta">🏆 Final project</span>
+              <span class="card-status status-soon">Coming Soon</span>
+            </div>
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <footer>
+    <p>AI Engineer Bootcamp · Built for Computer Engineers · 20 Tutorials · 16 Weeks</p>
+    <p style="margin-top:8px;">Start with <a href="tutorial-01.html" style="color:#a5b4fc;">Tutorial 01: Linear Algebra for AI →</a></p>
+  </footer>
+
+</body>
+</html>

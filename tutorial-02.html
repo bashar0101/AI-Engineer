@@ -1,0 +1,751 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tutorial 02: Statistics & Probability for AI — AI Engineer Bootcamp</title>
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --surface2: #1f2937;
+      --surface3: #263042;
+      --border: #374151;
+      --accent: #06b6d4;
+      --accent2: #0891b2;
+      --accent3: #6366f1;
+      --green: #10b981;
+      --yellow: #f59e0b;
+      --red: #ef4444;
+      --text: #f9fafb;
+      --text2: #9ca3af;
+      --text3: #6b7280;
+      --code-bg: #0d1117;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; line-height: 1.7; }
+
+    .top-nav { background: rgba(17,24,39,0.95); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); padding: 14px 40px; display: flex; align-items: center; gap: 16px; position: sticky; top: 0; z-index: 100; }
+    .nav-back { color: var(--text2); text-decoration: none; font-size: 0.85rem; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .nav-back:hover { color: var(--text); }
+    .nav-sep { color: var(--border); }
+    .nav-current { font-size: 0.85rem; color: var(--text); font-weight: 600; }
+    .nav-progress { margin-left: auto; display: flex; align-items: center; gap: 8px; font-size: 0.78rem; color: var(--text3); }
+    .progress-bar { width: 120px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); width: 5%; transition: width 0.5s; }
+
+    .tutorial-hero { background: linear-gradient(135deg, #020f1a, #0a1a1e, #0a0e1a); border-bottom: 1px solid var(--border); padding: 50px 40px; }
+    .tutorial-hero .container { max-width: 860px; margin: 0 auto; }
+    .tut-meta { display: flex; gap: 16px; align-items: center; margin-bottom: 20px; flex-wrap: wrap; }
+    .tut-badge { background: rgba(6,182,212,0.15); border: 1px solid rgba(6,182,212,0.3); color: #67e8f9; padding: 4px 12px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; }
+    .tut-phase { color: var(--text3); font-size: 0.82rem; }
+    .tutorial-hero h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; margin-bottom: 14px; line-height: 1.2; }
+    .tutorial-hero .subtitle { font-size: 1.05rem; color: var(--text2); margin-bottom: 24px; }
+    .tut-info-row { display: flex; gap: 24px; flex-wrap: wrap; }
+    .tut-info-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text2); }
+
+    .content-layout { max-width: 1060px; margin: 0 auto; padding: 40px 24px; display: grid; grid-template-columns: 220px 1fr; gap: 40px; align-items: start; }
+
+    .sidebar { position: sticky; top: 70px; }
+    .toc { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; }
+    .toc h3 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 14px; }
+    .toc-list { list-style: none; }
+    .toc-item { margin-bottom: 2px; }
+    .toc-link { display: block; padding: 6px 8px; border-radius: 6px; color: var(--text2); text-decoration: none; font-size: 0.82rem; transition: all 0.15s; line-height: 1.3; }
+    .toc-link:hover { background: var(--surface2); color: var(--text); }
+    .toc-link.active { background: rgba(6,182,212,0.12); color: #67e8f9; }
+
+    .lesson-content { min-width: 0; }
+    .lesson-section { margin-bottom: 52px; }
+    .section-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); font-weight: 700; margin-bottom: 8px; }
+    h2.section-title { font-size: 1.7rem; font-weight: 800; margin-bottom: 20px; line-height: 1.2; }
+    h3.subsection { font-size: 1.15rem; font-weight: 700; margin: 32px 0 12px; color: #e2e8f0; padding-left: 12px; border-left: 3px solid var(--accent); }
+    p { margin-bottom: 14px; color: var(--text2); font-size: 0.95rem; }
+    strong { color: var(--text); }
+
+    .math-block { background: var(--code-bg); border: 1px solid var(--border); border-left: 3px solid var(--accent); border-radius: 10px; padding: 20px 24px; margin: 20px 0; overflow-x: auto; }
+    .math-block .math-title { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: #67e8f9; margin-bottom: 10px; font-weight: 600; }
+    .math-formula { font-family: 'Courier New', monospace; font-size: 1rem; color: #e2e8f0; line-height: 1.8; }
+    .math-formula .highlight { color: #67e8f9; }
+    .math-formula .comment { color: var(--text3); font-style: italic; }
+
+    .code-block { background: var(--code-bg); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin: 20px 0; }
+    .code-header { background: #161b22; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border); }
+    .code-lang { font-size: 0.75rem; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+    .code-body { padding: 20px; overflow-x: auto; }
+    pre { font-family: 'Courier New', Consolas, monospace; font-size: 0.87rem; line-height: 1.6; color: #e2e8f0; }
+    .py-kw { color: #ff7b72; } .py-fn { color: #d2a8ff; } .py-str { color: #a5d6ff; } .py-num { color: #79c0ff; } .py-cm { color: #8b949e; font-style: italic; }
+
+    .callout { border-radius: 10px; padding: 18px 20px; margin: 20px 0; display: flex; gap: 14px; }
+    .callout-icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
+    .callout-body h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 6px; }
+    .callout-body p { font-size: 0.87rem; margin-bottom: 0; }
+    .callout.info { background: rgba(6,182,212,0.08); border: 1px solid rgba(6,182,212,0.2); }
+    .callout.info .callout-body h4 { color: #67e8f9; }
+    .callout.tip { background: rgba(16,185,129,0.08); border: 1px solid rgba(16,185,129,0.2); }
+    .callout.tip .callout-body h4 { color: #6ee7b7; }
+    .callout.important { background: rgba(6,182,212,0.06); border: 1px solid rgba(6,182,212,0.2); }
+    .callout.important .callout-body h4 { color: #67e8f9; }
+
+    .ai-connection { background: linear-gradient(135deg, rgba(6,182,212,0.06), rgba(16,185,129,0.06)); border: 1px solid rgba(6,182,212,0.2); border-radius: 12px; padding: 20px 24px; margin: 20px 0; }
+    .ai-title { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: #67e8f9; font-weight: 700; margin-bottom: 10px; }
+    .ai-connection p { color: var(--text2); font-size: 0.9rem; }
+
+    .analogy-box { background: linear-gradient(135deg, rgba(6,182,212,0.04), rgba(99,102,241,0.04)); border: 1px solid rgba(6,182,212,0.15); border-radius: 12px; padding: 20px 24px; margin: 20px 0; }
+    .analogy-title { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: #67e8f9; font-weight: 700; margin-bottom: 10px; }
+    .analogy-box p { color: var(--text2); font-size: 0.9rem; }
+
+    .key-terms { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin: 20px 0; }
+    .term-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+    .term-name { font-size: 0.9rem; font-weight: 700; color: #67e8f9; margin-bottom: 6px; font-family: monospace; }
+    .term-def { font-size: 0.82rem; color: var(--text2); }
+
+    .section-divider { border: none; border-top: 1px solid var(--border); margin: 52px 0; }
+
+    /* EXAM */
+    #exam { background: var(--surface); border: 1px solid var(--border); border-radius: 20px; padding: 40px; margin-top: 60px; }
+    .exam-header { text-align: center; margin-bottom: 40px; }
+    .exam-badge { display: inline-block; background: linear-gradient(135deg, rgba(6,182,212,0.2), rgba(99,102,241,0.2)); border: 1px solid rgba(6,182,212,0.3); color: #67e8f9; padding: 6px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; letter-spacing: 0.05em; margin-bottom: 14px; }
+    .exam-header h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 10px; }
+    .exam-header p { font-size: 0.92rem; color: var(--text2); }
+    .exam-progress-bar { background: var(--surface2); border-radius: 4px; height: 6px; margin: 20px 0 30px; overflow: hidden; }
+    .exam-progress-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); transition: width 0.4s; width: 0%; }
+    .exam-progress-label { font-size: 0.78rem; color: var(--text3); text-align: right; margin-bottom: 6px; }
+    .question-block { margin-bottom: 32px; padding: 24px; background: var(--surface2); border: 1px solid var(--border); border-radius: 14px; transition: border-color 0.2s; }
+    .question-block.answered-correct { border-color: rgba(16,185,129,0.5); }
+    .question-block.answered-wrong { border-color: rgba(239,68,68,0.3); }
+    .q-num { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); font-weight: 600; margin-bottom: 8px; }
+    .q-text { font-size: 0.98rem; font-weight: 600; color: var(--text); margin-bottom: 18px; line-height: 1.5; }
+    .q-code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 16px; font-family: monospace; font-size: 0.85rem; color: #67e8f9; margin-bottom: 16px; line-height: 1.6; }
+    .options { display: flex; flex-direction: column; gap: 10px; }
+    .option-btn { background: var(--surface3); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; color: var(--text2); font-size: 0.9rem; cursor: pointer; transition: all 0.15s; text-align: left; display: flex; align-items: center; gap: 12px; }
+    .option-btn:hover:not(:disabled) { border-color: var(--accent); color: var(--text); background: rgba(6,182,212,0.08); }
+    .option-btn.correct { border-color: var(--green); background: rgba(16,185,129,0.1); color: #6ee7b7; }
+    .option-btn.wrong { border-color: var(--red); background: rgba(239,68,68,0.08); color: #fca5a5; }
+    .option-key { width: 26px; height: 26px; border-radius: 6px; background: var(--surface); border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 700; flex-shrink: 0; }
+    .option-btn.correct .option-key { background: rgba(16,185,129,0.2); border-color: var(--green); }
+    .option-btn.wrong .option-key { background: rgba(239,68,68,0.15); border-color: var(--red); }
+    .feedback { margin-top: 14px; padding: 14px 16px; border-radius: 8px; font-size: 0.87rem; display: none; }
+    .feedback.show { display: block; }
+    .feedback.correct { background: rgba(16,185,129,0.1); border: 1px solid rgba(16,185,129,0.25); color: #6ee7b7; }
+    .feedback.wrong { background: rgba(239,68,68,0.08); border: 1px solid rgba(239,68,68,0.2); color: #fca5a5; }
+    .exam-submit { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--accent), var(--accent3)); border: none; border-radius: 12px; color: white; font-size: 1rem; font-weight: 700; cursor: pointer; transition: opacity 0.2s, transform 0.1s; margin-top: 10px; }
+    .exam-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+    .exam-submit:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+    .exam-results { display: none; text-align: center; padding: 40px; background: var(--surface2); border: 1px solid var(--border); border-radius: 16px; margin-top: 24px; }
+    .exam-results.show { display: block; }
+    .result-score { font-size: 3.5rem; font-weight: 800; margin-bottom: 8px; }
+    .result-label { font-size: 1.1rem; color: var(--text2); margin-bottom: 20px; }
+    .result-message { font-size: 0.95rem; color: var(--text2); max-width: 500px; margin: 0 auto 24px; }
+    .result-next { display: inline-block; background: linear-gradient(135deg, var(--accent), var(--accent3)); color: white; text-decoration: none; padding: 12px 28px; border-radius: 10px; font-weight: 700; font-size: 0.95rem; }
+    .result-next:hover { opacity: 0.9; }
+    .retry-btn { background: var(--surface); border: 1px solid var(--border); color: var(--text2); padding: 12px 28px; border-radius: 10px; font-size: 0.9rem; cursor: pointer; margin-top: 12px; transition: all 0.2s; }
+    .retry-btn:hover { border-color: var(--accent); color: var(--text); }
+    .next-tutorial { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; margin-top: 40px; display: flex; align-items: center; gap: 20px; }
+    .next-info { flex: 1; }
+    .next-label { font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); margin-bottom: 6px; }
+    .next-title { font-size: 1.05rem; font-weight: 700; margin-bottom: 4px; }
+    .next-desc { font-size: 0.83rem; color: var(--text2); }
+    .next-btn { background: linear-gradient(135deg, var(--accent), var(--accent3)); color: white; text-decoration: none; padding: 12px 24px; border-radius: 10px; font-weight: 700; font-size: 0.88rem; white-space: nowrap; }
+    .next-btn:hover { opacity: 0.9; }
+    @media (max-width: 768px) { .content-layout { grid-template-columns: 1fr; } .sidebar { display: none; } #exam { padding: 24px 20px; } .tutorial-hero { padding: 36px 20px; } }
+  </style>
+</head>
+<body>
+
+<nav class="top-nav">
+  <a href="index.html" class="nav-back">← Course Home</a>
+  <span class="nav-sep">/</span>
+  <span class="nav-current">Tutorial 02: Statistics & Probability for AI</span>
+  <div class="nav-progress">
+    <span id="progress-text">0% read</span>
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+  </div>
+</nav>
+
+<div class="tutorial-hero">
+  <div class="container">
+    <div class="tut-meta">
+      <span class="tut-badge">📊 Tutorial 02</span>
+      <span class="tut-phase">Phase 1 · Mathematical Foundations · Week 1</span>
+    </div>
+    <h1>Statistics & Probability for AI</h1>
+    <p class="subtitle">Distributions, Bayes' theorem, maximum likelihood, and the mathematics of uncertainty — because every prediction a model makes is really a probability statement.</p>
+    <div class="tut-info-row">
+      <div class="tut-info-item">📖 ~2 hour read</div>
+      <div class="tut-info-item">🎯 6 core concepts</div>
+      <div class="tut-info-item">✏️ 10-question exam</div>
+      <div class="tut-info-item">💻 Python code included</div>
+    </div>
+  </div>
+</div>
+
+<div class="content-layout">
+  <aside class="sidebar">
+    <nav class="toc">
+      <h3>Contents</h3>
+      <ul class="toc-list">
+        <li class="toc-item"><a href="#sec1" class="toc-link">1. Probability Basics</a></li>
+        <li class="toc-item"><a href="#sec2" class="toc-link">2. Probability Distributions</a></li>
+        <li class="toc-item"><a href="#sec3" class="toc-link">3. Bayes' Theorem</a></li>
+        <li class="toc-item"><a href="#sec4" class="toc-link">4. Expectation & Variance</a></li>
+        <li class="toc-item"><a href="#sec5" class="toc-link">5. Maximum Likelihood</a></li>
+        <li class="toc-item"><a href="#sec6" class="toc-link">6. Information Theory</a></li>
+        <li class="toc-item"><a href="#exam" class="toc-link" style="color:#67e8f9;font-weight:600;">✏️ Exam</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <main class="lesson-content">
+
+    <div class="callout info">
+      <span class="callout-icon">🎓</span>
+      <div class="callout-body">
+        <h4>Professor's Opening</h4>
+        <p>Every output from a neural network is a probability. The softmax layer outputs a probability distribution. The loss function measures how surprised the model is by the correct answer. Model confidence is a probability. <strong>You cannot deeply understand AI without understanding probability.</strong> This tutorial builds that foundation from first principles.</p>
+      </div>
+    </div>
+
+    <!-- SECTION 1 -->
+    <div class="lesson-section" id="sec1">
+      <div class="section-label">Section 1</div>
+      <h2 class="section-title">Probability Basics & Rules</h2>
+
+      <p>Probability is a number between 0 and 1 that quantifies <strong>uncertainty</strong>. In AI, we deal with probability constantly — the probability a token is the next word, the probability an image contains a cat, the probability a user will click an ad.</p>
+
+      <h3 class="subsection">Fundamental Rules</h3>
+
+      <div class="math-block">
+        <div class="math-title">Core Probability Rules</div>
+        <div class="math-formula">
+          P(A) ∈ [0, 1]  <span class="comment">← all probabilities between 0 and 1</span><br/>
+          P(Ω) = 1        <span class="comment">← something must happen</span><br/><br/>
+          <span class="highlight">Sum rule:</span>  P(A) = Σ P(A, B) over all B<br/>
+          <span class="highlight">Product rule:</span> P(A, B) = P(A|B) · P(B)<br/>
+          <span class="highlight">Complement:</span> P(not A) = 1 - P(A)<br/>
+          <span class="highlight">Independence:</span> P(A,B) = P(A)·P(B)  if A⊥B
+        </div>
+      </div>
+
+      <h3 class="subsection">Conditional Probability</h3>
+      <p>P(A|B) is the probability of A <em>given that</em> B is true. This is the most important concept in probabilistic AI — everything is conditioned on something.</p>
+
+      <div class="math-block">
+        <div class="math-title">Conditional Probability</div>
+        <div class="math-formula">
+          P(A|B) = P(A, B) / P(B)<br/><br/>
+          <span class="comment">// Example: P(spam | contains "FREE!") = ?</span><br/>
+          <span class="comment">// = P(contains "FREE!" AND spam) / P(contains "FREE!")</span>
+        </div>
+      </div>
+
+      <div class="ai-connection">
+        <div class="ai-title">🤖 AI Connection — Language Models</div>
+        <p>A language model is fundamentally a conditional probability machine: P(next_word | all_previous_words). GPT generates text by repeatedly computing P(token_i | token_1, token_2, ..., token_{i-1}) and sampling from this distribution. Every sentence ever generated by an LLM is produced by chaining conditional probabilities.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- SECTION 2 -->
+    <div class="lesson-section" id="sec2">
+      <div class="section-label">Section 2</div>
+      <h2 class="section-title">Probability Distributions</h2>
+
+      <p>A <strong>probability distribution</strong> describes how probability is spread over possible outcomes. Understanding which distribution fits your data is one of the key skills of an AI engineer.</p>
+
+      <h3 class="subsection">The Normal (Gaussian) Distribution</h3>
+      <p>The most important distribution in ML. Weight initialization, noise modeling, and many natural phenomena follow a Gaussian distribution.</p>
+
+      <div class="math-block">
+        <div class="math-title">Gaussian Distribution</div>
+        <div class="math-formula">
+          N(x; μ, σ²) = (1/√(2πσ²)) · exp(-(x-μ)² / (2σ²))<br/><br/>
+          · μ (mu)    = mean (center of the bell curve)<br/>
+          · σ (sigma) = standard deviation (spread)<br/>
+          · σ²        = variance<br/><br/>
+          <span class="comment">// 68% of data within 1σ, 95% within 2σ, 99.7% within 3σ</span>
+        </div>
+      </div>
+
+      <div class="ai-connection">
+        <div class="ai-title">🤖 AI Connection — Weight Initialization</div>
+        <p>When you initialize neural network weights, you typically sample from N(0, 0.01) — a Gaussian with mean 0 and tiny variance. If weights are too large (large σ), gradients explode. If too small (σ≈0), gradients vanish. The famous <strong>Xavier/Glorot initialization</strong> and <strong>He initialization</strong> are carefully designed Gaussian initializations that keep activations in a healthy range throughout the network.</p>
+      </div>
+
+      <h3 class="subsection">Bernoulli & Binomial Distributions</h3>
+      <p>Binary outcomes (0 or 1, yes or no, spam or not spam) follow a <strong>Bernoulli distribution</strong>. Binary classification models output Bernoulli probabilities.</p>
+
+      <div class="math-block">
+        <div class="math-title">Bernoulli Distribution</div>
+        <div class="math-formula">
+          P(X=1) = p,   P(X=0) = 1-p<br/><br/>
+          <span class="comment">// A sigmoid output in a binary classifier is p in this distribution</span><br/>
+          sigmoid(z) = 1/(1+e^(-z)) → outputs P(Y=1|X)
+        </div>
+      </div>
+
+      <h3 class="subsection">Categorical & Softmax</h3>
+      <p>When there are K classes (K>2), we use a <strong>Categorical distribution</strong>. The softmax function converts raw model outputs (logits) into a valid categorical probability distribution.</p>
+
+      <div class="math-block">
+        <div class="math-title">Softmax — Converting Logits to Probabilities</div>
+        <div class="math-formula">
+          softmax(zᵢ) = e^(zᵢ) / Σⱼ e^(zⱼ)<br/><br/>
+          Properties: all outputs > 0, all outputs sum to 1 → valid probability distribution<br/><br/>
+          <span class="comment">// Example — 3-class classifier (cat, dog, bird):</span><br/>
+          logits z = [2.0, 1.0, 0.1]<br/>
+          softmax → [0.659, 0.242, 0.099]  ← probabilities!<br/>
+          <span class="comment">// Model says 65.9% confident it's a cat</span>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python</span></div>
+        <div class="code-body">
+<pre><span class="py-kw">import</span> numpy <span class="py-kw">as</span> np
+<span class="py-kw">import</span> matplotlib.pyplot <span class="py-kw">as</span> plt
+
+<span class="py-cm"># Gaussian distribution</span>
+mu, sigma = <span class="py-num">0</span>, <span class="py-num">1</span>
+x = np.linspace(-<span class="py-num">4</span>, <span class="py-num">4</span>, <span class="py-num">200</span>)
+pdf = (<span class="py-num">1</span> / (sigma * np.sqrt(<span class="py-num">2</span> * np.pi))) * np.exp(-<span class="py-num">0.5</span> * ((x - mu)/sigma)**<span class="py-num">2</span>)
+
+<span class="py-cm"># Softmax function</span>
+<span class="py-kw">def</span> <span class="py-fn">softmax</span>(logits):
+    exp_logits = np.exp(logits - np.max(logits))  <span class="py-cm"># subtract max for numerical stability</span>
+    <span class="py-kw">return</span> exp_logits / exp_logits.sum()
+
+logits = np.array([<span class="py-num">2.0</span>, <span class="py-num">1.0</span>, <span class="py-num">0.1</span>])
+probs = <span class="py-fn">softmax</span>(logits)
+<span class="py-fn">print</span>(<span class="py-str">f"Logits: {logits}"</span>)
+<span class="py-fn">print</span>(<span class="py-str">f"Probabilities: {probs.round(3)}"</span>)  <span class="py-cm"># [0.659, 0.242, 0.099]</span>
+<span class="py-fn">print</span>(<span class="py-str">f"Sum: {probs.sum():.4f}"</span>)           <span class="py-cm"># exactly 1.0</span>
+
+<span class="py-cm"># Sigmoid for binary classification</span>
+<span class="py-kw">def</span> <span class="py-fn">sigmoid</span>(z):
+    <span class="py-kw">return</span> <span class="py-num">1</span> / (<span class="py-num">1</span> + np.exp(-z))
+
+z = np.array([-<span class="py-num">3</span>, -<span class="py-num">1</span>, <span class="py-num">0</span>, <span class="py-num">1</span>, <span class="py-num">3</span>])
+<span class="py-fn">print</span>(<span class="py-str">f"Sigmoid outputs: {sigmoid(z).round(3)}"</span>)  <span class="py-cm"># [0.047, 0.269, 0.5, 0.731, 0.953]</span></pre>
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- SECTION 3 -->
+    <div class="lesson-section" id="sec3">
+      <div class="section-label">Section 3</div>
+      <h2 class="section-title">Bayes' Theorem</h2>
+
+      <p>Bayes' theorem is one of the most important equations in all of AI. It tells us how to <strong>update our beliefs</strong> when we receive new evidence.</p>
+
+      <div class="math-block">
+        <div class="math-title">Bayes' Theorem</div>
+        <div class="math-formula">
+          <span class="highlight">P(θ|D)</span> = P(D|θ) · P(θ) / P(D)<br/><br/>
+          · P(θ|D) = <span class="highlight">Posterior</span>: what we believe AFTER seeing data D<br/>
+          · P(D|θ) = <span class="highlight">Likelihood</span>: how probable is data D given parameters θ<br/>
+          · P(θ)   = <span class="highlight">Prior</span>: what we believed BEFORE seeing data<br/>
+          · P(D)   = <span class="highlight">Evidence</span>: normalizing constant (often ignored)<br/><br/>
+          <span class="comment">// Posterior ∝ Likelihood × Prior</span>
+        </div>
+      </div>
+
+      <h3 class="subsection">Intuitive Example: Medical Diagnosis</h3>
+      <p>A disease affects 1% of the population. A test is 95% accurate. You test positive. What's the probability you actually have the disease?</p>
+
+      <div class="code-block">
+        <div class="code-header"><span class="code-lang">Python — Bayes' Theorem</span></div>
+        <div class="code-body">
+<pre><span class="py-cm"># P(disease) = 0.01 (prior — 1% of population)</span>
+<span class="py-cm"># P(positive | disease) = 0.95 (sensitivity)</span>
+<span class="py-cm"># P(positive | no disease) = 0.05 (false positive rate)</span>
+
+p_disease = <span class="py-num">0.01</span>
+p_pos_given_disease = <span class="py-num">0.95</span>
+p_pos_given_no_disease = <span class="py-num">0.05</span>
+p_no_disease = <span class="py-num">1</span> - p_disease
+
+<span class="py-cm"># Total probability of testing positive</span>
+p_positive = (p_pos_given_disease * p_disease +
+              p_pos_given_no_disease * p_no_disease)
+
+<span class="py-cm"># Bayes' theorem: P(disease | positive)</span>
+p_disease_given_positive = (p_pos_given_disease * p_disease) / p_positive
+
+<span class="py-fn">print</span>(<span class="py-str">f"P(disease | positive test) = {p_disease_given_positive:.1%}"</span>)
+<span class="py-cm"># Output: ~16.1% — much lower than you'd intuitively think!</span>
+<span class="py-cm"># This is why low base rates matter enormously in ML model evaluation</span></pre>
+        </div>
+      </div>
+
+      <div class="ai-connection">
+        <div class="ai-title">🤖 AI Connection — Bayesian Deep Learning & Regularization</div>
+        <p>L2 regularization (weight decay) has a Bayesian interpretation: it corresponds to placing a Gaussian prior P(θ) on the weights, assuming they should be small. Dropout has a Bayesian interpretation as approximate variational inference. The prior P(θ) encodes our belief that simpler models (smaller weights) are more likely — this is why regularization prevents overfitting.</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- SECTION 4 -->
+    <div class="lesson-section" id="sec4">
+      <div class="section-label">Section 4</div>
+      <h2 class="section-title">Expectation, Variance & Covariance</h2>
+
+      <div class="math-block">
+        <div class="math-title">Key Statistical Measures</div>
+        <div class="math-formula">
+          <span class="highlight">Expected Value:</span>  E[X] = Σ xᵢ · P(xᵢ)  <span class="comment">← weighted average</span><br/>
+          <span class="highlight">Variance:</span>         Var(X) = E[(X - E[X])²] = E[X²] - (E[X])²<br/>
+          <span class="highlight">Std Deviation:</span>   σ = √Var(X)<br/>
+          <span class="highlight">Covariance:</span>      Cov(X,Y) = E[(X-μₓ)(Y-μᵧ)]<br/>
+          <span class="highlight">Correlation:</span>     ρ(X,Y) = Cov(X,Y) / (σₓ · σᵧ)  ∈ [-1, 1]
+        </div>
+      </div>
+
+      <div class="ai-connection">
+        <div class="ai-title">🤖 AI Connection — Batch Normalization</div>
+        <p><strong>Batch Normalization</strong> (a critical technique in modern neural networks) works by computing the mean and variance of each feature across the batch, then normalizing: x̂ = (x - μ) / σ. This keeps the distribution of activations stable during training, making it much faster to train deep networks. Without it, the distribution shifts constantly — a problem called "internal covariate shift".</p>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- SECTION 5 -->
+    <div class="lesson-section" id="sec5">
+      <div class="section-label">Section 5</div>
+      <h2 class="section-title">Maximum Likelihood Estimation (MLE)</h2>
+
+      <p>MLE is the principle behind training almost every neural network: <strong>find the parameters θ that make the observed training data most probable.</strong></p>
+
+      <div class="math-block">
+        <div class="math-title">Maximum Likelihood Estimation</div>
+        <div class="math-formula">
+          θ_MLE = argmax_θ P(D|θ) = argmax_θ Π P(xᵢ|θ)<br/><br/>
+          <span class="comment">// Products are numerically unstable → take log (log-likelihood)</span><br/>
+          θ_MLE = argmax_θ Σ log P(xᵢ|θ)<br/><br/>
+          <span class="comment">// Maximizing log-likelihood = minimizing negative log-likelihood (NLL)</span><br/>
+          θ_MLE = argmin_θ -Σ log P(xᵢ|θ)  ← <span class="highlight">this IS your loss function!</span>
+        </div>
+      </div>
+
+      <div class="callout tip">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body">
+          <h4>MLE = Loss Function Training</h4>
+          <p>When you train a classification model with cross-entropy loss, you are doing MLE. The cross-entropy loss <em>is</em> the negative log-likelihood under a categorical distribution. When you train with MSE loss, you are doing MLE under a Gaussian noise model. <strong>Loss functions are probabilistic statements.</strong></p>
+        </div>
+      </div>
+
+      <div class="math-block">
+        <div class="math-title">Cross-Entropy Loss = Negative Log-Likelihood</div>
+        <div class="math-formula">
+          L = -Σᵢ y_true[i] · log(y_pred[i])<br/><br/>
+          <span class="comment">// For binary classification (BCE):</span><br/>
+          L = -(y·log(ŷ) + (1-y)·log(1-ŷ))<br/><br/>
+          <span class="comment">// If model says P("cat")=0.9 and true label IS cat:</span><br/>
+          L = -log(0.9) = 0.105  ← small loss (model was confident & right)<br/><br/>
+          <span class="comment">// If model says P("cat")=0.1 and true label IS cat:</span><br/>
+          L = -log(0.1) = 2.303  ← large loss (model was confident & wrong)
+        </div>
+      </div>
+    </div>
+
+    <hr class="section-divider" />
+
+    <!-- SECTION 6 -->
+    <div class="lesson-section" id="sec6">
+      <div class="section-label">Section 6</div>
+      <h2 class="section-title">Information Theory: Entropy & KL Divergence</h2>
+
+      <p>Information theory gives us the language to talk about uncertainty, surprise, and the difference between distributions — all essential for understanding ML loss functions and generative models.</p>
+
+      <div class="math-block">
+        <div class="math-title">Entropy & KL Divergence</div>
+        <div class="math-formula">
+          <span class="highlight">Shannon Entropy:</span>  H(P) = -Σ P(x) · log P(x)<br/>
+          <span class="comment">← measures average surprise / uncertainty in distribution P</span><br/><br/>
+          <span class="highlight">Cross-Entropy:</span>    H(P, Q) = -Σ P(x) · log Q(x)<br/>
+          <span class="comment">← how surprised are we if we use Q to encode events from P?</span><br/><br/>
+          <span class="highlight">KL Divergence:</span>   KL(P||Q) = Σ P(x) · log(P(x)/Q(x)) ≥ 0<br/>
+          <span class="comment">← how different is Q from the true distribution P?</span><br/><br/>
+          H(P, Q) = H(P) + KL(P||Q)
+        </div>
+      </div>
+
+      <div class="ai-connection">
+        <div class="ai-title">🤖 AI Connection — VAEs & Diffusion Models</div>
+        <p><strong>Variational Autoencoders (VAEs)</strong> use KL divergence in their loss function: the VAE loss = reconstruction loss + KL(q(z|x) || p(z)). The KL term pushes the learned distribution q(z|x) to be close to a standard Gaussian prior p(z). <strong>Diffusion models</strong> (Stable Diffusion, DALL-E 3) are also trained using a form of KL divergence minimization. Understanding KL divergence unlocks the theory behind the most powerful generative AI systems.</p>
+      </div>
+
+      <div class="callout important">
+        <span class="callout-icon">⭐</span>
+        <div class="callout-body">
+          <h4>Summary: Statistics as the Language of AI</h4>
+          <p>Neural network outputs are probability distributions. Loss functions are likelihood principles. Training is Bayesian inference (implicitly). Normalization techniques use variance. Generative models minimize distributional distances. <strong>Every single concept in this tutorial directly maps to a component of real AI systems.</strong> You'll see these connections daily as an AI engineer.</p>
+        </div>
+      </div>
+
+      <div class="key-terms">
+        <div class="term-card">
+          <div class="term-name">P-value</div>
+          <div class="term-def">Used in A/B testing ML models. If p &lt; 0.05, the difference between model A and B is statistically significant (not due to random chance).</div>
+        </div>
+        <div class="term-card">
+          <div class="term-name">Central Limit Theorem</div>
+          <div class="term-def">The average of many independent random variables tends toward a Gaussian. Why mini-batch gradient estimates are reliable even with random sampling.</div>
+        </div>
+        <div class="term-card">
+          <div class="term-name">MAP Estimation</div>
+          <div class="term-def">Maximum A Posteriori — like MLE but includes the prior. MAP with Gaussian prior = L2 regularization. MAP with Laplace prior = L1 regularization.</div>
+        </div>
+        <div class="term-card">
+          <div class="term-name">Mutual Information</div>
+          <div class="term-def">How much knowing X tells us about Y. I(X;Y) = KL(P(X,Y) || P(X)P(Y)). Used in feature selection, information bottleneck theory.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXAM -->
+    <hr class="section-divider" />
+    <div id="exam">
+      <div class="exam-header">
+        <div class="exam-badge">📝 End-of-Tutorial Exam</div>
+        <h2>Tutorial 02 Exam — Statistics & Probability</h2>
+        <p>10 questions covering all sections. Passing grade: 7/10.</p>
+      </div>
+
+      <div class="exam-progress-label" id="answered-count">0 of 10 answered</div>
+      <div class="exam-progress-bar"><div class="exam-progress-fill" id="exam-progress"></div></div>
+
+      <!-- Q1 -->
+      <div class="question-block" id="q1">
+        <div class="q-num">Question 1 of 10</div>
+        <div class="q-text">A language model generates text by repeatedly computing which probability?</div>
+        <div class="options">
+          <button class="option-btn" onclick="selectOption(this,'q1','A','wrong')"><span class="option-key">A</span> P(word) — the probability of each word in isolation</button>
+          <button class="option-btn" onclick="selectOption(this,'q1','B','correct')"><span class="option-key">B</span> P(next_word | all previous words) — conditional probability</button>
+          <button class="option-btn" onclick="selectOption(this,'q1','C','wrong')"><span class="option-key">C</span> P(sentence) — the joint probability of the whole sentence at once</button>
+          <button class="option-btn" onclick="selectOption(this,'q1','D','wrong')"><span class="option-key">D</span> P(word | vocabulary_size) — uniform distribution over vocabulary</button>
+        </div>
+        <div class="feedback" id="fb-q1-correct correct">✅ <strong>Correct!</strong> Language models are autoregressive — they compute P(tokenᵢ | token₁, ..., token_{i-1}) at each step. This conditional probability is what makes contextual understanding possible. The full sentence probability is the product of all these conditionals.</div>
+        <div class="feedback" id="fb-q1-wrong wrong">❌ <strong>Incorrect.</strong> Language models are autoregressive conditional probability machines. They compute P(next_token | all_previous_tokens) at each step. This is the conditional probability from Section 1 — and it's the fundamental operation that allows GPT and Claude to generate coherent text.</div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="question-block" id="q2">
+        <div class="q-num">Question 2 of 10</div>
+        <div class="q-text">The softmax function converts logits [3.0, 1.0, 0.0] to probabilities. What property do the output probabilities always satisfy?</div>
+        <div class="options">
+          <button class="option-btn" onclick="selectOption(this,'q2','A','wrong')"><span class="option-key">A</span> All values are between -1 and 1</button>
+          <button class="option-btn" onclick="selectOption(this,'q2','B','wrong')"><span class="option-key">B</span> The maximum value equals exactly 1.0</button>
+          <button class="option-btn" onclick="selectOption(this,'q2','C','correct')"><span class="option-key">C</span> All values are positive and they sum to exactly 1.0</button>
+          <button class="option-btn" onclick="selectOption(this,'q2','D','wrong')"><span class="option-key">D</span> All values are equal to 1/K where K is number of classes</button>
+        </div>
+        <div class="feedback" id="fb-q2-correct correct">✅ <strong>Correct!</strong> Softmax produces a valid probability distribution: all outputs > 0 (due to exp) and they sum to 1 (due to normalization). For logits [3,1,0], softmax gives approximately [0.844, 0.114, 0.042]. This is a valid categorical probability distribution.</div>
+        <div class="feedback" id="fb-q2-wrong wrong">❌ <strong>Incorrect.</strong> Softmax(z_i) = exp(z_i) / Σexp(z_j). Since exp() is always positive and we divide by the sum, all outputs are positive AND sum to 1 — making it a valid probability distribution. Equal values (1/K) would only happen if all logits are equal.</div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="question-block" id="q3">
+        <div class="q-num">Question 3 of 10</div>
+        <div class="q-text">In Bayes' theorem P(θ|D) ∝ P(D|θ) · P(θ), what does P(θ) represent in the context of neural network training?</div>
+        <div class="options">
+          <button class="option-btn" onclick="selectOption(this,'q3','A','wrong')"><span class="option-key">A</span> The training data distribution</button>
+          <button class="option-btn" onclick="selectOption(this,'q3','B','wrong')"><span class="option-key">B</span> The model's accuracy on the validation set</button>
+          <button class="option-btn" onclick="selectOption(this,'q3','C','correct')"><span class="option-key">C</span> The prior belief about what parameter values are likely (before seeing data)</button>
+          <button class="option-btn" onclick="selectOption(this,'q3','D','wrong')"><span class="option-key">D</span> The probability of the test data given the model</button>
+        </div>
+        <div class="feedback" id="fb-q3-correct correct">✅ <strong>Correct!</strong> P(θ) is the prior — our belief about parameters before seeing training data. In practice, L2 regularization corresponds to a Gaussian prior: we believe weights should be near zero. This is MAP (Maximum A Posteriori) estimation, which extends MLE with a prior belief.</div>
+        <div class="feedback" id="fb-q3-wrong wrong">❌ <strong>Incorrect.</strong> P(θ) is the prior probability of the parameters — what we believe about the weights before seeing any training data. A Gaussian prior P(θ) ~ N(0, σ²) corresponds to L2 regularization in practice. It encodes the belief that weights should be small.</div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="question-block" id="q4">
+        <div class="q-num">Question 4 of 10</div>
+        <div class="q-text">Training a neural network with cross-entropy loss is equivalent to which statistical principle?</div>
+        <div class="options">
+          <button class="option-btn" onclick="selectOption(this,'q4','A','wrong')"><span class="option-key">A</span> Minimizing the KL divergence between the prior and posterior</button>
+          <button class="option-btn" onclick="selectOption(this,'q4','B','correct')"><span class="option-key">B</span> Maximum Likelihood Estimation (MLE) under a categorical distribution</button>
+          <button class="option-btn" onclick="selectOption(this,'q4','C','wrong')"><span class="option-key">C</span> Maximizing the entropy of the output distribution</button>
+          <button class="option-btn" onclick="selectOption(this,'q4','D','wrong')"><span class="option-key">D</span> Minimizing the variance of the gradient estimates</button>
+        </div>
+        <div class="feedback" id="fb-q4-correct correct">✅ <strong>Correct!</strong> Cross-entropy loss L = -Σ y·log(ŷ) is exactly the negative log-likelihood under a categorical distribution. Minimizing it = maximizing the likelihood P(D|θ) = Π P(yᵢ|xᵢ,θ). This is the probabilistic justification for why cross-entropy is the standard classification loss.</div>
+        <div class="feedback" id="fb-q4-wrong wrong">❌ <strong>Incorrect.</strong> Cross-entropy loss IS the negative log-likelihood: -log P(y|x,θ). Minimizing it = maximizing P(y|x,θ) = Maximum Likelihood Estimation. Understanding this connection is what separates engineers who know ML from those who truly understand it.</div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="question-block" id="q5">
+        <div class="q-num">Question 5 of 10</div>
+        <div class="q-text">Batch Normalization normalizes activations using which statistics computed over the batch?</div>
+        <div class="options">
+          <button class="option-btn" onclick="selectOption(this,'q5','A','wrong')"><span class="option-key">A</span> Median and interquartile range</button>
+          <button class="option-btn" onclick="selectOption(this,'q5','B','correct')"><span class="option-key">C</span> Mean and variance (standard deviation)</button>
+          <button class="option-btn" onclick="selectOption(this,'q5','C','wrong')"><span class="option-key">B</span> Mode and range</button>
+          <button class="option-btn" onclick="selectOption(this,'q5','D','wrong')"><span class="option-key">D</span> Minimum and maximum values</button>
+        </div>
+        <div class="feedback" id="fb-q5-correct correct">✅ <strong>Correct!</strong> BatchNorm computes the mean μ and variance σ² across the batch for each feature, then normalizes: x̂ = (x - μ) / √(σ² + ε). This ensures activations stay centered near zero with unit variance, preventing the distribution from shifting erratically during training.</div>
+        <div class="feedback" id="fb-q5-wrong wrong">❌ <strong>Incorrect.</strong> Batch Normalization uses the mean μ and variance σ² (from Section 4). The normalization x̂ = (x - μ) / σ ensures zero mean and unit variance. It then applies learnable scale γ and shift β: y = γ·x̂ + β to allow the network to "un-normalize" if needed.</div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="question-block" id="q6">
+        <div class="q-num">Question 6 of 10</div>
+        <div class="q-text">A model predicts P(cat) = 0.9 and the correct label is indeed "cat". What is the cross-entropy loss for this single prediction?</div>
+        <div class="options">
+          <button class="option-btn" onclick="selectOption(this,'q6','A','wrong')"><span class="option-key">A</span> 0.9</button>
+          <button class="option-btn" onclick="selectOption(this,'q6','B','wrong')"><span class="option-key">B</span> 2.303</button>
+          <button class="option-btn" onclick="selectOption(this,'q6','C','correct')"><span class="option-key">C</span> 0.105 (approximately -log(0.9))</button>
+          <button class="option-btn" onclick="selectOption(this,'q6','D','wrong')"><span class="option-key">D</span> -0.9</button>
+        </div>
+        <div class="feedback" id="fb-q6-correct correct">✅ <strong>Correct!</strong> L = -log(0.9) ≈ 0.105. When the model is confident AND correct, the loss is small. For comparison: if the model said P(cat) = 0.1 when the true label is cat, loss = -log(0.1) = 2.303 — over 20× larger! This is why cross-entropy heavily penalizes confident wrong predictions.</div>
+        <div class="feedback" id="fb-q6-wrong wrong">❌ <strong>Incorrect.</strong> Cross-entropy loss = -y·log(ŷ) = -1·log(0.9) = -(-0.10536) ≈ 0.105. Since y=1 (correct class) and ŷ=0.9 (high confidence correct prediction), the loss is small. 2.303 would be the loss for ŷ=0.1 — when the model is confidently wrong.</div>
+      </div>
+
+      <!-- Q7 -->
+      <div class="question-block" id="q7">
+        <div class="q-num">Question 7 of 10</div>
+        <div class="q-text">KL divergence KL(P||Q) has what key mathematical property?</div>
+        <div class="options">
+          <button class="option-btn" onclick="selectOption(this,'q7','A','wrong')"><span class="option-key">A</span> It can be negative when Q is wider than P</button>
+          <button class="option-btn" onclick="selectOption(this,'q7','B','wrong')"><span class="option-key">B</span> KL(P||Q) = KL(Q||P) (it is symmetric)</button>
+          <button class="option-btn" onclick="selectOption(this,'q7','C','correct')"><span class="option-key">C</span> KL(P||Q) ≥ 0, and equals 0 if and only if P = Q</button>
+          <button class="option-btn" onclick="selectOption(this,'q7','D','wrong')"><span class="option-key">D</span> It is always between 0 and 1</button>
+        </div>
+        <div class="feedback" id="fb-q7-correct correct">✅ <strong>Correct!</strong> KL divergence is non-negative (by Gibbs' inequality) and equals 0 only when P = Q exactly. Importantly, KL(P||Q) ≠ KL(Q||P) — it's NOT symmetric. VAEs use this: they minimize KL(q(z|x) || p(z)) to force the learned encoder to be close to the prior, but the direction matters.</div>
+        <div class="feedback" id="fb-q7-wrong wrong">❌ <strong>Incorrect.</strong> KL(P||Q) ≥ 0 always (it's a non-negative measure of distributional difference), and = 0 iff P = Q. It is NOT symmetric: KL(P||Q) ≠ KL(Q||P) in general. KL can also be greater than 1, so it's not bounded at 1.</div>
+      </div>
+
+      <!-- Q8 -->
+      <div class="question-block" id="q8">
+        <div class="q-num">Question 8 of 10</div>
+        <div class="q-text">Adding L2 regularization (weight decay) to a neural network's loss function has which Bayesian interpretation?</div>
+        <div class="options">
+          <button class="option-btn" onclick="selectOption(this,'q8','A','wrong')"><span class="option-key">A</span> It implements Maximum Likelihood Estimation</button>
+          <button class="option-btn" onclick="selectOption(this,'q8','B','correct')"><span class="option-key">B</span> It implements MAP estimation with a Gaussian prior on the weights</button>
+          <button class="option-btn" onclick="selectOption(this,'q8','C','wrong')"><span class="option-key">C</span> It maximizes the entropy of the weight distribution</button>
+          <button class="option-btn" onclick="selectOption(this,'q8','D','wrong')"><span class="option-key">D</span> It implements MAP estimation with a Laplace prior</button>
+        </div>
+        <div class="feedback" id="fb-q8-correct correct">✅ <strong>Correct!</strong> L2 regularization adds λ·Σwᵢ² to the loss, which is equivalent to MAP with a Gaussian prior P(w) ~ N(0, 1/2λ). Note: L1 regularization corresponds to a Laplace prior (promotes sparsity). This Bayesian view explains why regularization reduces overfitting — it encodes a prior belief that weights should be small.</div>
+        <div class="feedback" id="fb-q8-wrong wrong">❌ <strong>Incorrect.</strong> L2 regularization (||w||²) corresponds to MAP with a Gaussian prior on weights. Pure MLE has no regularization. L1 regularization (||w||₁) corresponds to MAP with a Laplace prior (which promotes sparsity — this is why L1 is used for feature selection).</div>
+      </div>
+
+      <!-- Q9 -->
+      <div class="question-block" id="q9">
+        <div class="q-num">Question 9 of 10</div>
+        <div class="q-text">The Central Limit Theorem is why mini-batch gradient descent works reliably. What does it tell us?</div>
+        <div class="options">
+          <button class="option-btn" onclick="selectOption(this,'q9','A','wrong')"><span class="option-key">A</span> The gradient of the loss is always zero at the global minimum</button>
+          <button class="option-btn" onclick="selectOption(this,'q9','B','wrong')"><span class="option-key">B</span> Larger batch sizes always lead to better model accuracy</button>
+          <button class="option-btn" onclick="selectOption(this,'q9','C','correct')"><span class="option-key">C</span> The average of many random samples approximates the true mean, and this average tends toward a Gaussian distribution</button>
+          <button class="option-btn" onclick="selectOption(this,'q9','D','wrong')"><span class="option-key">D</span> Neural networks converge to a global optimum given enough data</button>
+        </div>
+        <div class="feedback" id="fb-q9-correct correct">✅ <strong>Correct!</strong> The CLT says: the average of n independent samples tends toward N(μ, σ²/n) as n → ∞. This means a mini-batch gradient is an unbiased estimate of the full-batch gradient, and with enough samples it's reliable. This justifies using 32 or 64 samples instead of the whole dataset each step.</div>
+        <div class="feedback" id="fb-q9-wrong wrong">❌ <strong>Incorrect.</strong> The CLT tells us that the sample mean of n independent draws tends toward a Gaussian centered at the true mean. For gradient descent: averaging gradients over a mini-batch gives an unbiased estimate of the true gradient, and the CLT guarantees this estimate is reliable (Gaussian distributed around the true value).</div>
+      </div>
+
+      <!-- Q10 -->
+      <div class="question-block" id="q10">
+        <div class="q-num">Question 10 of 10</div>
+        <div class="q-text">A disease has a 0.1% base rate. A perfect test (no false positives, no false negatives) comes back positive. What is P(disease | positive test)?</div>
+        <div class="options">
+          <button class="option-btn" onclick="selectOption(this,'q10','A','wrong')"><span class="option-key">A</span> 50% — could go either way</button>
+          <button class="option-btn" onclick="selectOption(this,'q10','B','wrong')"><span class="option-key">B</span> 0.1% — unchanged from the base rate</button>
+          <button class="option-btn" onclick="selectOption(this,'q10','C','correct')"><span class="option-key">C</span> 100% — a perfect test with no errors gives certainty</button>
+          <button class="option-btn" onclick="selectOption(this,'q10','D','wrong')"><span class="option-key">D</span> 99.9% — very high but not certain</button>
+        </div>
+        <div class="feedback" id="fb-q10-correct correct">✅ <strong>Correct!</strong> If the test has 0% false positives (never positive when disease-free) and 0% false negatives (always positive when diseased), then a positive result means you definitively have the disease: P(disease|positive) = 1.0 = 100%. The base rate only matters when the test is imperfect. This is why Bayes' theorem with perfect tests reduces to pure logic.</div>
+        <div class="feedback" id="fb-q10-wrong wrong">❌ <strong>Incorrect.</strong> A perfect test has 0 false positives: P(positive | no disease) = 0. Applying Bayes: P(disease|+) = [P(+|disease)·P(disease)] / P(+) = [1.0 × 0.001] / [1.0×0.001 + 0×0.999] = 0.001/0.001 = 1.0 = 100%. With a perfect test, a positive is definitive. The base rate only matters when the test makes errors.</div>
+      </div>
+
+      <button class="exam-submit" id="submit-btn" onclick="submitExam()" disabled>Answer all 10 questions to submit</button>
+
+      <div class="exam-results" id="exam-results">
+        <div class="result-score" id="result-score"></div>
+        <div class="result-label" id="result-label"></div>
+        <div class="result-message" id="result-message"></div>
+        <div><a href="tutorial-03.html" class="result-next">Continue to Tutorial 03 →</a></div>
+        <div><button class="retry-btn" onclick="retryExam()">↺ Retry Exam</button></div>
+      </div>
+    </div>
+
+    <div class="next-tutorial">
+      <div class="next-info">
+        <div class="next-label">Up Next · Tutorial 03</div>
+        <div class="next-title">Python & NumPy for AI Engineers</div>
+        <div class="next-desc">Python essentials, NumPy broadcasting, Pandas DataFrames — your primary tools as an AI engineer.</div>
+      </div>
+      <a href="tutorial-03.html" class="next-btn">Start Tutorial 03 →</a>
+    </div>
+
+  </main>
+</div>
+
+<script>
+  window.addEventListener('scroll', () => {
+    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+    const scrolled = (window.scrollY / docHeight) * 100;
+    document.getElementById('progress-fill').style.width = Math.min(scrolled, 100) + '%';
+    document.getElementById('progress-text').textContent = Math.round(scrolled) + '% read';
+  });
+
+  const answers = {};
+  function selectOption(btn, qId, choice, correctness) {
+    const block = document.getElementById(qId);
+    if (block.classList.contains('answered-correct') || block.classList.contains('answered-wrong')) return;
+    if (correctness === 'correct') {
+      btn.classList.add('correct');
+      block.classList.add('answered-correct');
+      const fb = document.getElementById(`fb-${qId}-correct`);
+      if (fb) { fb.className = 'feedback correct show'; }
+    } else {
+      btn.classList.add('wrong');
+      block.classList.add('answered-wrong');
+      block.querySelectorAll('.option-btn').forEach(b => { if (b.getAttribute('onclick').includes(",'correct'")) b.classList.add('correct'); });
+      const fb = document.getElementById(`fb-${qId}-wrong`);
+      if (fb) { fb.className = 'feedback wrong show'; }
+    }
+    block.querySelectorAll('.option-btn').forEach(b => b.disabled = true);
+    answers[qId] = correctness === 'correct';
+    const answered = Object.keys(answers).length;
+    document.getElementById('exam-progress').style.width = (answered / 10 * 100) + '%';
+    document.getElementById('answered-count').textContent = `${answered} of 10 answered`;
+    if (answered === 10) { const s = document.getElementById('submit-btn'); s.disabled = false; s.textContent = 'Submit Exam →'; }
+  }
+
+  function submitExam() {
+    const correct = Object.values(answers).filter(v => v).length;
+    const pct = Math.round(correct / 10 * 100);
+    const r = document.getElementById('exam-results');
+    const s = document.getElementById('result-score');
+    const l = document.getElementById('result-label');
+    const m = document.getElementById('result-message');
+    s.textContent = `${correct} / 10`;
+    if (correct >= 9) { s.style.color = '#6ee7b7'; l.textContent = '🏆 Excellent! — ' + pct + '%'; m.textContent = 'Outstanding! You have a strong grasp of probability and statistics for AI. Move on to Tutorial 03.'; }
+    else if (correct >= 7) { s.style.color = '#67e8f9'; l.textContent = '✅ Passed — ' + pct + '%'; m.textContent = 'Good work! You understand the core concepts. Proceed to Tutorial 03.'; }
+    else if (correct >= 5) { s.style.color = '#fcd34d'; l.textContent = '⚠️ Borderline — ' + pct + '%'; m.textContent = 'Review Sections 3 (Bayes) and 5 (MLE) — these are foundational. Retry before moving on.'; }
+    else { s.style.color = '#fca5a5'; l.textContent = '❌ Needs Review — ' + pct + '%'; m.textContent = 'Work through all sections again, especially Bayes, MLE, and cross-entropy. These concepts appear in every tutorial that follows.'; }
+    r.classList.add('show');
+    r.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    document.getElementById('submit-btn').disabled = true;
+  }
+
+  function retryExam() {
+    for (let i = 1; i <= 10; i++) {
+      const b = document.getElementById(`q${i}`);
+      b.classList.remove('answered-correct', 'answered-wrong');
+      b.querySelectorAll('.option-btn').forEach(btn => { btn.classList.remove('selected', 'correct', 'wrong'); btn.disabled = false; });
+      b.querySelectorAll('.feedback').forEach(f => f.classList.remove('show'));
+    }
+    for (const k in answers) delete answers[k];
+    document.getElementById('exam-progress').style.width = '0%';
+    document.getElementById('answered-count').textContent = '0 of 10 answered';
+    const s = document.getElementById('submit-btn'); s.disabled = true; s.textContent = 'Answer all 10 questions to submit';
+    document.getElementById('exam-results').classList.remove('show');
+    document.getElementById('exam').scrollIntoView({ behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
